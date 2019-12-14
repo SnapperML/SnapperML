@@ -1,0 +1,8 @@
+title: "TFG (Nombre provisional)"
+author: Antonio Molner Domenech
+date: \today
+lang: es
+geometry: margin=3cm
+linkcolor: blue
+titlepage: True
+listings-no-page-break: True
