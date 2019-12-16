@@ -1,5 +1,6 @@
 from inspect import signature
 import argparse
+from functools import wraps
 
 
 def cli_decorator(func, description=''):
@@ -20,6 +21,7 @@ def cli_decorator(func, description=''):
         else:
             parser.add_argument(f'{name}')
 
+    @wraps(func)
     def inner():
         args = parser.parse_args()
         return func(**vars(args))
