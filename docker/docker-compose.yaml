@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  pyroot:
+    build:
+      context: .
+      dockerfile: ROOT.Dockerfile
+      args:
+        LATTES_REPO_ACCESS_TOKEN: $LATTES_REPO_ACCESS_TOKEN
+    volumes:
+       - ../:/mnt
+    entrypoint: bash -c "cd /mnt && export PYTHONPATH='.' && t //bin/bash"
+    stdin_open: true
+    container_name: "pyroot_${USER}"
+    tty: true

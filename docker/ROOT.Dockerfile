@@ -2,13 +2,11 @@
 # cloning without leaking the ssh private key
 FROM alpine/git as intermediate
 
-ARG SSH_PRIVATE_KEY
+ARG LATTES_REPO_ACCESS_TOKEN
 WORKDIR /
 RUN mkdir /root/.ssh/  \
-    && echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_rsa \
-    && chmod 400 /root/.ssh/id_rsa \
-    && ssh-keyscan git02.ncg.ingrid.pt >> /root/.ssh/known_hosts \
-    && git clone git@git02.ncg.ingrid.pt:LATTES/LATTESsim.git
+    && git config --global http.sslVerify false \
+    && git clone https://oauth2:${LATTES_REPO_ACCESS_TOKEN}@git02.ncg.ingrid.pt/LATTES/LATTESsim.git
 
 
 FROM rootproject/root
@@ -16,6 +14,6 @@ FROM rootproject/root
 COPY --from=intermediate /LATTESsim /LATTESsim
 RUN python3 -m pip install numpy pandas rootpy
 WORKDIR /LATTESsim
-RUN make
+RUN git checkout newconcept && make
 
 ENTRYPOINT ["/bin/bash"]
