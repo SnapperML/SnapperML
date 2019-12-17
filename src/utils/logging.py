@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 def setup_logging(experiment_name):
+    global logger
+    logger = logging.getLogger(__name__)
+
     info_handler = logging.FileHandler(os.path.join('logs', f'{experiment_name}.info.log'))
     error_handler = logging.FileHandler(os.path.join('logs', f'{experiment_name}.error.log'))
     console = logging.StreamHandler()
@@ -30,4 +33,3 @@ def setup_logging(experiment_name):
     logger.addHandler(console)
 
     coloredlogs.install(fmt=simple_format, level='DEBUG', logger=logger)
-    coloredlogs.install(level="DEBUG")

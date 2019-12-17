@@ -47,15 +47,16 @@ def log_experiment(
 
     mlflow.set_experiment(experiment_name)
 
+    logger.info(f"Logging params {params}")
+    logger.info(f"Logging metrics {metrics}")
+    logger.info(f"Logging artifacts {artifacts}")
+
     with mlflow.start_run():
         for key, val in params.items():
-            logger.info(f"Logging param {key}")
             mlflow.log_param(key, val)
         for key, val in metrics.items():
-            logger.info(f"Logging metric {key}")
             mlflow.log_metric(key, val)
         for key, val in artifacts.items():
-            logger.info(f"Logging artifact {key}")
             mlflow.log_artifact(val)
 
 
@@ -75,6 +76,7 @@ def parse_experiment_arguments(experiment_func):
 def generate_experiment_name():
     base = os.path.basename(sys.argv[0])
     return os.path.splitext(base)[0]
+
 
 def experiment(func):
     sig = signature(func)
