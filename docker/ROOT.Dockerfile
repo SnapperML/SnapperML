@@ -15,5 +15,6 @@ COPY --from=intermediate /LATTESsim /LATTESsim
 RUN python3 -m pip install numpy pandas rootpy
 WORKDIR /LATTESsim
 RUN git checkout newconcept && make
+WORKDIR /mnt/
 
 ENTRYPOINT ["/bin/bash"]
