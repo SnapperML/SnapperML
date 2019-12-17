@@ -14,16 +14,16 @@ def setup_logging(experiment_name):
     error_handler = logging.FileHandler(os.path.join('logs', f'{experiment_name}.error.log'))
     console = logging.StreamHandler()
 
-    simple_format = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    descriptive_format = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    simple_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    descriptive_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
     info_handler.setLevel(logging.INFO)
     error_handler.setLevel(logging.ERROR)
     console.setLevel(logging.DEBUG)
 
-    info_handler.setFormatter(descriptive_format)
-    error_handler.setFormatter(descriptive_format)
-    console.setFormatter(simple_format)
+    info_handler.setFormatter(logging.Formatter(descriptive_format))
+    error_handler.setFormatter(logging.Formatter(descriptive_format))
+    console.setFormatter(logging.Formatter(simple_format))
 
     logger.addHandler(info_handler)
     logger.addHandler(error_handler)
