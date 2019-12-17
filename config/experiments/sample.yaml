@@ -1,0 +1,8 @@
+name: "AutoEncoder Simple"
+params:
+  - lr: 0.001
+  - batch_size: 256
+  - encoding_dim: 4
+
+run:
+  - src/models/train_simple_autoencoder.py
