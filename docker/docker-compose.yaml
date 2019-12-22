@@ -9,7 +9,7 @@ services:
         LATTES_REPO_ACCESS_TOKEN: $LATTES_REPO_ACCESS_TOKEN
     volumes:
        - ../:/mnt
-    entrypoint: bash -c "cd /mnt && export PYTHONPATH='.' && t //bin/bash"
+    entrypoint: bash -c "cd /mnt && export PYTHONPATH='.' && /bin/bash"
     stdin_open: true
     container_name: "pyroot_${USER}"
     tty: true
