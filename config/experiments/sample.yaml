@@ -1,8 +1,16 @@
 name: "AutoEncoder Simple"
+
+build:
+  dockerfile: "docker/ROOT.Dockerfile"
+  args:
+    LATTES_REPO_ACCESS_TOKEN: $LATTES_REPO_ACCESS_TOKEN
+
 params:
-  - lr: 0.001
-  - batch_size: 256
-  - encoding_dim: 4
+  train_data: "data/raw/proton_bin_3_4_newconcept.root"
+  optimizer: "adam"
+  encoding_dim: 4
+  epochs: 100
+  batch_size: 256
 
 run:
   - src/models/train_simple_autoencoder.py
