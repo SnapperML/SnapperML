@@ -12,7 +12,10 @@ RUN mkdir /root/.ssh/  \
 FROM rootproject/root
 
 COPY --from=intermediate /LATTESsim /LATTESsim
-RUN python3 -m pip install numpy pandas rootpy
+ADD requirements.txt requirements.txt
+RUN python3 -m pip install numpy pandas rootpy \
+    && python3 -m pip install -r requirements.txt
+
 WORKDIR /LATTESsim
 RUN git checkout newconcept && make
 WORKDIR /mnt/
