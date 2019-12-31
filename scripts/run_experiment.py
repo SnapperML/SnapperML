@@ -8,10 +8,21 @@ import subprocess
 import docker
 
 
-class ExperimentTypes(Enum):
+class JobTypes(Enum):
     JOB = "job"
     EXPERIMENT = "experiment"
     GROUP = "group"
+
+
+def extract_string_from_docker_log(log):
+    if 'stream' in log:
+        return log['stream'].splitlines()
+    return []
+
+
+def create_low_level_docker_client(**kwargs):
+    params = docker.api.client.utils.kwargs_from_env(**kwargs)
+    return docker.APIClient(**params)
 
 
 def extract_docker_config_params(docker_config):
@@ -29,34 +40,44 @@ def build_image(client, context, dockerfile, build_args):
     else:
         dockerfile_file = open(dockerfile, 'rb')
         build_params = {'path': context, 'fileobj': dockerfile_file}
-    print(build_params)
-    image, logs = client.images.build(rm=True, buildargs=build_args, **build_params)
+    logs = client.build(rm=True, buildargs=build_args, decode=True, **build_params)
+    logs_str = []
     for log in logs:
-        logger.debug(log.get('stream', ''))
-    return image.id
+        chunk = extract_string_from_docker_log(log)
+        logs_str.extend(chunk)
+        for line in chunk:
+            logger.info(line)
+    return logs_str[-1].strip().split(' ')[-1]
 
 
-def run_docker_container(client, image, command):
-    logs = client.containers.run(
+def run_docker_container(image, command):
+    client = docker.from_env()
+    container = client.containers.run(
         image,
         ['-c', command],
         auto_remove=True,
         entrypoint='sh',
         volumes={os.getcwd(): {'bind': '/mnt/', 'mode': 'rw'}},
-        working_dir='/mnt/'
+        working_dir='/mnt/',
+        detach=True,
     )
-    logger.debug(logs)
+    logs = container.attach(stdout=True, stderr=True, stream=True, logs=True)
+    for chunk in logs:
+        logger.info(chunk.decode('utf-8'))
+    logger.info('Finished job!')
 
 
 def process_docker(docker_config, command):
-    client = docker.from_env()
+    client = create_low_level_docker_client()
     commands = command if isinstance(command, list) else [command]
     command_single_expression = " && ".join(commands)
     dockerfile, context, image, build_args = extract_docker_config_params(docker_config)
     if dockerfile:
+        logger.info('Building docker image...')
         image = build_image(client, context, dockerfile, build_args)
     if image:
-        run_docker_container(client, image, command_single_expression)
+        logger.info('Running job on docker container...')
+        run_docker_container(image, command_single_expression)
 
 
 def extract_docker_build_info(config):
@@ -74,20 +95,23 @@ def extract_docker_build_info(config):
 
 def extract_info_base(config):
     experiment_name = config["name"]
-    kind = config.get("type")
+    kind = config.get("kind", JobTypes.EXPERIMENT)
     run_command = config['run']
     return experiment_name, kind, run_command
 
 
-def run_experiment(config_file, experiment_name, command, docker_config):
+def run_experiment(config_file, experiment_name, commands, docker_config, kind):
     logger.info(f"\nRunning experiment: {experiment_name}")
-    run_commands = command if isinstance(command, list) else [command]
-    bash_commands = [f'python3 {cmd} --config_file {config_file}' for cmd in run_commands]
+    run_commands = commands if isinstance(commands, list) else [commands]
+    if kind == JobTypes.EXPERIMENT:
+        bash_commands = [f'PYTHONPATH=. python3 {cmd} --config_file {config_file}' for cmd in run_commands]
+    else:
+        bash_commands = commands
     if docker_config:
         process_docker(docker_config, bash_commands)
     else:
-        for command in bash_commands:
-            subprocess.run(command, shell=True)
+        for commands in bash_commands:
+            subprocess.run(commands, shell=True)
 
 
 @cli_decorator
@@ -97,7 +121,12 @@ def main(config_file):
     experiment_name, kind, run_command = extract_info_base(config)
     docker_config = extract_docker_build_info(config)
     setup_logging(experiment_name=experiment_name)
-    run_experiment(config_file, experiment_name, run_command, docker_config)
+    run_experiment(
+        config_file=config_file,
+        experiment_name=experiment_name,
+        commands=run_command,
+        docker_config=docker_config,
+        kind=kind)
 
 
 if __name__ == '__main__':
