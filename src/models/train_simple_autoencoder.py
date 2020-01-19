@@ -2,7 +2,7 @@ from keras.layers import Input, Dense
 from keras.models import Model
 from keras import regularizers
 import pandas as pd
-import src.utils.cli
+from src.utils.experiments import experiment
 
 
 def create_model(input_shape, encoding_dim, regularizer, optimizer):
@@ -19,7 +19,10 @@ def create_model(input_shape, encoding_dim, regularizer, optimizer):
     return autoencoder, encoder, decoder
 
 
-def main(train_data, encoding_dim, optimizer, epochs, batch_size=256, l1_regularization=0):
+@experiment
+def main(train_data: str, encoding_dim: int, optimizer, epochs: int, batch_size: int = 256, l1_regularization = 0):
+    """Simple autoencoder with Dropout"""
+    return {}, {}
     dataframe = pd.load_csv(train_data)
     regularizer = regularizers.l1(l1_regularization) if l1_regularization else None
     autoencoder, encoder, decoder = create_model(
@@ -32,3 +35,7 @@ def main(train_data, encoding_dim, optimizer, epochs, batch_size=256, l1_regular
         shuffle=True,
         validation_data=(dataframe, dataframe),
         verbose=2)
+
+
+if __name__ == '__main__':
+    main()

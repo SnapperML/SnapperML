@@ -7,7 +7,7 @@ from datetime import timedelta
 import mlflow
 from pytictoc import TicToc
 from .logging import logger, setup_logging
-from .cli import create_argument_parse_from_signature
+from .cli import create_argument_parse_from_function
 
 
 def log_experiment(
@@ -58,8 +58,8 @@ def log_experiment(
             mlflow.log_artifact(val)
 
 
-def parse_experiment_arguments(experiment_signature):
-    parser = create_argument_parse_from_signature(experiment_signature, all_keywords=True)
+def parse_experiment_arguments(experiment_func):
+    parser = create_argument_parse_from_function(experiment_func, all_keywords=True)
     parser.add_argument('--experiment_name', type=str, default=generate_experiment_name())
     arguments = parser.parse_args()
     params = vars(arguments)
@@ -81,7 +81,7 @@ def experiment(func):
 
     @wraps(func)
     def wrapper():
-        experiment_name, params = parse_experiment_arguments(sig)
+        experiment_name, params = parse_experiment_arguments(func)
 
         if not experiment_name:
             experiment_name = generate_experiment_name()

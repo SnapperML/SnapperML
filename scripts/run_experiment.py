@@ -1,3 +1,7 @@
+# TODO: Add support for remote job scheduling through Swarm or OpenFaas
+# TODO: Add support for running group of jobs in parallel / Hyperparams
+
+
 import os
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
@@ -100,11 +104,12 @@ def extract_info_base(config):
     return experiment_name, kind, run_command
 
 
-def run_experiment(config_file, experiment_name, commands, docker_config, kind):
+def run_experiment(params, experiment_name, commands, docker_config, kind):
     logger.info(f"\nRunning experiment: {experiment_name}")
     run_commands = commands if isinstance(commands, list) else [commands]
     if kind == JobTypes.EXPERIMENT:
-        bash_commands = [f'PYTHONPATH=. python3 {cmd} --config_file {config_file}' for cmd in run_commands]
+        argv = ' '.join([f'--{k} {v}' for k, v in params.items()])
+        bash_commands = [f'PYTHONPATH=. python3 {cmd} {argv}' for cmd in run_commands]
     else:
         bash_commands = commands
     if docker_config:
@@ -122,7 +127,7 @@ def main(config_file):
     docker_config = extract_docker_build_info(config)
     setup_logging(experiment_name=experiment_name)
     run_experiment(
-        config_file=config_file,
+        params=config.get('params', {}),
         experiment_name=experiment_name,
         commands=run_command,
         docker_config=docker_config,

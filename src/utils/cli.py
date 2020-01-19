@@ -1,3 +1,4 @@
+from docstring_parser import parse as parse_docstring
 from inspect import signature
 import argparse
 from functools import wraps, partial
@@ -30,9 +31,18 @@ def add_argument(parameter, argument_group, as_keyword):
         )
 
 
-def create_argument_parse_from_signature(func_signature, description="", all_keywords=False, *args, **kwargs):
+def get_description_from_function(func):
+    description = ''
+    if func.__doc__:
+        docstring = parse_docstring(func.__doc__)
+        description = f'{docstring.short_description}\n\n{docstring.long_description or ""}'
+    return description
+
+
+def create_argument_parse_from_function(func, all_keywords=False, *args, **kwargs):
+    func_signature = signature(func)
     parser = argparse.ArgumentParser(
-        description=description,
+        description=get_description_from_function(func),
         formatter_class=CustomHelpFormatter,
         *args,
         **kwargs
@@ -62,7 +72,7 @@ def cli_decorator(func=None, *, description=""):
     and generates the argument parser. """
     if func is None:
         return partial(cli_decorator, description=description)
-    parser = create_argument_parse_from_signature(signature(func), description)
+    parser = create_argument_parse_from_function(func, description)
     @wraps(func)
     def inner():
         args = parser.parse_args()
