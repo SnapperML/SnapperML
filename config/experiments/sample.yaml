@@ -1,10 +1,5 @@
 name: "AutoEncoder Simple"
 
-build:
-  dockerfile: "docker/ROOT.Dockerfile"
-  args:
-    LATTES_REPO_ACCESS_TOKEN: $LATTES_REPO_ACCESS_TOKEN
-
 params:
   train_data: "data/raw/proton_bin_3_4_newconcept.root"
   optimizer: "adam"
