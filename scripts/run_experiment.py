@@ -1,7 +1,5 @@
 # TODO: Add support for remote job scheduling through Swarm or OpenFaas
 # TODO: Add support for running group of jobs in parallel / Hyperparams
-
-
 import os
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
