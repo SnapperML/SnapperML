@@ -2,14 +2,12 @@ from functools import wraps
 from inspect import signature
 import os
 import sys
-import argparse
 from math import ceil
 from datetime import timedelta
 import mlflow
 from pytictoc import TicToc
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_signature
-from .config import parse_config
 
 
 def log_experiment(
@@ -60,17 +58,13 @@ def log_experiment(
             mlflow.log_artifact(val)
 
 
-def parse_experiment_arguments(experiment_func):
-    parser = create_argument_parse_from_signature(experiment_func)
-    parser.add_argument('--config_file', type=argparse.FileType('w'), default=None)
-    parser.add_argument('--experiment_name', type=str, default='')
+def parse_experiment_arguments(experiment_signature):
+    parser = create_argument_parse_from_signature(experiment_signature, all_keywords=True)
+    parser.add_argument('--experiment_name', type=str, default=generate_experiment_name())
     arguments = parser.parse_args()
     params = vars(arguments)
-    config_file = params['config_file']
-    experiment_name = params['experiment_name']
-    params.pop('config_file', None)
-    params.pop('experiment_name', None)
-    return config_file, experiment_name, params
+    experiment_name = params.pop('experiment_name', None)
+    return experiment_name, params
 
 
 def generate_experiment_name():
@@ -87,19 +81,13 @@ def experiment(func):
 
     @wraps(func)
     def wrapper():
-        config_file, experiment_name, params = parse_experiment_arguments(func)
-
-        if config_file:
-            config = parse_config(config_file)
-            experiment_name = config_file['experiment'] if not experiment_name else experiment_name
-            config_params = config.get('params', {})
-            params = {**config_params, **params}
+        experiment_name, params = parse_experiment_arguments(sig)
 
         if not experiment_name:
             experiment_name = generate_experiment_name()
 
         setup_logging(experiment_name=experiment_name)
-        logger.info(f'Starting job {func.__name__}() in {sys.argv[0]}')
+        logger.info(f'Starting job {experiment_name} in {sys.argv[0]}')
         t = TicToc()
         t.tic()
 
@@ -112,7 +100,7 @@ def experiment(func):
             artifacts=artifacts
         )
 
-        logger.info(f"Finished job {func.__name__}() in "
+        logger.info(f"Finished job {experiment_name} in "
                     f"{timedelta(seconds=ceil(t.tocvalue()))}")
 
     return wrapper

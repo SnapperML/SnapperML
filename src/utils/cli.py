@@ -3,19 +3,56 @@ import argparse
 from functools import wraps, partial
 
 
-def create_argument_parse_from_signature(func, description=""):
-    parser = argparse.ArgumentParser(description=description)
-    sig = signature(func)
+class CustomHelpFormatter(argparse.HelpFormatter):
+    def _get_default_metavar_for_optional(self, action):
+        return action.type.__name__ if action.type else 'any'
 
-    for parameter in sig.parameters.values():
-        name = parameter.name.replace('*', '')
+    def _get_default_metavar_for_positional(self, action):
+        return self._get_default_metavar_for_optional(action)
+
+
+def add_argument(parameter, argument_group, as_keyword):
+    name = parameter.name.replace('*', '')
+    params = {'type': parameter.annotation} if parameter.annotation != parameter.empty else {}
+    if parameter.default == parameter.empty:
+        if as_keyword:
+            params['required'] = True
+        else:
+            params['help'] = name
+        name = f'--{name}' if as_keyword else name
+        argument_group.add_argument(name, **params)
+    else:
+        argument_group.add_argument(
+            f'--{name}',
+            default=parameter.default,
+            help=f'Default: {parameter.default}',
+            **params,
+        )
+
+
+def create_argument_parse_from_signature(func_signature, description="", all_keywords=False, *args, **kwargs):
+    parser = argparse.ArgumentParser(
+        description=description,
+        formatter_class=CustomHelpFormatter,
+        *args,
+        **kwargs
+    )
+    if all_keywords:
+        optional = parser._action_groups.pop()
+        required = parser.add_argument_group('required arguments')
+        parser._action_groups.append(optional)
+    else:
+        optional = required = parser
+
+    for parameter in func_signature.parameters.values():
         # Not supporting *args or **kwargs arguments for now.
         if parameter.kind != parameter.POSITIONAL_OR_KEYWORD:
             continue
         if parameter.default == parameter.empty:
-            parser.add_argument(f'{name}')
+            add_argument(parameter, required, all_keywords)
         else:
-            parser.add_argument(f'--{name}', default=parameter.default)
+            add_argument(parameter, optional, all_keywords)
+
     return parser
 
 
@@ -25,7 +62,7 @@ def cli_decorator(func=None, *, description=""):
     and generates the argument parser. """
     if func is None:
         return partial(cli_decorator, description=description)
-    parser = create_argument_parse_from_signature(func, description)
+    parser = create_argument_parse_from_signature(signature(func), description)
     @wraps(func)
     def inner():
         args = parser.parse_args()
