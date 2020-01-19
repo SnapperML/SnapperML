@@ -78,3 +78,4 @@ def cli_decorator(func=None, *, description=""):
         args = parser.parse_args()
         return func(**vars(args))
     return inner
+

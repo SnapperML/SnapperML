@@ -1,7 +1,8 @@
-from functools import wraps
+from functools import wraps, partial
 from inspect import signature
 import os
 import sys
+from enum import Enum
 from math import ceil
 from datetime import timedelta
 import mlflow
@@ -10,20 +11,17 @@ from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function
 
 
-def log_experiment(
-        experiment_name,
-        params,
-        metrics=None,
-        artifacts=None,
-        mlflow_tracking_uri="./experiments",
-        mlflow_artifact_location=None,
-):
+class AutologgingBackend(Enum):
+    TENSORFLOW = "tensorflow"
+    KERAS = "keras"
+    FASTAI = "fastai"
+    PYTORCH = "pytorch"
+
+
+def create_mlflow_experiment(experiment_name, mlflow_tracking_uri="./experiments", mlflow_artifact_location=None):
     """
-    Evaluate the model and log it with mlflow
+    Try to create an experiment if it doesn't exist
     Args:
-        params (dict): dictionary of parameters to log
-        metrics (dict): dictionary of metrics to log
-        artifacts (dict): dictionary of artifacts (path) to log
         experiment_name (str): experiment name
         mlflow_tracking_uri (str): path or sql url for mlflow logging
         mlflow_artifact_location (str): path or s3bucket url for artifact
@@ -31,10 +29,6 @@ def log_experiment(
     Returns:
         None
     """
-    metrics = {} if not metrics else artifacts
-    artifacts = {} if not artifacts else artifacts
-
-    # Try to create an experiment if it doesn't exist
     try:
         exp = mlflow.create_experiment(
             experiment_name, artifact_location=mlflow_artifact_location)
@@ -42,20 +36,52 @@ def log_experiment(
         logger.info(f"mlflow - Created new experiment id: {exp}")
     except Exception as E:
         logger.info(f"ml-flow - {E}. Writing to same URI/artifact store")
-
     mlflow.set_experiment(experiment_name)
 
+
+def log_experiment(params, metrics=None, artifacts=None):
+    """
+    Evaluate the model and log it with mlflow
+    Args:
+        params (dict): dictionary of parameters to log
+        metrics (dict): dictionary of metrics to log
+        artifacts (dict): dictionary of artifacts (path) to log
+    Returns:
+        None
+    """
+    metrics = metrics or {}
+    artifacts = artifacts or {}
     logger.info(f"Logging params {params}")
     logger.info(f"Logging metrics {metrics}")
     logger.info(f"Logging artifacts {artifacts}")
+    for key, val in params.items():
+        mlflow.log_param(key, val)
+    for key, val in metrics.items():
+        mlflow.log_metric(key, val)
+    for key, val in artifacts.items():
+        mlflow.log_artifact(val)
 
-    with mlflow.start_run():
-        for key, val in params.items():
-            mlflow.log_param(key, val)
-        for key, val in metrics.items():
-            mlflow.log_metric(key, val)
-        for key, val in artifacts.items():
-            mlflow.log_artifact(val)
+
+def setup_autologging(backend):
+    if isinstance(backend, list):
+        for b in backend:
+            setup_autologging(b)
+    elif backend == AutologgingBackend.TENSORFLOW:
+        import mlflow.tensorflow
+        mlflow.tensorflow.autolog()
+        logger.info("Enabled autologging for Tensorflow")
+    elif backend == AutologgingBackend.KERAS:
+        import mlflow.keras
+        mlflow.keras.autolog()
+        logger.info("Enabled autologging for Keras")
+    elif backend == AutologgingBackend.FASTAI:
+        # TODO: implement autologging for fastai
+        logger.info("Enabled autologging for Fastai")
+    elif backend == AutologgingBackend.PYTORCH:
+        # TODO: implement autologging for pytorch
+        logger.info("Enabled autologging for Pytorch")
+    elif backend:
+        raise Exception(f'Not supported Autologging backend {backend}')
 
 
 def parse_experiment_arguments(experiment_func):
@@ -72,8 +98,12 @@ def generate_experiment_name():
     return os.path.splitext(base)[0]
 
 
-def experiment(func):
+def experiment(func=None, *, autologging_backends=None):
+    if func is None:
+        return partial(experiment, autologging_backends=autologging_backends)
+
     sig = signature(func)
+
     default_params = {
         param.name: param.default for param in sig.parameters.values()
         if param.kind == param.POSITIONAL_OR_KEYWORD and param.default != param.empty
@@ -82,24 +112,16 @@ def experiment(func):
     @wraps(func)
     def wrapper():
         experiment_name, params = parse_experiment_arguments(func)
-
-        if not experiment_name:
-            experiment_name = generate_experiment_name()
-
         setup_logging(experiment_name=experiment_name)
+        create_mlflow_experiment(experiment_name=experiment_name)
         logger.info(f'Starting job {experiment_name} in {sys.argv[0]}')
         t = TicToc()
         t.tic()
-
-        params = {**default_params, **params}
-        metrics, artifacts = func(**params)
-        log_experiment(
-            experiment_name=experiment_name,
-            params=params,
-            metrics=metrics,
-            artifacts=artifacts
-        )
-
+        with mlflow.start_run():
+            setup_autologging(autologging_backends)
+            params = {**default_params, **params}
+            metrics, artifacts = func(**params)
+            log_experiment(params, metrics, artifacts)
         logger.info(f"Finished job {experiment_name} in "
                     f"{timedelta(seconds=ceil(t.tocvalue()))}")
 

@@ -2,7 +2,7 @@ from keras.layers import Input, Dense
 from keras.models import Model
 from keras import regularizers
 import pandas as pd
-from src.utils.experiments import experiment
+from src.utils.experiments import experiment, AutologgingBackend
 
 
 def create_model(input_shape, encoding_dim, regularizer, optimizer):
@@ -19,7 +19,7 @@ def create_model(input_shape, encoding_dim, regularizer, optimizer):
     return autoencoder, encoder, decoder
 
 
-@experiment
+@experiment(autologging_backends=AutologgingBackend.KERAS)
 def main(train_data: str, encoding_dim: int, optimizer, epochs: int, batch_size: int = 256, l1_regularization = 0):
     """Simple autoencoder with Dropout"""
     return {}, {}
