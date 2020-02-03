@@ -8,6 +8,7 @@ from src.utils.config import parse_config
 from src.utils.logging import logger, setup_logging
 import subprocess
 import docker
+from schema import Or, Optional
 
 
 class JobTypes(Enum):
@@ -16,10 +17,20 @@ class JobTypes(Enum):
     GROUP = "group"
 
 
+SCHEMA = {
+    'name': str,
+    Optional('build'): {
+        Or("dockerfile", "image", only_one=True): str,
+        Optional('context', default=''): str,
+        Optional('args', default={}): dict,
+    },
+    Optional('params', default={}): dict,
+    'run': [str],
+}
+
+
 def extract_string_from_docker_log(log):
-    if 'stream' in log:
-        return log['stream'].splitlines()
-    return []
+    return log['stream'].splitlines() if 'stream' in log else []
 
 
 def create_low_level_docker_client(**kwargs):
@@ -28,10 +39,10 @@ def create_low_level_docker_client(**kwargs):
 
 
 def extract_docker_config_params(docker_config):
-    dockerfile = docker_config.get('dockerfile')
+    dockerfile = docker_config.get('dockerfile', None)
     context = docker_config.get('context', None)
     image = docker_config.get('image', None)
-    build_args = docker_config.get('args', {})
+    build_args = docker_config.get('args')
     return dockerfile, context, image, build_args
 
 
@@ -120,7 +131,7 @@ def run_experiment(params, experiment_name, commands, docker_config, kind):
 @cli_decorator
 def main(config_file):
     load_dotenv(find_dotenv())
-    config = parse_config(config_file)
+    config = parse_config(config_file, SCHEMA)
     experiment_name, kind, run_command = extract_info_base(config)
     docker_config = extract_docker_build_info(config)
     setup_logging(experiment_name=experiment_name)
