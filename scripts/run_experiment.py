@@ -8,7 +8,7 @@ from src.utils.config import parse_config
 from src.utils.logging import logger, setup_logging
 import subprocess
 import docker
-from schema import Or, Optional
+from schema import Or, Optional, Schema
 
 
 class JobTypes(Enum):
@@ -18,14 +18,14 @@ class JobTypes(Enum):
 
 
 SCHEMA = {
-    'name': str,
-    Optional('build'): {
-        Or("dockerfile", "image", only_one=True): str,
-        Optional('context', default=''): str,
+    'name': Schema(str, error='Experiment/Job name must be a string'),
+    Optional('build', 'Invalid build configuration, you must use a dictionary'): {
+        Or("dockerfile", "image", 'Invalid dockerfile or image, you must only only one of them', only_one=True): str,
+        Optional('context', error='Invalid context, you must use an existent directory', default=''): str,
         Optional('args', default={}): dict,
     },
-    Optional('params', default={}): dict,
-    'run': [str],
+    Optional('params', error='Invalid params, you must use a dictionary', default={}): dict,
+    'run': Schema([str], error='Run key must be a list of commands'),
 }
 
 
