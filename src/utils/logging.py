@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 def setup_logging(experiment_name):
     global logger
     logger = logging.getLogger(__name__)
-
+    logs_folder = os.environ.get('LOGS_FOLDER', './logs')
+    if not os.path.exists(logs_folder):
+        os.mkdir(logs_folder)
     info_handler = logging.FileHandler(os.path.join('logs', f'{experiment_name}.info.log'))
     error_handler = logging.FileHandler(os.path.join('logs', f'{experiment_name}.error.log'))
     console = logging.StreamHandler()
