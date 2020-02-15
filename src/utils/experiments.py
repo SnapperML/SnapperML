@@ -1,6 +1,7 @@
 from functools import wraps, partial
-from inspect import signature
+from inspect import signature, isgeneratorfunction
 import os
+import json
 import sys
 from enum import Enum
 from math import ceil
@@ -9,6 +10,8 @@ import mlflow
 from pytictoc import TicToc
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function
+from .config import parse_config
+from .input import DataLoader
 
 
 class AutologgingBackend(Enum):
@@ -87,10 +90,20 @@ def setup_autologging(backend):
 def parse_experiment_arguments(experiment_func):
     parser = create_argument_parse_from_function(experiment_func, all_keywords=True)
     parser.add_argument('--experiment_name', type=str, default=generate_experiment_name())
+    parser.add_argument('--input', type=str, default=None)
     arguments = parser.parse_args()
     params = vars(arguments)
     experiment_name = params.pop('experiment_name', None)
-    return experiment_name, params
+    input_config = params.pop('input', None)
+
+    if input_config:
+        try:
+            input_config = json.loads(input_config)
+        except json.JSONDecodeError:
+            if os.path.exists(input_config):
+                input_config = parse_config(input_config)
+
+    return experiment_name, params, input_config
 
 
 def generate_experiment_name():
@@ -99,7 +112,6 @@ def generate_experiment_name():
 
 
 def experiment(func=None, *, autologging_backends=None):
-    # TODO: Add support for generators
     if func is None:
         return partial(experiment, autologging_backends=autologging_backends)
 
@@ -112,17 +124,21 @@ def experiment(func=None, *, autologging_backends=None):
 
     @wraps(func)
     def wrapper():
-        experiment_name, params = parse_experiment_arguments(func)
+        experiment_name, params, input_config = parse_experiment_arguments(func)
         setup_logging(experiment_name=experiment_name)
+        if input_config:
+            DataLoader.initialize_instance(**input_config)
         create_mlflow_experiment(experiment_name=experiment_name)
         logger.info(f'Starting job {experiment_name} in {sys.argv[0]}')
         t = TicToc()
         t.tic()
+
         with mlflow.start_run():
             setup_autologging(autologging_backends)
             params = {**default_params, **params}
-            metrics, artifacts = func(**params)
-            log_experiment(params, metrics, artifacts)
+            results = func(**params) if isgeneratorfunction(func) else [func(**params)]
+            for metrics, artifacts in results:
+                log_experiment(params, metrics, artifacts)
         logger.info(f"Finished job {experiment_name} in "
                     f"{timedelta(seconds=ceil(t.tocvalue()))}")
 

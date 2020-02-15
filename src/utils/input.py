@@ -1,10 +1,16 @@
 import os
 import pandas as pd
-from src.utils.root_helper import get_dataframe
+from src.utils import root_helper
 import glob
+
+dataLoader = None
 
 
 class UnsupportedColumnSelector(Exception):
+    pass
+
+
+class DataLoaderNotInitializer(Exception):
     pass
 
 
@@ -33,18 +39,31 @@ def csv_generator(filepath, columns=None, batch_size=None, **kwargs):
 
 
 class DataLoader(object):
-    def __init__(self, filepath, batch_size=None, **kwargs):
+    _instance = None
+
+    def __init__(self, file, batch_size=None, **kwargs):
         self._batch_size = batch_size
-        _, file_extension = os.path.splitext(filepath)
+        _, file_extension = os.path.splitext(file)
         if file_extension == '.root':
-            self.generator = get_dataframe(filepath, batch_size=batch_size, **kwargs)
+            self.generator = root_helper.get_dataframe(file, batch_size=batch_size, **kwargs)
         if file_extension == '.csv':
-            self.generator = csv_generator(filepath, batch_size=batch_size, **kwargs)
+            self.generator = csv_generator(file, batch_size=batch_size, **kwargs)
 
     @property
     def batch_size(self):
         return self._batch_size
 
+    @classmethod
+    def initialize_instance(cls, *args, **kwargs):
+        cls._instance = cls(*args, **kwargs)
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance:
+            return cls._instance
+        else:
+            raise DataLoaderNotInitializer('Data loader not initialized.'
+                                           'You need to run the experiment with an input configuration')
+
     def __next__(self):
-        for df in self.generator:
-            yield df
+        return next(self.generator)

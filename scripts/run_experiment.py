@@ -1,6 +1,7 @@
 # TODO: Add support for remote job scheduling through Swarm or OpenFaas
 # TODO: Add support for running group of jobs in parallel / Hyperparams
 import os
+import json
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from src.utils.cli import cli_decorator
@@ -25,6 +26,12 @@ SCHEMA = {
         Optional('args', default={}): dict,
     },
     Optional('params', error='Invalid params, you must use a dictionary', default={}): dict,
+    Optional('input', error='Invalid input, you must use a dictionary', default={}): {
+        'file': str,
+        Optional('columns', default='*'): [str, dict, list],
+        Optional('batch_size', default=None): int,
+        Optional('tree', default=''): str,
+    },
     'run': Schema([str], error='Run key must be a list of commands'),
 }
 
@@ -110,17 +117,24 @@ def extract_info_base(config):
     experiment_name = config["name"]
     kind = config.get("kind", JobTypes.EXPERIMENT)
     run_command = config['run']
-    return experiment_name, kind, run_command
+    input_config = config.get('input')
+    return experiment_name, kind, run_command, input_config
 
 
-def run_experiment(params, experiment_name, commands, docker_config, kind):
+def run_experiment(params, experiment_name, commands, docker_config, input_config, kind):
     logger.info(f"\nRunning experiment: {experiment_name}")
     run_commands = commands if isinstance(commands, list) else [commands]
+
+    if input_config:
+        input_json = json.dumps(input_config)
+        run_commands = [f"{cmd} --input='{input_json}'" for cmd in commands]
+
     if kind == JobTypes.EXPERIMENT:
         argv = ' '.join([f'--{k} {v}' for k, v in params.items()])
         bash_commands = [f'PYTHONPATH=. python3 {cmd} {argv}' for cmd in run_commands]
     else:
         bash_commands = commands
+
     if docker_config:
         process_docker(docker_config, bash_commands)
     else:
@@ -132,7 +146,7 @@ def run_experiment(params, experiment_name, commands, docker_config, kind):
 def main(config_file):
     load_dotenv(find_dotenv())
     config = parse_config(config_file, SCHEMA)
-    experiment_name, kind, run_command = extract_info_base(config)
+    experiment_name, kind, run_command, input_config = extract_info_base(config)
     docker_config = extract_docker_build_info(config)
     setup_logging(experiment_name=experiment_name)
     run_experiment(
@@ -140,6 +154,7 @@ def main(config_file):
         experiment_name=experiment_name,
         commands=run_command,
         docker_config=docker_config,
+        input_config=input_config,
         kind=kind)
 
 

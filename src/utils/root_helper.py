@@ -47,18 +47,18 @@ def find_branches(tree, branches_names):
     return branches
 
 
-def get_dataframe(filepath, columns, batch_size, tree_path):
+def get_dataframe(filepath, columns, batch_size, tree):
     file = uproot.open(filepath)
-    tree = file[tree_path]
+    tree_obj = file[tree]
     branches = []
 
-    for b in find_branches(tree, columns):
+    for b in find_branches(tree_obj, columns):
         if b'/' in b:
             steps = b.split(b'/')
-            leaf = reduce(lambda branch, x: branch.get(x), steps, tree)
+            leaf = reduce(lambda branch, x: branch.get(x), steps, tree_obj)
             branches.append(leaf)
         else:
-            branches.append(tree.get(b))
+            branches.append(tree_obj.get(b))
 
-    for df in tree.pandas.iterate(lambda x: x in branches, entrysteps=batch_size):
+    for df in tree_obj.pandas.iterate(lambda x: x in branches, entrysteps=batch_size):
         yield df
