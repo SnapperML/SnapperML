@@ -1,5 +1,6 @@
-# Add support to load/save from/to S3
-# Add connection to models part
+# TODO: Add support to load/save from/to S3
+# TODO: Add connection to models part
+
 import uproot
 import glob
 from functools import reduce
@@ -49,8 +50,8 @@ def find_branches(tree, branches_names):
 def get_dataframe(filepath, columns, batch_size, tree_path):
     file = uproot.open(filepath)
     tree = file[tree_path]
-
     branches = []
+
     for b in find_branches(tree, columns):
         if b'/' in b:
             steps = b.split(b'/')
