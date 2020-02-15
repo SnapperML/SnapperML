@@ -23,10 +23,11 @@ def get_file_metadata(root_directory):
 
 
 def find_branches_by_string(tree, branches):
+    branches = branches.strip()
     if b"*" in branches or b"?" in branches or b"[" in branches:
-        for name, branch in tree.iteritems(recursive=True):
-            if name == branches or glob.fnmatch.fnmatchcase(name, branches):
-                yield branch.name
+        for name in tree.iterkeys(recursive=True):
+            if name == branches or branches == b'*' or glob.fnmatch.fnmatchcase(name, branches):
+                yield name
 
 
 def find_branches(tree, branches_names):
@@ -36,7 +37,7 @@ def find_branches(tree, branches_names):
     if isinstance(branches_names, list):
         branches = []
         for b in branches_names:
-            branches.extend(tree.matches(b))
+            branches.extend(find_branches(tree, b))
     elif isinstance(branches_names, dict):
         branches = []
         for k, v in branches_names.items():
@@ -58,5 +59,5 @@ def get_dataframe(filepath, columns, batch_size, tree_path):
         else:
             branches.append(tree.get(b))
 
-    for df in tree.pandas.iterate(filepath, tree_path, lambda x: x in branches, entrysteps=batch_size):
+    for df in tree.pandas.iterate(lambda x: x in branches, entrysteps=batch_size):
         yield df
