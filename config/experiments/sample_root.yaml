@@ -3,7 +3,11 @@ name: "AutoEncoder Simple"
 params:
   input:
     file: "data/raw/proton_bin_3_4_newconcept.root"
-    columns: "Muon[xyz]"
+    tree: "events"
+    columns:
+      branch1: "Muon[xyz]"
+      branch2: ["Ev1", "Ev2", "t"]
+      branch3: "Px.*"
   optimizer: "adam"
   encoding_dim: 4
   epochs: 100

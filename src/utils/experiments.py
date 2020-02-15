@@ -99,6 +99,7 @@ def generate_experiment_name():
 
 
 def experiment(func=None, *, autologging_backends=None):
+    # TODO: Add support for generators
     if func is None:
         return partial(experiment, autologging_backends=autologging_backends)
 

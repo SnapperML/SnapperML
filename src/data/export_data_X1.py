@@ -10,7 +10,6 @@ from ROOT import TFile, TTree, TH1D, AddressOf, TCanvas, gPad
 from ROOT import kBlack, kBlue, kRed, kGreen
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import pandas as pd
 

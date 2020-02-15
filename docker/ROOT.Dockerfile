@@ -13,7 +13,7 @@ FROM rootproject/root
 
 COPY --from=intermediate /LATTESsim /LATTESsim
 ADD requirements.txt requirements.txt
-RUN python3 -m pip install numpy pandas rootpy \
+RUN python3 -m pip install numpy pandas rootpy root-pandas \
     && python3 -m pip install -r requirements.txt
 
 WORKDIR /LATTESsim
