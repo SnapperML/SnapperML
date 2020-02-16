@@ -7,9 +7,10 @@ from dotenv import find_dotenv, load_dotenv
 from src.utils.cli import cli_decorator
 from src.utils.config import parse_config
 from src.utils.logging import logger, setup_logging
+from src.utils.input import SUPPORTED_EXTENSIONS
 import subprocess
 import docker
-from schema import Or, Optional, Schema
+from schema import And, Or, Optional, Schema
 
 
 class JobTypes(Enum):
@@ -20,18 +21,25 @@ class JobTypes(Enum):
 
 SCHEMA = {
     'name': Schema(str, error='Experiment/Job name must be a string'),
+
     Optional('build', 'Invalid build configuration, you must use a dictionary'): {
         Or("dockerfile", "image", 'Invalid dockerfile or image, you must only only one of them', only_one=True): str,
         Optional('context', error='Invalid context, you must use an existent directory', default=''): str,
         Optional('args', default={}): dict,
     },
+
     Optional('params', error='Invalid params, you must use a dictionary', default={}): dict,
+
     Optional('input', error='Invalid input, you must use a dictionary', default={}): {
-        'file': str,
+        'file': And(Schema(str, error='You must specify an input file as string'),
+                    Schema(os.path.exists, error='You must specify an existing input file'),
+                    Schema(lambda f: os.path.splitext(f)[-1] in SUPPORTED_EXTENSIONS,
+                           error=f'Unsupported input file extension. Must be one of the following: {SUPPORTED_EXTENSIONS}')),
         Optional('columns', default='*'): [str, dict, list],
         Optional('batch_size', default=None): int,
         Optional('tree', default=''): str,
     },
+
     'run': Schema([str], error='Run key must be a list of commands'),
 }
 
@@ -100,25 +108,13 @@ def process_docker(docker_config, command):
         run_docker_container(image, command_single_expression)
 
 
-def extract_docker_build_info(config):
-    docker_config = config.get('build')
-    if not docker_config:
-        return None
-    else:
-        image = config.get('image')
-        dockerfile = config.get('dockerfile')
-        if image and dockerfile or (not image and not dockerfile):
-            # TODO: Throw config parsing error
-            pass
-        return docker_config
-
-
 def extract_info_base(config):
     experiment_name = config["name"]
     kind = config.get("kind", JobTypes.EXPERIMENT)
     run_command = config['run']
     input_config = config.get('input')
-    return experiment_name, kind, run_command, input_config
+    docker_config = config.get('build')
+    return experiment_name, kind, run_command, input_config, docker_config
 
 
 def run_experiment(params, experiment_name, commands, docker_config, input_config, kind):
@@ -146,8 +142,7 @@ def run_experiment(params, experiment_name, commands, docker_config, input_confi
 def main(config_file):
     load_dotenv(find_dotenv())
     config = parse_config(config_file, SCHEMA)
-    experiment_name, kind, run_command, input_config = extract_info_base(config)
-    docker_config = extract_docker_build_info(config)
+    experiment_name, kind, run_command, input_config, docker_config = extract_info_base(config)
     setup_logging(experiment_name=experiment_name)
     run_experiment(
         params=config.get('params', {}),

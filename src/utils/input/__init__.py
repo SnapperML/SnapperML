@@ -4,6 +4,8 @@ from .exceptions import DataLoaderNotInitialized
 
 dataLoader = None
 
+SUPPORTED_EXTENSIONS = ['.csv', '.root']
+
 
 class DataLoader(object):
     _instance = None

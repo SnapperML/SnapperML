@@ -1,5 +1,4 @@
 # TODO: Add support to load/save from/to S3
-# TODO: Add connection to models part
 
 import uproot
 import glob

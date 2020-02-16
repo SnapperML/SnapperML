@@ -1,7 +1,7 @@
-name: "AutoEncoder Simple"
+name: "Sample ROOT input"
 
 input:
-  file: "data/raw/proton_bin_3_4_newconcept.root"
+  file: "data/raw/proton_bin_3_4_newconcept.roota"
   tree: "Tree;1"
   columns:
     - "*fPMTs"
