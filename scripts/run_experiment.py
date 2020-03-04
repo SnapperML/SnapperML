@@ -1,16 +1,16 @@
 # TODO: Add support for remote job scheduling through Swarm or OpenFaas
 # TODO: Add support for running group of jobs in parallel / Hyperparams
 import os
-import json
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from src.utils.cli import cli_decorator
 from src.utils.config import parse_config
 from src.utils.logging import logger, setup_logging
-from src.utils.input import SUPPORTED_EXTENSIONS
+from src.utils.optuna.optuna import PRUNERS, SAMPLERS
 import subprocess
 import docker
-from schema import And, Or, Optional, Schema
+from typing import Optional, List, Type, Union
+from pydantic import BaseModel, validator, DirectoryPath, PositiveInt, root_validator
 
 
 class JobTypes(Enum):
@@ -19,29 +19,63 @@ class JobTypes(Enum):
     GROUP = "group"
 
 
-SCHEMA = {
-    'name': Schema(str, error='Experiment/Job name must be a string'),
+class DockerConfig(BaseModel):
+    dockerfile: Optional[str]
+    image: Optional[str]
+    context: Optional[DirectoryPath] = None
+    args: dict = {}
 
-    Optional('build', 'Invalid build configuration, you must use a dictionary'): {
-        Or("dockerfile", "image", 'Invalid dockerfile or image, you must only only one of them', only_one=True): str,
-        Optional('context', error='Invalid context, you must use an existent directory', default=''): str,
-        Optional('args', default={}): dict,
-    },
+    @root_validator()
+    def check_card_number_omitted(cls, values):
+        if values.get('image') and values.get('dockerfile'):
+            raise ValueError('image and dockerfile fields cannot be used simultaneously. Use one of them.')
+        return values
 
-    Optional('params', error='Invalid params, you must use a dictionary', default={}): dict,
 
-    Optional('input', error='Invalid input, you must use a dictionary', default={}): {
-        'file': And(Schema(str, error='You must specify an input file as string'),
-                    Schema(os.path.exists, error='You must specify an existing input file'),
-                    Schema(lambda f: os.path.splitext(f)[-1] in SUPPORTED_EXTENSIONS,
-                           error=f'Unsupported input file extension. Must be one of the following: {SUPPORTED_EXTENSIONS}')),
-        Optional('columns', default='*'): [str, dict, list],
-        Optional('batch_size', default=None): int,
-        Optional('tree', default=''): str,
-    },
+class JobConfig(BaseModel):
+    name: str
+    run: Union[str, List[str]]
+    kind: JobTypes = JobTypes.EXPERIMENT
+    docker_config: Optional[DockerConfig]
 
-    'run': Schema([str], error='Run key must be a list of commands'),
-}
+
+class GroupConfig(JobConfig):
+    sampler: str
+    pruner: str
+    num_trials: PositiveInt
+    concurrent_workers: PositiveInt
+    # Improve by adding dict of classes
+    param_space: dict
+
+    @validator('sampler')
+    def sampler_must_exists(cls, value):
+        samplers = list(SAMPLERS.keys())
+        if value not in samplers:
+            raise ValueError(f'Sampler must be one of the following: {samplers}')
+        return value
+
+    @validator('pruner')
+    def pruner_must_exists(cls, value):
+        pruners = list(PRUNERS.keys())
+        if value not in pruners:
+            raise ValueError(f'Pruner must be one of the following: {pruners}')
+        return value
+
+
+class ExperimentConfig(JobConfig):
+    # TODO: Improve by adding experiment signature
+    params: dict = {}
+
+
+def get_validation_model(config: dict) -> Type[JobConfig]:
+    job = JobConfig(**config)
+    kind = job.kind
+    if kind == JobTypes.GROUP:
+        return GroupConfig
+    if kind == JobTypes.EXPERIMENT:
+        return ExperimentConfig
+    else:
+        return JobConfig
 
 
 def extract_string_from_docker_log(log):
@@ -95,44 +129,31 @@ def run_docker_container(image, command):
     logger.info('Finished job!')
 
 
-def process_docker(docker_config, command):
+def process_docker(config: DockerConfig, command: Union[List[str], str]):
     client = create_low_level_docker_client()
     commands = command if isinstance(command, list) else [command]
     command_single_expression = " && ".join(commands)
-    dockerfile, context, image, build_args = extract_docker_config_params(docker_config)
-    if dockerfile:
+    image = config.image
+    if config.dockerfile:
         logger.info('Building docker image...')
-        image = build_image(client, context, dockerfile, build_args)
+        image = build_image(client, config.context, config.dockerfile, config.args)
     if image:
         logger.info('Running job on docker container...')
         run_docker_container(image, command_single_expression)
 
 
-def extract_info_base(config):
-    experiment_name = config["name"]
-    kind = config.get("kind", JobTypes.EXPERIMENT)
-    run_command = config['run']
-    input_config = config.get('input')
-    docker_config = config.get('build')
-    return experiment_name, kind, run_command, input_config, docker_config
+def run_job(job: JobConfig):
+    logger.info(f"\nRunning {job.kind}: {job.name}")
 
-
-def run_experiment(params, experiment_name, commands, docker_config, input_config, kind):
-    logger.info(f"\nRunning experiment: {experiment_name}")
-    run_commands = commands if isinstance(commands, list) else [commands]
-
-    if input_config:
-        input_json = json.dumps(input_config)
-        run_commands = [f"{cmd} --input='{input_json}'" for cmd in commands]
-
-    if kind == JobTypes.EXPERIMENT:
-        argv = ' '.join([f'--{k} {v}' for k, v in params.items()])
+    if isinstance(job, ExperimentConfig):
+        run_commands = job.run if isinstance(job.run, list) else [job.run]
+        argv = ' '.join([f'--{k} {v}' for k, v in job.params.items()])
         bash_commands = [f'PYTHONPATH=. python3 {cmd} {argv}' for cmd in run_commands]
     else:
-        bash_commands = commands
+        bash_commands = job.run
 
-    if docker_config:
-        process_docker(docker_config, bash_commands)
+    if job.docker_config:
+        process_docker(job.docker_config, bash_commands)
     else:
         for commands in bash_commands:
             subprocess.run(commands, shell=True)
@@ -141,16 +162,9 @@ def run_experiment(params, experiment_name, commands, docker_config, input_confi
 @cli_decorator
 def main(config_file):
     load_dotenv(find_dotenv())
-    config = parse_config(config_file, SCHEMA)
-    experiment_name, kind, run_command, input_config, docker_config = extract_info_base(config)
-    setup_logging(experiment_name=experiment_name)
-    run_experiment(
-        params=config.get('params', {}),
-        experiment_name=experiment_name,
-        commands=run_command,
-        docker_config=docker_config,
-        input_config=input_config,
-        kind=kind)
+    config = parse_config(config_file, get_validation_model)
+    setup_logging(experiment_name=config.name)
+    run_job(config)
 
 
 if __name__ == '__main__':
