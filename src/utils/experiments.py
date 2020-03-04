@@ -42,7 +42,7 @@ def create_mlflow_experiment(experiment_name, mlflow_tracking_uri="./experiments
     mlflow.set_experiment(experiment_name)
 
 
-def log_experiment(params, metrics=None, artifacts=None):
+def log_experiment_results(params, metrics=None, artifacts=None):
     """
     Evaluate the model and log it with mlflow
     Args:
@@ -111,7 +111,7 @@ def generate_experiment_name():
     return os.path.splitext(base)[0]
 
 
-def experiment(func=None, *, autologging_backends=None):
+def experiment(func=None, *, optuna_params=None, autologging_backends=None):
     if func is None:
         return partial(experiment, autologging_backends=autologging_backends)
 
@@ -126,8 +126,10 @@ def experiment(func=None, *, autologging_backends=None):
     def wrapper():
         experiment_name, params, input_config = parse_experiment_arguments(func)
         setup_logging(experiment_name=experiment_name)
+
         if input_config:
             DataLoader.initialize_instance(**input_config)
+
         create_mlflow_experiment(experiment_name=experiment_name)
         logger.info(f'Starting job {experiment_name} in {sys.argv[0]}')
         t = TicToc()
@@ -136,10 +138,12 @@ def experiment(func=None, *, autologging_backends=None):
         with mlflow.start_run():
             setup_autologging(autologging_backends)
             params = {**default_params, **params}
-            results = func(**params) if isgeneratorfunction(func) else [func(**params)]
-            for metrics, artifacts in results:
-                log_experiment(params, metrics, artifacts)
-        logger.info(f"Finished job {experiment_name} in "
-                    f"{timedelta(seconds=ceil(t.tocvalue()))}")
+            results = func(**params)
+            if results:
+                results = results if isgeneratorfunction(func) else results[func(**params)]
+                for metrics, artifacts in results:
+                    log_experiment_results(params, metrics, artifacts)
+
+        logger.info(f"Finished job {experiment_name} in {timedelta(seconds=ceil(t.tocvalue()))}")
 
     return wrapper
