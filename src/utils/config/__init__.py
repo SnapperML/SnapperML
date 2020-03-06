@@ -1,11 +1,8 @@
-"""
-This module is for config utility functions.
-"""
-import yaml
 import os
 import sys
-from typing import Callable, Union, Type, TypeVar
+import yaml
 from src.utils.logging import logger
+from typing import Callable, Type, TypeVar, Union
 from pydantic import BaseModel, ValidationError
 
 T = TypeVar('T', bound=BaseModel)

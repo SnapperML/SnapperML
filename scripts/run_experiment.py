@@ -1,70 +1,14 @@
 # TODO: Add support for remote job scheduling through Swarm or OpenFaas
 # TODO: Add support for running group of jobs in parallel / Hyperparams
 import os
-from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from src.utils.cli import cli_decorator
 from src.utils.config import parse_config
+from src.utils.config.models import JobTypes, DockerConfig, JobConfig, GroupConfig, ExperimentConfig
 from src.utils.logging import logger, setup_logging
-from src.utils.optuna.optuna import PRUNERS, SAMPLERS
 import subprocess
 import docker
-from typing import Optional, List, Type, Union
-from pydantic import BaseModel, validator, DirectoryPath, PositiveInt, root_validator
-
-
-class JobTypes(Enum):
-    JOB = "job"
-    EXPERIMENT = "experiment"
-    GROUP = "group"
-
-
-class DockerConfig(BaseModel):
-    dockerfile: Optional[str]
-    image: Optional[str]
-    context: Optional[DirectoryPath] = None
-    args: dict = {}
-
-    @root_validator()
-    def check_card_number_omitted(cls, values):
-        if values.get('image') and values.get('dockerfile'):
-            raise ValueError('image and dockerfile fields cannot be used simultaneously. Use one of them.')
-        return values
-
-
-class JobConfig(BaseModel):
-    name: str
-    run: Union[str, List[str]]
-    kind: JobTypes = JobTypes.EXPERIMENT
-    docker_config: Optional[DockerConfig]
-
-
-class GroupConfig(JobConfig):
-    sampler: str
-    pruner: str
-    num_trials: PositiveInt
-    concurrent_workers: PositiveInt
-    # Improve by adding dict of classes
-    param_space: dict
-
-    @validator('sampler')
-    def sampler_must_exists(cls, value):
-        samplers = list(SAMPLERS.keys())
-        if value not in samplers:
-            raise ValueError(f'Sampler must be one of the following: {samplers}')
-        return value
-
-    @validator('pruner')
-    def pruner_must_exists(cls, value):
-        pruners = list(PRUNERS.keys())
-        if value not in pruners:
-            raise ValueError(f'Pruner must be one of the following: {pruners}')
-        return value
-
-
-class ExperimentConfig(JobConfig):
-    # TODO: Improve by adding experiment signature
-    params: dict = {}
+from typing import List, Type, Union
 
 
 def get_validation_model(config: dict) -> Type[JobConfig]:
