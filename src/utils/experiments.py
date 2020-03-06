@@ -11,7 +11,9 @@ from pytictoc import TicToc
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function
 from .config import parse_config
-from .input import DataLoader
+from .config.models import GroupConfig
+from .optuna import create_optuna_study
+from optuna.exceptions import TrialPruned
 
 
 class AutologgingBackend(Enum):
@@ -90,20 +92,21 @@ def setup_autologging(backend):
 def parse_experiment_arguments(experiment_func):
     parser = create_argument_parse_from_function(experiment_func, all_keywords=True)
     parser.add_argument('--experiment_name', type=str, default=generate_experiment_name())
-    parser.add_argument('--input', type=str, default=None)
+    parser.add_argument('--group_config', type=str, default=None)
     arguments = parser.parse_args()
     params = vars(arguments)
     experiment_name = params.pop('experiment_name', None)
-    input_config = params.pop('input', None)
+    group_config = params.pop('group_config', None)
 
-    if input_config:
+    if group_config:
         try:
-            input_config = json.loads(input_config)
+            group_config = json.loads(group_config)
         except json.JSONDecodeError:
-            if os.path.exists(input_config):
-                input_config = parse_config(input_config)
+            if os.path.exists(group_config):
+                group_config = parse_config(group_config)
+        group_config = GroupConfig(**group_config)
 
-    return experiment_name, params, input_config
+    return experiment_name, params, group_config
 
 
 def generate_experiment_name():
@@ -111,7 +114,44 @@ def generate_experiment_name():
     return os.path.splitext(base)[0]
 
 
-def experiment(func=None, *, optuna_params=None, autologging_backends=None):
+def run_group(func, params, optimize_metric: str, group_config: GroupConfig):
+    is_generator = isgeneratorfunction(func)
+
+    def objective(trial):
+        new_params = {k: v(trial) if callable(v) else v for k, v in group_config.param_space.items()}
+        all_params = {**params, **new_params}
+        results = func(**all_params)
+
+        if not results:
+            raise Exception('Group main functions should always return something!')
+
+        results = results if is_generator else results[func(**params)]
+        metrics = {}
+
+        if is_generator:
+            # This overrides metrics variable
+            for i, (metrics, artifacts) in enumerate(results):
+                trial.report(metrics[optimize_metric], i)
+                log_experiment_results(params, metrics, artifacts)
+                if trial.should_prune():
+                    raise TrialPruned()
+        else:
+            metrics, artifacts = results
+            log_experiment_results(params, metrics, artifacts)
+        return metrics[optimize_metric]
+
+    return create_optuna_study(objective, group_config)
+
+
+def run_experiment_main(func, params):
+    results = func(**params)
+    if results:
+        results = results if isgeneratorfunction(func) else results[func(**params)]
+        for metrics, artifacts in results:
+            log_experiment_results(params, metrics, artifacts)
+
+
+def experiment(func=None, *, autologging_backends=None, optimize_metric=None):
     if func is None:
         return partial(experiment, autologging_backends=autologging_backends)
 
@@ -124,13 +164,11 @@ def experiment(func=None, *, optuna_params=None, autologging_backends=None):
 
     @wraps(func)
     def wrapper():
-        experiment_name, params, input_config = parse_experiment_arguments(func)
+        experiment_name, params, group_config = parse_experiment_arguments(func)
         setup_logging(experiment_name=experiment_name)
 
-        if input_config:
-            DataLoader.initialize_instance(**input_config)
-
         create_mlflow_experiment(experiment_name=experiment_name)
+
         logger.info(f'Starting job {experiment_name} in {sys.argv[0]}')
         t = TicToc()
         t.tic()
@@ -138,11 +176,10 @@ def experiment(func=None, *, optuna_params=None, autologging_backends=None):
         with mlflow.start_run():
             setup_autologging(autologging_backends)
             params = {**default_params, **params}
-            results = func(**params)
-            if results:
-                results = results if isgeneratorfunction(func) else results[func(**params)]
-                for metrics, artifacts in results:
-                    log_experiment_results(params, metrics, artifacts)
+            if group_config:
+                run_group(func, params, optimize_metric, group_config)
+            else:
+                run_experiment_main(func, params)
 
         logger.info(f"Finished job {experiment_name} in {timedelta(seconds=ceil(t.tocvalue()))}")
 
