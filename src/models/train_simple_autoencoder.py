@@ -2,7 +2,8 @@ from keras.layers import Input, Dense
 from keras.models import Model
 from keras import regularizers
 import pandas as pd
-from src.utils.experiments import experiment, AutologgingBackend
+from src.utils.experiments import experiment
+from src.utils.mlflow import AutologgingBackend
 
 
 def create_model(input_shape, encoding_dim, regularizer, optimizer):

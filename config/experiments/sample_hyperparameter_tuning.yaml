@@ -1,12 +1,10 @@
 name: "Sample ROOT input"
+kind: 'group'
+num_trials: 100
 
-tuning:
-  algorithm: 'TTP'
-  num_trial: 100
-  param_space:
-    optimizer: ["adam", 'sgd', 'rmsprop']
-    epochs: "range(100, 1000, 10)"
-
+param_space:
+  optimizer: ["adam", 'sgd', 'rmsprop']
+  epochs: "range(100, 1000, 10)"
 
 run:
   - src/models/test_root_input.py

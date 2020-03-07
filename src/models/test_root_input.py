@@ -1,12 +1,10 @@
 from src.utils.experiments import experiment
-from src.utils.input import DataLoader
 
 
-@experiment()
+@experiment(optimize_metric='optimizer_test')
 def main(optimizer, epochs: int):
+    print(optimizer, epochs)
     yield {'optimizer_test': 10, 'epochs_test': epochs}, {}
-    data_loader = DataLoader.get_instance()
-    print(next(data_loader).columns)
 
 
 if __name__ == '__main__':

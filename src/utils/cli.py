@@ -6,29 +6,40 @@ from functools import wraps, partial
 
 class CustomHelpFormatter(argparse.HelpFormatter):
     def _get_default_metavar_for_optional(self, action):
-        return action.type.__name__ if action.type else 'any'
+        if not action.type:
+            return 'any'
+        try:
+            return action.type.__name__
+        except AttributeError:
+            return str(action.type)
 
     def _get_default_metavar_for_positional(self, action):
         return self._get_default_metavar_for_optional(action)
 
 
-def add_argument(parameter, argument_group, as_keyword):
+def add_argument(parameter, argument_group, as_keyword, as_optional=False):
+    # TODO: Handle lists and dicts
     name = parameter.name.replace('*', '')
-    params = {'type': parameter.annotation} if parameter.annotation != parameter.empty else {}
-    if parameter.default == parameter.empty:
+    kwargs = {'type': parameter.annotation} if parameter.annotation != parameter.empty else {}
+    has_default_value = parameter.default != parameter.empty
+
+    if has_default_value:
+        kwargs['default'] = parameter.default
+        kwargs['help'] = f'Default: {parameter.default}'
+        kwargs['required'] = False
+
+    if as_optional:
+        kwargs['default'] = argparse.SUPPRESS
+
+    if not has_default_value and not as_optional:
         if as_keyword:
-            params['required'] = True
+            kwargs['required'] = True
         else:
-            params['help'] = name
+            kwargs['help'] = name
         name = f'--{name}' if as_keyword else name
-        argument_group.add_argument(name, **params)
+        argument_group.add_argument(name, **kwargs)
     else:
-        argument_group.add_argument(
-            f'--{name}',
-            default=parameter.default,
-            help=f'Default: {parameter.default}',
-            **params,
-        )
+        argument_group.add_argument(f'--{name}', **kwargs)
 
 
 def get_description_from_function(func):
@@ -39,7 +50,7 @@ def get_description_from_function(func):
     return description
 
 
-def create_argument_parse_from_function(func, all_keywords=False, *args, **kwargs):
+def create_argument_parse_from_function(func, all_keywords=False, all_optional=False, *args, **kwargs):
     func_signature = signature(func)
     parser = argparse.ArgumentParser(
         description=get_description_from_function(func),
@@ -47,7 +58,7 @@ def create_argument_parse_from_function(func, all_keywords=False, *args, **kwarg
         *args,
         **kwargs
     )
-    if all_keywords:
+    if all_keywords and not all_optional:
         optional = parser._action_groups.pop()
         required = parser.add_argument_group('required arguments')
         parser._action_groups.append(optional)
@@ -59,9 +70,9 @@ def create_argument_parse_from_function(func, all_keywords=False, *args, **kwarg
         if parameter.kind != parameter.POSITIONAL_OR_KEYWORD:
             continue
         if parameter.default == parameter.empty:
-            add_argument(parameter, required, all_keywords)
+            add_argument(parameter, required, all_keywords, as_optional=all_optional)
         else:
-            add_argument(parameter, optional, all_keywords)
+            add_argument(parameter, optional, all_keywords, as_optional=all_optional)
 
     return parser
 
@@ -72,10 +83,19 @@ def cli_decorator(func=None, *, description=""):
     and generates the argument parser. """
     if func is None:
         return partial(cli_decorator, description=description)
-    parser = create_argument_parse_from_function(func, description)
+    parser = create_argument_parse_from_function(func, description=description)
+
     @wraps(func)
     def inner():
         args = parser.parse_args()
         return func(**vars(args))
+
     return inner
 
+
+def get_default_params_from_func(func):
+    sig = signature(func)
+    return {
+        param.name: param.default for param in sig.parameters.values()
+        if param.kind == param.POSITIONAL_OR_KEYWORD and param.default != param.empty
+    }

@@ -3,23 +3,12 @@
 import os
 from dotenv import find_dotenv, load_dotenv
 from src.utils.cli import cli_decorator
-from src.utils.config import parse_config
-from src.utils.config.models import JobTypes, DockerConfig, JobConfig, GroupConfig, ExperimentConfig
+from src.utils.config import parse_config, get_validation_model
+from src.utils.config.models import DockerConfig, JobConfig, ExperimentConfig
 from src.utils.logging import logger, setup_logging
 import subprocess
 import docker
-from typing import List, Type, Union
-
-
-def get_validation_model(config: dict) -> Type[JobConfig]:
-    job = JobConfig(**config)
-    kind = job.kind
-    if kind == JobTypes.GROUP:
-        return GroupConfig
-    if kind == JobTypes.EXPERIMENT:
-        return ExperimentConfig
-    else:
-        return JobConfig
+from typing import List, Union
 
 
 def extract_string_from_docker_log(log):

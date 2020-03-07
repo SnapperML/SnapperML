@@ -30,19 +30,25 @@ class DockerConfig(BaseModel):
 
 
 class JobConfig(BaseModel):
+    # TODO: Improve by adding restrictions according signature
+    kind: JobTypes = JobTypes.JOB
     name: str
     run: Union[str, List[str]]
-    kind: JobTypes = JobTypes.EXPERIMENT
     docker_config: Optional[DockerConfig]
+    params: dict = {}
+
+    class Config:
+        extra = 'forbid'
 
 
 class GroupConfig(JobConfig):
-    sampler: str
-    pruner: str
+    kind = JobTypes.JOB
+    sampler: Optional[str]
+    pruner: Optional[str]
     num_trials: PositiveInt
-    concurrent_workers: PositiveInt
+    concurrent_workers: PositiveInt = 1
     resources_per_trial: TrialResourcesConfig = TrialResourcesConfig()
-    # Improve by adding dict of classes
+    # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]
     param_space: Dict[str, Union[Choice, Range, RandomInt, Uniform, LogUniform]]
 
@@ -60,5 +66,4 @@ class GroupConfig(JobConfig):
 
 
 class ExperimentConfig(JobConfig):
-    # TODO: Improve by adding experiment signature
-    params: dict = {}
+    kind = JobTypes.EXPERIMENT
