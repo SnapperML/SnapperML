@@ -5,7 +5,8 @@ from functools import wraps, partial
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):
-    def _get_default_metavar_for_optional(self, action):
+    @classmethod
+    def get_type_hint(cls, action):
         if not action.type:
             return 'any'
         try:
@@ -13,8 +14,12 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         except AttributeError:
             return str(action.type)
 
+    def _get_default_metavar_for_optional(self, action):
+        return self.get_type_hint(action)
+
     def _get_default_metavar_for_positional(self, action):
-        return self._get_default_metavar_for_optional(action)
+        # return f'{action.dest}: {self.get_type_hint(action)}'
+        return action.dest
 
 
 def add_argument(parameter, argument_group, as_keyword, as_optional=False):
@@ -52,12 +57,13 @@ def get_description_from_function(func):
 
 def create_argument_parse_from_function(func, all_keywords=False, all_optional=False, *args, **kwargs):
     func_signature = signature(func)
-    parser = argparse.ArgumentParser(
-        description=get_description_from_function(func),
-        formatter_class=CustomHelpFormatter,
-        *args,
-        **kwargs
-    )
+    kwargs = {
+        'description': get_description_from_function(func),
+        'formatter_class': CustomHelpFormatter,
+        **kwargs,
+    }
+    parser = argparse.ArgumentParser(*args, **kwargs)
+
     if all_keywords and not all_optional:
         optional = parser._action_groups.pop()
         required = parser.add_argument_group('required arguments')

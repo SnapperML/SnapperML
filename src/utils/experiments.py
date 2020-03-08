@@ -9,9 +9,10 @@ from pytictoc import TicToc
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
 from .config import parse_config, get_validation_model
-from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig
+from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
 from .mlflow import AutologgingBackend, create_mlflow_experiment, log_experiment_results, setup_autologging
 from .optuna import create_optuna_study
+from .exceptions import NoMetricSpecified, ExperimentError
 from optuna.exceptions import TrialPruned
 
 
@@ -27,13 +28,12 @@ def parse_experiment_arguments(experiment_func: Callable):
     return experiment_name, params, config
 
 
-def run_group(func: Callable, overridden_params: dict, optimize_metric: str, group_config: GroupConfig):
+def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional[Metric], group_config: GroupConfig):
     is_generator = isgeneratorfunction(func)
     default_params = get_default_params_from_func(func)
 
     if not optimize_metric:
-        raise Exception('Optimization metric should be specified. '
-                        'Please, add it to the experiment decorator')
+        raise NoMetricSpecified()
 
     def objective(trial):
         config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
@@ -42,19 +42,19 @@ def run_group(func: Callable, overridden_params: dict, optimize_metric: str, gro
         metrics = {}
 
         if not results:
-            raise Exception('Group main functions should always return something!')
+            raise ExperimentError('Group main functions should always return something!')
 
         if is_generator:
             # This overrides metrics variable
             for i, (metrics, artifacts) in enumerate(results):
-                trial.report(metrics[optimize_metric], i)
+                trial.report(metrics[optimize_metric.name], i)
                 log_experiment_results(all_params, metrics, artifacts)
                 if trial.should_prune():
                     raise TrialPruned()
         else:
             metrics, artifacts = results
             log_experiment_results(overridden_params, metrics, artifacts)
-        return metrics[optimize_metric]
+        return metrics[optimize_metric.name]
 
     return create_optuna_study(objective,
                                group_config, metric=optimize_metric,
@@ -77,11 +77,14 @@ def run_job(func: Callable, params: dict, config: JobConfig):
 
 def experiment(func: Optional[Callable] = None, *,
                autologging_backends: Union[List[AutologgingBackend], AutologgingBackend, None] = None,
-               optimize_metric: Optional[str] = None):
+               optimize_metric: Union[Metric, str, None] = None):
     if func is None:
         return partial(experiment,
                        autologging_backends=autologging_backends,
                        optimize_metric=optimize_metric)
+
+    if isinstance(optimize_metric, str):
+        optimize_metric = Metric(name=optimize_metric)
 
     @wraps(func)
     def wrapper():

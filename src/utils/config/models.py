@@ -11,6 +11,15 @@ class JobTypes(Enum):
     GROUP = "group"
 
 
+class RayConfig(BaseModel):
+    cluster_address: str
+
+
+class OptimizationDirection(Enum):
+    MINIMIZE = 'minimize'
+    MAXIMIZE = 'maximize'
+
+
 class TrialResourcesConfig(BaseModel):
     cpu: PositiveFloat = 1.0
     gpu: PositiveFloat = 0.0
@@ -36,6 +45,7 @@ class JobConfig(BaseModel):
     run: Union[str, List[str]]
     docker_config: Optional[DockerConfig]
     params: dict = {}
+    ray_config: Optional[RayConfig]
 
     class Config:
         extra = 'forbid'
@@ -67,3 +77,9 @@ class GroupConfig(JobConfig):
 
 class ExperimentConfig(JobConfig):
     kind = JobTypes.EXPERIMENT
+
+
+class Metric(BaseModel):
+    name: str
+    direction: OptimizationDirection = OptimizationDirection.MINIMIZE
+
