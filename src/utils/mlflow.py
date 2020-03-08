@@ -34,7 +34,7 @@ def create_mlflow_experiment(experiment_name: str,
         mlflow.set_tracking_uri(mlflow_tracking_uri)
         logger.info(f"mlflow - Created new experiment id: {exp}")
     except Exception as E:
-        logger.info(f"ml-flow - {E}. Writing to same URI/artifact store")
+        logger.info(f"mlflow - {E} Writing to same URI/artifact store")
     mlflow.set_experiment(experiment_name)
 
 
@@ -55,10 +55,8 @@ def log_experiment_results(params: dict,
     logger.info(f"Logging params {params}")
     logger.info(f"Logging metrics {metrics}")
     logger.info(f"Logging artifacts {artifacts}")
-    for key, val in params.items():
-        mlflow.log_param(key, val)
-    for key, val in metrics.items():
-        mlflow.log_metric(key, val)
+    mlflow.log_params(params)
+    mlflow.log_metrics(metrics)
     for key, val in artifacts.items():
         mlflow.log_artifact(val)
 

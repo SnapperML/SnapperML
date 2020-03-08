@@ -36,25 +36,26 @@ def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional
         raise NoMetricSpecified()
 
     def objective(trial):
-        config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
-        all_params = {**default_params, **config_params, **overridden_params}
-        results = func(**all_params)
-        metrics = {}
+        with mlflow.start_run(run_name=f'Trial {trial.number}'):
+            config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
+            all_params = {**default_params, **config_params, **overridden_params}
+            results = func(**all_params)
+            metrics = {}
 
-        if not results:
-            raise ExperimentError('Group main functions should always return something!')
+            if not results:
+                raise ExperimentError('Group main functions should always return something!')
 
-        if is_generator:
-            # This overrides metrics variable
-            for i, (metrics, artifacts) in enumerate(results):
-                trial.report(metrics[optimize_metric.name], i)
-                log_experiment_results(all_params, metrics, artifacts)
-                if trial.should_prune():
-                    raise TrialPruned()
-        else:
-            metrics, artifacts = results
-            log_experiment_results(overridden_params, metrics, artifacts)
-        return metrics[optimize_metric.name]
+            if is_generator:
+                # This overrides metrics variable
+                for i, (metrics, artifacts) in enumerate(results):
+                    trial.report(metrics[optimize_metric.name], i)
+                    log_experiment_results(all_params, metrics, artifacts)
+                    if trial.should_prune():
+                        raise TrialPruned()
+            else:
+                metrics, artifacts = results
+                log_experiment_results(overridden_params, metrics, artifacts)
+            return metrics[optimize_metric.name]
 
     return create_optuna_study(objective,
                                group_config, metric=optimize_metric,
@@ -62,11 +63,12 @@ def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional
 
 
 def run_experiment(func: Callable, overridden_params: dict, config: ExperimentConfig):
-    results = run_job(func, overridden_params, config)
-    if results:
-        results = results if isgeneratorfunction(func) else results[func(**overridden_params)]
-        for metrics, artifacts in results:
-            log_experiment_results(overridden_params, metrics, artifacts)
+    with mlflow.start_run():
+        results = run_job(func, overridden_params, config)
+        if results:
+            results = results if isgeneratorfunction(func) else results[func(**overridden_params)]
+            for metrics, artifacts in results:
+                log_experiment_results(overridden_params, metrics, artifacts)
 
 
 def run_job(func: Callable, params: dict, config: JobConfig):
@@ -89,7 +91,6 @@ def experiment(func: Optional[Callable] = None, *,
     @wraps(func)
     def wrapper():
         experiment_name, overridden_params, config = parse_experiment_arguments(func)
-        uses_mlflow = config.kind == JobTypes.GROUP or config.kind == JobTypes.EXPERIMENT
         setup_logging(experiment_name=experiment_name)
 
         logger.info(f'======== Starting job {experiment_name} in {sys.argv[0]} =========')
@@ -108,16 +109,15 @@ def experiment(func: Optional[Callable] = None, *,
         t = TicToc()
         t.tic()
 
-        if uses_mlflow:
-            create_mlflow_experiment(experiment_name=experiment_name)
-            with mlflow.start_run():
-                setup_autologging(autologging_backends)
-                if config.kind == JobTypes.GROUP:
-                    run_group(func, overridden_params, optimize_metric, config)
-                else:
-                    run_experiment(func, overridden_params, config)
-        else:
+        if config.kind == JobTypes.JOB:
             run_job(func, overridden_params, config)
+        else:
+            create_mlflow_experiment(experiment_name=experiment_name)
+            setup_autologging(autologging_backends)
+            if config.kind == JobTypes.GROUP:
+                run_group(func, overridden_params, optimize_metric, config)
+            else:
+                run_experiment(func, overridden_params, config)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {experiment_name} in {elapsed_time}")

@@ -1,6 +1,6 @@
 name: "Sample ROOT input"
 kind: 'group'
-num_trials: 100
+num_trials: 10
 
 param_space:
   optimizer: ["adam", 'sgd', 'rmsprop']
