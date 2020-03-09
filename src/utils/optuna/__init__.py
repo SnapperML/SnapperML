@@ -52,5 +52,8 @@ def create_optuna_study(objective: Callable[[optuna.Trial], float],
                                 load_if_exists=True,
                                 pruner=pruner)
     callbacks = [create_mlflow_callback(metric.name)] if add_mlflow_callback else []
-    study.optimize(objective, n_trials=group_config.num_trials, callbacks=callbacks)
+    study.optimize(objective,
+                   n_trials=group_config.num_trials,
+                   timeout=group_config.timeout_per_trial,
+                   callbacks=callbacks)
     return {'Best value': study.best_value, **study.best_params}

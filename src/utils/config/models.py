@@ -56,7 +56,6 @@ class GroupConfig(JobConfig):
     sampler: Optional[str]
     pruner: Optional[str]
     num_trials: PositiveInt
-    concurrent_workers: PositiveInt = 1
     resources_per_trial: TrialResourcesConfig = TrialResourcesConfig()
     # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]

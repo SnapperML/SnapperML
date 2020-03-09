@@ -14,6 +14,8 @@ from .mlflow import AutologgingBackend, create_mlflow_experiment, log_experiment
 from .optuna import create_optuna_study
 from .exceptions import NoMetricSpecified, ExperimentError
 from optuna.exceptions import TrialPruned
+import ray
+import numpy as np
 
 
 def parse_experiment_arguments(experiment_func: Callable):
@@ -25,15 +27,48 @@ def parse_experiment_arguments(experiment_func: Callable):
     config_file = params.pop('config_file')
     config = parse_config(config_file, get_validation_model)
     experiment_name = params.pop('experiment_name') or config.name
-    return experiment_name, params, config
+    config.name = experiment_name
+    return params, config
+
+
+def calculate_concurrent_workers(cpu, gpu, num_trials):
+    available_resources = ray.available_resources()
+    available_gpus = available_resources.get('GPU', 0)
+    available_cpus = available_resources.get('CPU', 1)
+    concurrent_workers_by_cpu = available_cpus / cpu
+    concurrent_workers_by_gpu = available_gpus / gpu if gpu else np.inf
+    return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, num_trials]))
 
 
 def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional[Metric], group_config: GroupConfig):
-    is_generator = isgeneratorfunction(func)
-    default_params = get_default_params_from_func(func)
+    cpu = group_config.resources_per_trial.cpu
+    gpu = group_config.resources_per_trial.gpu
+    concurrent_workers = calculate_concurrent_workers(cpu, gpu, group_config.num_trials)
 
     if not optimize_metric:
         raise NoMetricSpecified()
+
+    remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(run_group_remote)
+    futures = []
+
+    for i in range(concurrent_workers):
+        num_trials = group_config.num_trials // concurrent_workers
+        if i == 0:
+            num_trials += group_config.num_trials % concurrent_workers
+        new_group_config = group_config.copy(update={'num_trials': num_trials})
+        object_id = remote_func.remote(func, overridden_params, optimize_metric, new_group_config)
+        futures.append(object_id)
+
+    return ray.get(futures)
+
+
+def run_group_remote(func: Callable,
+                     overridden_params: dict,
+                     optimize_metric: Optional[Metric],
+                     group_config: GroupConfig):
+    is_generator = isgeneratorfunction(func)
+    default_params = get_default_params_from_func(func)
+    setup_logging(experiment_name=group_config.name)
 
     def objective(trial):
         with mlflow.start_run(run_name=f'Trial {trial.number}'):
@@ -57,8 +92,9 @@ def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional
                 log_experiment_results(overridden_params, metrics, artifacts)
             return metrics[optimize_metric.name]
 
-    return create_optuna_study(objective,
-                               group_config, metric=optimize_metric,
+    return create_optuna_study(objective=objective,
+                               group_config=group_config,
+                               metric=optimize_metric,
                                add_mlflow_callback=(not is_generator))
 
 
@@ -77,6 +113,13 @@ def run_job(func: Callable, params: dict, config: JobConfig):
     return func(**all_params)
 
 
+def initialize_ray(config: JobConfig):
+    if config.ray_config and config.ray_config.cluster_address:
+        ray.init(address=config.ray_config.cluster_address)
+    else:
+        ray.init()
+
+
 def experiment(func: Optional[Callable] = None, *,
                autologging_backends: Union[List[AutologgingBackend], AutologgingBackend, None] = None,
                optimize_metric: Union[Metric, str, None] = None):
@@ -90,10 +133,11 @@ def experiment(func: Optional[Callable] = None, *,
 
     @wraps(func)
     def wrapper():
-        experiment_name, overridden_params, config = parse_experiment_arguments(func)
-        setup_logging(experiment_name=experiment_name)
+        overridden_params, config = parse_experiment_arguments(func)
+        setup_logging(experiment_name=config.name)
+        initialize_ray(config)
 
-        logger.info(f'======== Starting job {experiment_name} in {sys.argv[0]} =========')
+        logger.info(f'======== Starting job {config.name} in {sys.argv[0]} =========')
 
         if config.kind == JobTypes.GROUP:
             config = cast(GroupConfig, config)
@@ -112,7 +156,7 @@ def experiment(func: Optional[Callable] = None, *,
         if config.kind == JobTypes.JOB:
             run_job(func, overridden_params, config)
         else:
-            create_mlflow_experiment(experiment_name=experiment_name)
+            create_mlflow_experiment(experiment_name=config.name)
             setup_autologging(autologging_backends)
             if config.kind == JobTypes.GROUP:
                 run_group(func, overridden_params, optimize_metric, config)
@@ -120,6 +164,8 @@ def experiment(func: Optional[Callable] = None, *,
                 run_experiment(func, overridden_params, config)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
-        logger.info(f"Finished job {experiment_name} in {elapsed_time}")
+        logger.info(f"Finished job {config.name} in {elapsed_time}")
+
+        ray.shutdown()
 
     return wrapper
