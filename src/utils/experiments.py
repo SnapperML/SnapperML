@@ -71,11 +71,14 @@ def run_group_remote(func: Callable,
     setup_logging(experiment_name=group_config.name)
 
     def objective(trial):
-        with mlflow.start_run(run_name=f'Trial {trial.number}'):
+        mlflow.set_experiment(group_config.name)
+
+        with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
             config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
             all_params = {**default_params, **config_params, **overridden_params}
             results = func(**all_params)
             metrics = {}
+            trial.set_user_attr('mlflow_run_id', run.info.run_id)
 
             if not results:
                 raise ExperimentError('Group main functions should always return something!')
@@ -92,10 +95,10 @@ def run_group_remote(func: Callable,
                 log_experiment_results(overridden_params, metrics, artifacts)
             return metrics[optimize_metric.name]
 
-    return create_optuna_study(objective=objective,
-                               group_config=group_config,
-                               metric=optimize_metric,
-                               add_mlflow_callback=(not is_generator))
+    create_optuna_study(objective=objective,
+                        group_config=group_config,
+                        metric=optimize_metric,
+                        add_mlflow_callback=(not is_generator))
 
 
 def run_experiment(func: Callable, overridden_params: dict, config: ExperimentConfig):

@@ -1,29 +1,23 @@
 version: '3'
 
 services:
-  pyroot:
-    build:
-      context: .
-      dockerfile: ROOT.Dockerfile
-      args:
-        LATTES_REPO_ACCESS_TOKEN: $LATTES_REPO_ACCESS_TOKEN
-    volumes:
-       - ../:/mnt
-    entrypoint: bash -c "cd /mnt && export PYTHONPATH='.' && /bin/bash"
-    stdin_open: true
-    container_name: "pyroot_${USER}"
-    tty: true
+  mlflow_storage:
+    image: mysql
     env_file:
       - ../.env
+    volumes:
+      - mlflow_storage_data:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
 
-  postgres:
+  optuna_storage:
     image: postgres
     env_file:
       - ../.env
     volumes:
-      - database-data:/var/lib/postgresql/data/
+      - optuna_storage_data:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
 
   mlflow:
     build:
@@ -32,7 +26,14 @@ services:
       - "5000:5000"
     volumes:
       - ../:/mnt
-    entrypoint: bash -c "mlflow server -h 0.0.0.0 -p 5000 && /bin/bash"
+    entrypoint: |
+      bash -c "mlflow server -h 0.0.0.0 -p 5000 \
+      --backend-store-uri='mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mlflow_storage:${MYSQL_PORT:-3306}/${MYSQL_DATABASE}' \
+      --default-artifact-root=${MLFLOW_ARTIFACT_STORE:-'./mlruns'} \
+      && /bin/bash"
+    depends_on:
+      - mlflow_storage
+      - optuna_storage
     stdin_open: true
     container_name: "mlflow_${USER}"
     tty: true
@@ -40,4 +41,5 @@ services:
       - ../.env
 
 volumes:
-  database-data:
+  mlflow_storage_data:
+  optuna_storage_data:

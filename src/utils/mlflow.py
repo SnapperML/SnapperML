@@ -15,9 +15,7 @@ class AutologgingBackend(Enum):
     PYTORCH = "pytorch"
 
 
-def create_mlflow_experiment(experiment_name: str,
-                             mlflow_tracking_uri: str ="./experiments",
-                             mlflow_artifact_location: str = None):
+def create_mlflow_experiment(experiment_name: str):
     """
     Try to create an experiment if it doesn't exist
     Args:
@@ -29,12 +27,10 @@ def create_mlflow_experiment(experiment_name: str,
         None
     """
     try:
-        exp = mlflow.create_experiment(
-            experiment_name, artifact_location=mlflow_artifact_location)
-        mlflow.set_tracking_uri(mlflow_tracking_uri)
+        exp = mlflow.create_experiment(experiment_name)
         logger.info(f"mlflow - Created new experiment id: {exp}")
-    except Exception as E:
-        logger.info(f"mlflow - {E} Writing to same URI/artifact store")
+    except Exception:
+        logger.info(f"mlflow - Experiment already exists. Writing to same URI/artifact store")
     mlflow.set_experiment(experiment_name)
 
 

@@ -20,7 +20,7 @@ SAMPLERS = {
 }
 
 
-def create_mlflow_callback(metric):
+def create_mlflow_callback(metric: str) -> Callable:
     def callback(_, trial):
         trial_value = trial.value if trial.value is not None else float('nan')
         mlflow.log_params(trial.params)
@@ -28,7 +28,7 @@ def create_mlflow_callback(metric):
     return callback
 
 
-def _get_storage_uri():
+def _get_storage_uri() -> str:
     user = os.getenv('POSTGRES_USER')
     password = os.getenv('POSTGRES_PASSWORD')
     db = os.getenv('POSTGRES_DB')
@@ -40,7 +40,7 @@ def _get_storage_uri():
 def create_optuna_study(objective: Callable[[optuna.Trial], float],
                         group_config: 'GroupConfig',
                         metric: 'Metric',
-                        add_mlflow_callback=True):
+                        add_mlflow_callback=True) -> optuna.Study:
     optuna.logging.enable_propagation()
     optuna.logging.disable_default_handler()
     pruner = group_config.pruner and PRUNERS.get(group_config.pruner)()
@@ -56,4 +56,4 @@ def create_optuna_study(objective: Callable[[optuna.Trial], float],
                    n_trials=group_config.num_trials,
                    timeout=group_config.timeout_per_trial,
                    callbacks=callbacks)
-    return {'Best value': study.best_value, **study.best_params}
+    return study
