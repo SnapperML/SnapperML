@@ -9,6 +9,8 @@
 // site configuration options.
 
 // List of projects/orgs using your project for the users page.
+
+/*
 const users = [
   {
     caption: 'User1',
@@ -19,10 +21,13 @@ const users = [
     pinned: true,
   },
 ];
+*/
+
+const users = [];
 
 const siteConfig = {
-  title: 'Test Site', // Title for your website.
-  tagline: 'A website for testing',
+  title: 'reproducible-ml', // Title for your website.
+  tagline: 'Framework for reproductible ML experimentation',
   url: 'https://your-docusaurus-test-site.com', // Your website URL
   baseUrl: '/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -30,7 +35,7 @@ const siteConfig = {
   //   baseUrl: '/test-site/',
 
   // Used for publishing and more
-  projectName: 'test-site',
+  projectName: 'reproducible-ml',
   organizationName: 'facebook',
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
@@ -38,10 +43,9 @@ const siteConfig = {
 
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
-    {doc: 'doc1', label: 'Docs'},
-    {doc: 'doc4', label: 'API'},
+    {doc: 'getting_started', label: 'Docs'},
+    {doc: 'api', label: 'API'},
     {page: 'help', label: 'Help'},
-    {blog: true, label: 'Blog'},
   ],
 
   // If you have users set above, you add it here:
@@ -73,14 +77,14 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Your Name or Your Company Name`,
+  copyright: `Copyright © ${new Date().getFullYear()} Antonio Molner Domenech`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
     theme: 'default',
   },
 
-  // Add custom scripts here that would be placed in <script> tags.
+  // Add custom scripts here that would be placed in <script>
   scripts: ['https://buttons.github.io/buttons.js'],
 
   // On page navigation for the current documentation page.
