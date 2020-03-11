@@ -76,8 +76,6 @@ def process_docker(config: DockerConfig, command: Union[List[str], str]):
 
 
 def run_job(job: JobConfig):
-    logger.info(f"\nRunning {job.kind}: {job.name}")
-
     if isinstance(job, ExperimentConfig):
         run_commands = job.run if isinstance(job.run, list) else [job.run]
         argv = ' '.join([f'--{k} {v}' for k, v in job.params.items()])

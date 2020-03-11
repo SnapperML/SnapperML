@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from typing import Union, List, Optional, Callable, cast
 from functools import wraps, partial
 from inspect import isgeneratorfunction
@@ -12,10 +13,16 @@ from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
 from .mlflow import AutologgingBackend, create_mlflow_experiment, log_experiment_results, setup_autologging
 from .optuna import create_optuna_study
-from .exceptions import NoMetricSpecified, ExperimentError
+from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 from optuna.exceptions import TrialPruned
 import ray
 import numpy as np
+
+
+class DataLoader(object):
+    @classmethod
+    def load_data(cls):
+        raise DataNotLoaded()
 
 
 def parse_experiment_arguments(experiment_func: Callable):
@@ -31,7 +38,7 @@ def parse_experiment_arguments(experiment_func: Callable):
     return params, config
 
 
-def calculate_concurrent_workers(cpu, gpu, num_trials):
+def calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
     available_resources = ray.available_resources()
     available_gpus = available_resources.get('GPU', 0)
     available_cpus = available_resources.get('CPU', 1)
@@ -40,23 +47,36 @@ def calculate_concurrent_workers(cpu, gpu, num_trials):
     return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, num_trials]))
 
 
-def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional[Metric], group_config: GroupConfig):
-    cpu = group_config.resources_per_trial.cpu
-    gpu = group_config.resources_per_trial.gpu
-    concurrent_workers = calculate_concurrent_workers(cpu, gpu, group_config.num_trials)
-
+def run_group(func: Callable,
+              overridden_params: dict,
+              optimize_metric: Optional[Metric],
+              group_config: GroupConfig,
+              data_loader: Optional[DataLoader]):
     if not optimize_metric:
         raise NoMetricSpecified()
 
-    remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(run_group_remote)
+    cpu = group_config.resources_per_trial.cpu
+    gpu = group_config.resources_per_trial.gpu
+    concurrent_workers = calculate_concurrent_workers(cpu, gpu, group_config.num_trials)
+    data_object_id = None
     futures = []
+
+    if data_loader:
+        data = data_loader.load_data()
+        data_object_id = ray.put(data)
+
+    remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(run_group_remote)
 
     for i in range(concurrent_workers):
         num_trials = group_config.num_trials // concurrent_workers
         if i == 0:
             num_trials += group_config.num_trials % concurrent_workers
         new_group_config = group_config.copy(update={'num_trials': num_trials})
-        object_id = remote_func.remote(func, overridden_params, optimize_metric, new_group_config)
+        object_id = remote_func.remote(func,
+                                       overridden_params,
+                                       optimize_metric,
+                                       new_group_config,
+                                       data_object_id)
         futures.append(object_id)
 
     return ray.get(futures)
@@ -65,10 +85,15 @@ def run_group(func: Callable, overridden_params: dict, optimize_metric: Optional
 def run_group_remote(func: Callable,
                      overridden_params: dict,
                      optimize_metric: Optional[Metric],
-                     group_config: GroupConfig):
+                     group_config: GroupConfig,
+                     object_id: Optional[int] = None):
     is_generator = isgeneratorfunction(func)
     default_params = get_default_params_from_func(func)
     setup_logging(experiment_name=group_config.name)
+
+    if object_id:
+        data = ray.get(object_id)
+        DataLoader.load_data = lambda: data
 
     def objective(trial):
         mlflow.set_experiment(group_config.name)
@@ -125,7 +150,8 @@ def initialize_ray(config: JobConfig):
 
 def experiment(func: Optional[Callable] = None, *,
                autologging_backends: Union[List[AutologgingBackend], AutologgingBackend, None] = None,
-               optimize_metric: Union[Metric, str, None] = None):
+               optimize_metric: Union[Metric, str, None] = None,
+               data_loader: Optional[DataLoader] = None):
     if func is None:
         return partial(experiment,
                        autologging_backends=autologging_backends,
@@ -138,33 +164,32 @@ def experiment(func: Optional[Callable] = None, *,
     def wrapper():
         overridden_params, config = parse_experiment_arguments(func)
         setup_logging(experiment_name=config.name)
-        initialize_ray(config)
 
         logger.info(f'======== Starting job {config.name} in {sys.argv[0]} =========')
 
         if config.kind == JobTypes.GROUP:
             config = cast(GroupConfig, config)
-            logger.info(f"======== Group Config ========\n{config}")
 
         if config.kind == JobTypes.EXPERIMENT:
             config = cast(ExperimentConfig, config)
-            logger.info(f"======== Experiment Config ========\n{config}")
 
         if config.kind == JobTypes.JOB:
-            logger.info(f"======== Job Config ========\n{config}")
+            logger.info(f"Job Config -> {config.dict()}")
+
+        initialize_ray(config)
 
         t = TicToc()
         t.tic()
 
         if config.kind == JobTypes.JOB:
-            run_job(func, overridden_params, config)
+            run_job(func, overridden_params, config, data_loader)
         else:
             create_mlflow_experiment(experiment_name=config.name)
             setup_autologging(autologging_backends)
             if config.kind == JobTypes.GROUP:
-                run_group(func, overridden_params, optimize_metric, config)
+                run_group(func, overridden_params, optimize_metric, config, data_loader)
             else:
-                run_experiment(func, overridden_params, config)
+                run_experiment(func, overridden_params, config, data_loader)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")

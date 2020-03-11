@@ -6,3 +6,8 @@ class NoMetricSpecified(Exception):
 
 class ExperimentError(Exception):
     pass
+
+
+class DataNotLoaded(Exception):
+    def __str__(self):
+        return 'Trying to access not loaded data. Please, add data_loader parameter to @experiment decorator'

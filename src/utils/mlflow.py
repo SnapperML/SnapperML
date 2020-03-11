@@ -48,13 +48,12 @@ def log_experiment_results(params: dict,
     """
     metrics = metrics or {}
     artifacts = artifacts or {}
-    logger.info(f"Logging params {params}")
-    logger.info(f"Logging metrics {metrics}")
-    logger.info(f"Logging artifacts {artifacts}")
     mlflow.log_params(params)
     mlflow.log_metrics(metrics)
     for key, val in artifacts.items():
         mlflow.log_artifact(val)
+    all_logs = {'params': params, 'metrics': metrics, 'artifacts': artifacts}
+    logger.info(f"- mlflow - Logging experiment results to Mlflow: {all_logs}")
 
 
 def setup_autologging(backend: Union[List[AutologgingBackend], AutologgingBackend]):

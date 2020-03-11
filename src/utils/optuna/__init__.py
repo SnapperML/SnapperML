@@ -20,7 +20,7 @@ SAMPLERS = {
 }
 
 
-def create_mlflow_callback(metric: str) -> Callable:
+def _create_mlflow_callback(metric: str) -> Callable:
     def callback(_, trial):
         trial_value = trial.value if trial.value is not None else float('nan')
         mlflow.log_params(trial.params)
@@ -37,6 +37,13 @@ def _get_storage_uri() -> str:
     return f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}'
 
 
+def _delete_optuna_study(study_name):
+    try:
+        optuna.delete_study(study_name, _get_storage_uri())
+    except Exception:
+        pass
+
+
 def create_optuna_study(objective: Callable[[optuna.Trial], float],
                         group_config: 'GroupConfig',
                         metric: 'Metric',
@@ -45,13 +52,14 @@ def create_optuna_study(objective: Callable[[optuna.Trial], float],
     optuna.logging.disable_default_handler()
     pruner = group_config.pruner and PRUNERS.get(group_config.pruner)()
     sampler = group_config.sampler and SAMPLERS.get(group_config.sampler)()
+    callbacks = [_create_mlflow_callback(metric.name)] if add_mlflow_callback else []
+    _delete_optuna_study(study_name=group_config.name)
     study = optuna.create_study(study_name=group_config.name,
                                 sampler=sampler,
                                 storage=_get_storage_uri(),
                                 direction=metric.direction.value,
                                 load_if_exists=True,
                                 pruner=pruner)
-    callbacks = [create_mlflow_callback(metric.name)] if add_mlflow_callback else []
     study.optimize(objective,
                    n_trials=group_config.num_trials,
                    timeout=group_config.timeout_per_trial,
