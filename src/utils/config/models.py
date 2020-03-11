@@ -1,6 +1,7 @@
+import os
 from enum import Enum
 from typing import Optional, Union, List, Dict
-from pydantic import BaseModel, PositiveFloat, DirectoryPath, root_validator, PositiveInt, validator
+from pydantic import BaseModel, PositiveFloat, DirectoryPath, root_validator, PositiveInt, validator, FilePath
 from src.utils.optuna import SAMPLERS, PRUNERS
 from src.utils.optuna.types import Choice, Range, RandomInt, Uniform, LogUniform
 
@@ -18,6 +19,11 @@ class RayConfig(BaseModel):
 class OptimizationDirection(Enum):
     MINIMIZE = 'minimize'
     MAXIMIZE = 'maximize'
+
+
+class Metric(BaseModel):
+    name: str
+    direction: OptimizationDirection = OptimizationDirection.MINIMIZE
 
 
 class TrialResourcesConfig(BaseModel):
@@ -38,6 +44,12 @@ class DockerConfig(BaseModel):
         return values
 
 
+class GoogleCloudConfig(BaseModel):
+    credentials_keyfile: FilePath = None
+    job_spec: dict
+    project_id: str = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
+
+
 class JobConfig(BaseModel):
     # TODO: Improve by adding restrictions according signature
     kind: JobTypes = JobTypes.JOB
@@ -46,6 +58,7 @@ class JobConfig(BaseModel):
     docker_config: Optional[DockerConfig]
     params: dict = {}
     ray_config: Optional[RayConfig]
+    google_cloud_config: Optional[GoogleCloudConfig]
 
     class Config:
         extra = 'forbid'
@@ -60,6 +73,7 @@ class GroupConfig(JobConfig):
     # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]
     param_space: Dict[str, Union[Choice, Range, RandomInt, Uniform, LogUniform]]
+    metric: Metric = Metric()
 
     @validator('sampler')
     def sampler_must_exist(cls, value):
@@ -76,9 +90,3 @@ class GroupConfig(JobConfig):
 
 class ExperimentConfig(JobConfig):
     kind = JobTypes.EXPERIMENT
-
-
-class Metric(BaseModel):
-    name: str
-    direction: OptimizationDirection = OptimizationDirection.MINIMIZE
-

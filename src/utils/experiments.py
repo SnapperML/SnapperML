@@ -150,31 +150,37 @@ def initialize_ray(config: JobConfig):
 
 def experiment(func: Optional[Callable] = None, *,
                autologging_backends: Union[List[AutologgingBackend], AutologgingBackend, None] = None,
-               optimize_metric: Union[Metric, str, None] = None,
-               data_loader: Optional[DataLoader] = None):
+               optimization_metric: Union[Metric, str, None] = None,
+               data_loader: Optional[DataLoader] = None,
+               **kwargs):
     if func is None:
         return partial(experiment,
                        autologging_backends=autologging_backends,
-                       optimize_metric=optimize_metric)
+                       optimize_metric=optimization_metric)
 
-    if isinstance(optimize_metric, str):
-        optimize_metric = Metric(name=optimize_metric)
+    if isinstance(optimization_metric, str):
+        optimization_metric = Metric(name=optimization_metric)
+
+    if optimization_metric:
+        kwargs['metric'] = optimization_metric
 
     @wraps(func)
     def wrapper():
         overridden_params, config = parse_experiment_arguments(func)
-        setup_logging(experiment_name=config.name)
+        config = config.copy(update=kwargs)
 
+        setup_logging(experiment_name=config.name)
         logger.info(f'======== Starting job {config.name} in {sys.argv[0]} =========')
 
         if config.kind == JobTypes.GROUP:
             config = cast(GroupConfig, config)
+            if optimization_metric:
+                config.metric = optimization_metric
 
         if config.kind == JobTypes.EXPERIMENT:
             config = cast(ExperimentConfig, config)
 
-        if config.kind == JobTypes.JOB:
-            logger.info(f"Job Config -> {config.dict()}")
+        logger.info(f"Job Config -> {config.dict()}")
 
         initialize_ray(config)
 
@@ -182,14 +188,14 @@ def experiment(func: Optional[Callable] = None, *,
         t.tic()
 
         if config.kind == JobTypes.JOB:
-            run_job(func, overridden_params, config, data_loader)
+            run_job(func, overridden_params, config)
         else:
             create_mlflow_experiment(experiment_name=config.name)
             setup_autologging(autologging_backends)
             if config.kind == JobTypes.GROUP:
-                run_group(func, overridden_params, optimize_metric, config, data_loader)
+                run_group(func, overridden_params, optimization_metric, config, data_loader)
             else:
-                run_experiment(func, overridden_params, config, data_loader)
+                run_experiment(func, overridden_params, config)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")
