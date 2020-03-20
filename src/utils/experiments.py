@@ -17,6 +17,42 @@ from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 from optuna.exceptions import TrialPruned
 import ray
 import numpy as np
+import gorilla
+
+
+def create_seed_initializers_patches():
+    patches = []
+
+    def seed(new_seed):
+        mlflow.set_tag('numpy seed', new_seed)
+        np.random.seed(new_seed)
+
+    patches.append(gorilla.Patch(np.random, 'seed', seed))
+
+    try:
+        import tensorflow as tf
+
+        def set_seed(new_seed):
+            tf.random.set_seed(new_seed)
+            mlflow.set_tag('TF seed', new_seed)
+
+        patches.append(gorilla.Patch(tf.random, 'set_seed', set_seed))
+    except ModuleNotFoundError:
+        pass
+
+    try:
+        import torch
+
+        def manual_seed(new_seed):
+            torch.manual_seed(new_seed)
+            mlflow.set_tag('TF seed', new_seed)
+
+        patches.append(gorilla.Patch(torch, 'manual_seed', manual_seed))
+    except ModuleNotFoundError:
+        pass
+
+    for patch in patches:
+        gorilla.apply(patch)
 
 
 class DataLoader(object):

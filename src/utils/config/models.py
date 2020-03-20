@@ -73,7 +73,7 @@ class GroupConfig(JobConfig):
     # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]
     param_space: Dict[str, Union[Choice, Range, RandomInt, Uniform, LogUniform]]
-    metric: Metric = Metric()
+    metric: Optional[Metric]
 
     @validator('sampler')
     def sampler_must_exist(cls, value):
