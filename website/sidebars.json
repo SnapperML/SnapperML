@@ -1,6 +1,11 @@
 {
   "Docs": {
-    "Docusaurus": ["getting_started"]
+    "Guide": [
+      "getting_started",
+      "concepts",
+      "framework-configuration",
+      "yaml-reference"
+    ]
   },
   "API": {
     "First Category": ["doc4", "doc5"]

@@ -1,7 +1,7 @@
 ---
-id: getting_started
-title: Getting Started
-sidebar_label: Getting Started
+id: concepts
+title: Concepts
+sidebar_label: Concepts
 ---
 
 Check the [documentation](https://docusaurus.io) for how to use Docusaurus.
