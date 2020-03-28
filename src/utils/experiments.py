@@ -1,5 +1,4 @@
-from abc import ABCMeta, abstractmethod
-from typing import Union, List, Optional, Callable, cast
+from typing import Union, List, Optional, Callable, cast, Any
 from functools import wraps, partial
 from inspect import isgeneratorfunction
 import sys
@@ -12,6 +11,7 @@ from .cli import create_argument_parse_from_function, get_default_params_from_fu
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
 from .mlflow import AutologgingBackend, create_mlflow_experiment, log_experiment_results, setup_autologging
+from .monkey_patch import monkey_patch_imported_function
 from .optuna import create_optuna_study
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 from optuna.exceptions import TrialPruned
@@ -20,45 +20,46 @@ import numpy as np
 import gorilla
 
 
-def create_seed_initializers_patches():
-    patches = []
+class DataLoader(object):
+    @classmethod
+    def load_data(cls):
+        raise DataNotLoaded()
+
+
+def get_seed_initializer_patch(target: Callable, module: Any, module_name: str, function_name: str):
+    current_seed = None
 
     def seed(new_seed):
-        mlflow.set_tag('numpy seed', new_seed)
-        np.random.seed(new_seed)
+        nonlocal current_seed
+        if not current_seed:
+            mlflow.set_tag(f'{module_name} seed', new_seed)
+        current_seed = new_seed
+        original = gorilla.get_original_attribute(module, function_name)
+        original(new_seed)
 
-    patches.append(gorilla.Patch(np.random, 'seed', seed))
+    original_func = getattr(module, function_name)
+    monkey_patch_imported_function(original_func, seed, target)
+    settings = gorilla.Settings(allow_hit=True, store_hit=True)
+    return gorilla.Patch(module, function_name, seed, settings)
+
+
+def patch_seed_initializers(target):
+    patches = [get_seed_initializer_patch(target, np.random, 'Numpy', 'seed')]
 
     try:
         import tensorflow as tf
-
-        def set_seed(new_seed):
-            tf.random.set_seed(new_seed)
-            mlflow.set_tag('TF seed', new_seed)
-
-        patches.append(gorilla.Patch(tf.random, 'set_seed', set_seed))
+        patches.append(get_seed_initializer_patch(target, tf.random, 'Tensorflow', 'set_seed'))
     except ModuleNotFoundError:
         pass
 
     try:
         import torch
-
-        def manual_seed(new_seed):
-            torch.manual_seed(new_seed)
-            mlflow.set_tag('TF seed', new_seed)
-
-        patches.append(gorilla.Patch(torch, 'manual_seed', manual_seed))
+        patches.append(get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed'))
     except ModuleNotFoundError:
         pass
 
     for patch in patches:
         gorilla.apply(patch)
-
-
-class DataLoader(object):
-    @classmethod
-    def load_data(cls):
-        raise DataNotLoaded()
 
 
 def parse_experiment_arguments(experiment_func: Callable):
@@ -135,6 +136,8 @@ def run_group_remote(func: Callable,
         mlflow.set_experiment(group_config.name)
 
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
+            patch_seed_initializers(func)
+
             config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
             all_params = {**default_params, **config_params, **overridden_params}
             results = func(**all_params)
@@ -164,6 +167,7 @@ def run_group_remote(func: Callable,
 
 def run_experiment(func: Callable, overridden_params: dict, config: ExperimentConfig):
     with mlflow.start_run():
+        patch_seed_initializers(func)
         results = run_job(func, overridden_params, config)
         if results:
             results = results if isgeneratorfunction(func) else results[func(**overridden_params)]

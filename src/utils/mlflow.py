@@ -2,9 +2,6 @@ from enum import Enum
 from typing import Optional, Union, List
 
 import mlflow
-import mlflow.keras
-import mlflow.fastai
-import mlflow.tensorflow
 
 from src.utils.logging import logger
 
@@ -69,6 +66,7 @@ def setup_autologging(backend: Union[List[AutologgingBackend], AutologgingBacken
         mlflow.keras.autolog()
         logger.info("Enabled autologging for Keras")
     elif backend == AutologgingBackend.FASTAI:
+        import mlflow.fastai
         mlflow.fastai.fastai.autolog()
         logger.info("Enabled autologging for Fastai")
     elif backend:

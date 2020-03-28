@@ -7,4 +7,4 @@ param_space:
   epochs: "range(100, 1000, 10)"
 
 run:
-  - src/models/test_root_input.py
+  - src/models/test_seed_logging.py

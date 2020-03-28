@@ -15,4 +15,4 @@ params:
   epochs: 100
 
 run:
-  - src/models/test_root_input.py
+  - src/models/test_seed_logging.py
