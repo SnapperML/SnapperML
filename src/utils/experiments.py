@@ -1,4 +1,4 @@
-from typing import Union, List, Optional, Callable, cast, Any
+from typing import Union, Optional, Callable, cast
 from functools import wraps, partial
 from inspect import isgeneratorfunction
 import sys
@@ -10,56 +10,19 @@ from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
-from .mlflow import AutologgingBackend, create_mlflow_experiment, log_experiment_results, setup_autologging
-from .monkey_patch import monkey_patch_imported_function
+from .mlflow import create_mlflow_experiment, log_experiment_results, setup_autologging, \
+    AutologgingBackendParam, AutologgingBackend
 from .optuna import create_optuna_study
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 from optuna.exceptions import TrialPruned
 import ray
 import numpy as np
-import gorilla
 
 
 class DataLoader(object):
     @classmethod
     def load_data(cls):
         raise DataNotLoaded()
-
-
-def get_seed_initializer_patch(target: Callable, module: Any, module_name: str, function_name: str):
-    current_seed = None
-
-    def seed(new_seed):
-        nonlocal current_seed
-        if not current_seed:
-            mlflow.set_tag(f'{module_name} seed', new_seed)
-        current_seed = new_seed
-        original = gorilla.get_original_attribute(module, function_name)
-        original(new_seed)
-
-    original_func = getattr(module, function_name)
-    monkey_patch_imported_function(original_func, seed, target)
-    settings = gorilla.Settings(allow_hit=True, store_hit=True)
-    return gorilla.Patch(module, function_name, seed, settings)
-
-
-def patch_seed_initializers(target):
-    patches = [get_seed_initializer_patch(target, np.random, 'Numpy', 'seed')]
-
-    try:
-        import tensorflow as tf
-        patches.append(get_seed_initializer_patch(target, tf.random, 'Tensorflow', 'set_seed'))
-    except ModuleNotFoundError:
-        pass
-
-    try:
-        import torch
-        patches.append(get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed'))
-    except ModuleNotFoundError:
-        pass
-
-    for patch in patches:
-        gorilla.apply(patch)
 
 
 def parse_experiment_arguments(experiment_func: Callable):
@@ -88,7 +51,8 @@ def run_group(func: Callable,
               overridden_params: dict,
               optimize_metric: Optional[Metric],
               group_config: GroupConfig,
-              data_loader: Optional[DataLoader]):
+              data_loader: Optional[DataLoader],
+              **kwargs):
     if not optimize_metric:
         raise NoMetricSpecified()
 
@@ -106,14 +70,17 @@ def run_group(func: Callable,
 
     for i in range(concurrent_workers):
         num_trials = group_config.num_trials // concurrent_workers
+
         if i == 0:
             num_trials += group_config.num_trials % concurrent_workers
+
         new_group_config = group_config.copy(update={'num_trials': num_trials})
         object_id = remote_func.remote(func,
                                        overridden_params,
                                        optimize_metric,
                                        new_group_config,
-                                       data_object_id)
+                                       data_object_id,
+                                       **kwargs)
         futures.append(object_id)
 
     return ray.get(futures)
@@ -123,7 +90,9 @@ def run_group_remote(func: Callable,
                      overridden_params: dict,
                      optimize_metric: Optional[Metric],
                      group_config: GroupConfig,
-                     object_id: Optional[int] = None):
+                     object_id: Optional[int],
+                     autologging_backends: AutologgingBackendParam,
+                     log_seeds: bool):
     is_generator = isgeneratorfunction(func)
     default_params = get_default_params_from_func(func)
     setup_logging(experiment_name=group_config.name)
@@ -136,7 +105,7 @@ def run_group_remote(func: Callable,
         mlflow.set_experiment(group_config.name)
 
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
-            patch_seed_initializers(func)
+            setup_autologging(func, autologging_backends, log_seeds)
 
             config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
             all_params = {**default_params, **config_params, **overridden_params}
@@ -165,9 +134,13 @@ def run_group_remote(func: Callable,
                         add_mlflow_callback=(not is_generator))
 
 
-def run_experiment(func: Callable, overridden_params: dict, config: ExperimentConfig):
+def run_experiment(func: Callable,
+                   overridden_params: dict,
+                   config: ExperimentConfig,
+                   autologging_backends: AutologgingBackendParam,
+                   log_seeds: bool):
     with mlflow.start_run():
-        patch_seed_initializers(func)
+        setup_autologging(func, autologging_backends, log_seeds)
         results = run_job(func, overridden_params, config)
         if results:
             results = results if isgeneratorfunction(func) else results[func(**overridden_params)]
@@ -189,7 +162,8 @@ def initialize_ray(config: JobConfig):
 
 
 def experiment(func: Optional[Callable] = None, *,
-               autologging_backends: Union[List[AutologgingBackend], AutologgingBackend, None] = None,
+               autologging_backends: AutologgingBackendParam = None,
+               log_seeds: bool = True,
                optimization_metric: Union[Metric, str, None] = None,
                data_loader: Optional[DataLoader] = None,
                **kwargs):
@@ -214,8 +188,6 @@ def experiment(func: Optional[Callable] = None, *,
 
         if config.kind == JobTypes.GROUP:
             config = cast(GroupConfig, config)
-            if optimization_metric:
-                config.metric = optimization_metric
 
         if config.kind == JobTypes.EXPERIMENT:
             config = cast(ExperimentConfig, config)
@@ -231,11 +203,20 @@ def experiment(func: Optional[Callable] = None, *,
             run_job(func, overridden_params, config)
         else:
             create_mlflow_experiment(experiment_name=config.name)
-            setup_autologging(autologging_backends)
             if config.kind == JobTypes.GROUP:
-                run_group(func, overridden_params, optimization_metric, config, data_loader)
+                run_group(func,
+                          overridden_params,
+                          optimization_metric,
+                          config,
+                          data_loader,
+                          autologging_backends=autologging_backends,
+                          log_seeds=log_seeds)
             else:
-                run_experiment(func, overridden_params, config)
+                run_experiment(func,
+                               overridden_params,
+                               config,
+                               autologging_backends,
+                               log_seeds)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")

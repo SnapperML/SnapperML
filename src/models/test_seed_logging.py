@@ -1,10 +1,10 @@
-from src.utils.experiments import experiment
+from src.utils.experiments import experiment, AutologgingBackend
 from torch import manual_seed
 import tensorflow as tf
 from numpy.random import seed
 
 
-@experiment()
+@experiment(autologging_backends=[AutologgingBackend.TENSORFLOW, AutologgingBackend.KERAS, AutologgingBackend.FASTAI])
 def main():
     seed(1)
     manual_seed(2)
