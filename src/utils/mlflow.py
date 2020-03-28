@@ -1,6 +1,7 @@
 from enum import Enum
 import random
 import os
+import sys
 import tempfile
 import shutil
 from typing import Optional, Union, List, Callable, Any
@@ -93,9 +94,10 @@ def get_system_info():
     cpu_info = get_cpu_info().get('brand')
     cpu_info = cpu_info and f'CPU: {cpu_info}'
 
-    system_info = ''
+    system_info = f'Python: {sys.version}'
+
     if cpu_info:
-        system_info += f'{cpu_info}'
+        system_info += f'\n{cpu_info}'
     if nvidia_info:
         system_info += f'\n\n{nvidia_info}\n'
 
