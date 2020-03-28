@@ -92,7 +92,8 @@ def run_group_remote(func: Callable,
                      group_config: GroupConfig,
                      object_id: Optional[int],
                      autologging_backends: AutologgingBackendParam,
-                     log_seeds: bool):
+                     log_seeds: bool,
+                     log_system_info: bool):
     is_generator = isgeneratorfunction(func)
     default_params = get_default_params_from_func(func)
     setup_logging(experiment_name=group_config.name)
@@ -105,7 +106,7 @@ def run_group_remote(func: Callable,
         mlflow.set_experiment(group_config.name)
 
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
-            setup_autologging(func, autologging_backends, log_seeds)
+            setup_autologging(func, autologging_backends, log_seeds, log_system_info)
 
             config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
             all_params = {**default_params, **config_params, **overridden_params}
@@ -138,9 +139,10 @@ def run_experiment(func: Callable,
                    overridden_params: dict,
                    config: ExperimentConfig,
                    autologging_backends: AutologgingBackendParam,
-                   log_seeds: bool):
+                   log_seeds: bool,
+                   log_system_info: bool):
     with mlflow.start_run():
-        setup_autologging(func, autologging_backends, log_seeds)
+        setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         results = run_job(func, overridden_params, config)
         if results:
             results = results if isgeneratorfunction(func) else results[func(**overridden_params)]
@@ -163,9 +165,10 @@ def initialize_ray(config: JobConfig):
 
 def experiment(func: Optional[Callable] = None, *,
                autologging_backends: AutologgingBackendParam = None,
-               log_seeds: bool = True,
                optimization_metric: Union[Metric, str, None] = None,
                data_loader: Optional[DataLoader] = None,
+               log_seeds: bool = True,
+               log_system_info: bool = True,
                **kwargs):
     if func is None:
         return partial(experiment,
@@ -210,13 +213,15 @@ def experiment(func: Optional[Callable] = None, *,
                           config,
                           data_loader,
                           autologging_backends=autologging_backends,
-                          log_seeds=log_seeds)
+                          log_seeds=log_seeds,
+                          log_system_info=log_system_info)
             else:
                 run_experiment(func,
                                overridden_params,
                                config,
                                autologging_backends,
-                               log_seeds)
+                               log_seeds,
+                               log_system_info)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")

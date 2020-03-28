@@ -1,10 +1,15 @@
 from enum import Enum
+import random
+import os
+import tempfile
+import shutil
 from typing import Optional, Union, List, Callable, Any
 import gorilla
 import mlflow
 from src.utils.logging import logger
 from src.utils.monkey_patch import monkey_patch_imported_function
-import random
+from easyprocess import EasyProcess, EasyProcessError
+from cpuinfo import get_cpu_info
 
 
 class AutologgingBackend(Enum):
@@ -71,6 +76,43 @@ def get_seed_initializer_patch(target: Callable, module: Any, module_name: str, 
     return gorilla.Patch(module, function_name, seed, settings)
 
 
+def get_system_info():
+    nvidia_info = None
+    pip_packages = None
+
+    try:
+        nvidia_info = EasyProcess('nvidia-smi').call().stdout
+    except EasyProcessError:
+        pass
+
+    try:
+        pip_packages = EasyProcess('pip3 freeze').call().stdout
+    except EasyProcessError:
+        pass
+
+    cpu_info = get_cpu_info().get('brand')
+    cpu_info = cpu_info and f'CPU: {cpu_info}'
+
+    system_info = ''
+    if cpu_info:
+        system_info += f'{cpu_info}'
+    if nvidia_info:
+        system_info += f'\n\n{nvidia_info}\n'
+
+    return system_info, pip_packages
+
+
+def log_text_file(filename: str, content: str):
+    tempdir = tempfile.mkdtemp()
+    try:
+        filepath = os.path.join(tempdir, filename)
+        with open(filepath, 'w') as f:
+            f.write(content)
+        mlflow.log_artifact(filepath)
+    finally:
+        shutil.rmtree(tempdir)
+
+
 def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds: bool):
     patch = None
 
@@ -99,7 +141,7 @@ def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds:
         gorilla.apply(patch)
 
 
-def setup_autologging(target: Callable, backend: AutologgingBackendParam, log_seeds=True):
+def setup_autologging(target: Callable, backend: AutologgingBackendParam, log_seeds, log_system_info):
     if isinstance(backend, list):
         for b in backend:
             _setup_autologging(target, b, log_seeds)
@@ -116,3 +158,9 @@ def setup_autologging(target: Callable, backend: AutologgingBackendParam, log_se
         for patch in patches:
             gorilla.apply(patch)
 
+    if log_system_info:
+        system_info, packages = get_system_info()
+        if system_info:
+            log_text_file('system_info.txt', system_info)
+        if packages:
+            log_text_file('requirements.txt', packages)
