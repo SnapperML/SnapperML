@@ -3,6 +3,7 @@ from typing import Optional, Union, List
 
 import mlflow
 import mlflow.keras
+import mlflow.fastai
 import mlflow.tensorflow
 
 from src.utils.logging import logger
@@ -12,7 +13,6 @@ class AutologgingBackend(Enum):
     TENSORFLOW = "tensorflow"
     KERAS = "keras"
     FASTAI = "fastai"
-    PYTORCH = "pytorch"
 
 
 def create_mlflow_experiment(experiment_name: str):
@@ -69,10 +69,7 @@ def setup_autologging(backend: Union[List[AutologgingBackend], AutologgingBacken
         mlflow.keras.autolog()
         logger.info("Enabled autologging for Keras")
     elif backend == AutologgingBackend.FASTAI:
-        # TODO: implement autologging for fastai
+        mlflow.fastai.fastai.autolog()
         logger.info("Enabled autologging for Fastai")
-    elif backend == AutologgingBackend.PYTORCH:
-        # TODO: implement autologging for pytorch
-        logger.info("Enabled autologging for Pytorch")
     elif backend:
-        raise Exception(f'Not supported Autologging backend {backend}')
+        raise Exception(f'Autologging backend {backend} not supported')
