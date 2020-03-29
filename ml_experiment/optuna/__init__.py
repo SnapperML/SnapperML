@@ -4,7 +4,7 @@ import optuna
 from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.utils.config.models import Metric, GroupConfig
+    from src.config import Metric, GroupConfig
 
 PRUNERS = {
     'hyperband': optuna.pruners.HyperbandPruner,
@@ -65,3 +65,7 @@ def create_optuna_study(objective: Callable[[optuna.Trial], float],
                    timeout=group_config.timeout_per_trial,
                    callbacks=callbacks)
     return study
+
+
+def prune_trial():
+    raise optuna.exceptions.TrialPruned()

@@ -2,10 +2,10 @@ import os
 import sys
 import yaml
 
-from src.utils.logging import logger
+from ..logging import logger
 from typing import Callable, Type, TypeVar, Union
 from pydantic import BaseModel, ValidationError
-from src.utils.config.models import JobConfig, JobTypes, GroupConfig, ExperimentConfig
+from .models import JobConfig, JobTypes, GroupConfig, ExperimentConfig
 
 
 T = TypeVar('T', bound=BaseModel)

@@ -7,10 +7,11 @@ import shutil
 from typing import Optional, Union, List, Callable, Any
 import gorilla
 import mlflow
-from src.utils.logging import logger
-from src.utils.monkey_patch import monkey_patch_imported_function
 from easyprocess import EasyProcess, EasyProcessError
 from cpuinfo import get_cpu_info
+
+from .logging import logger
+from .monkey_patch import monkey_patch_imported_function
 
 
 class AutologgingBackend(Enum):

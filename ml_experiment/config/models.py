@@ -2,8 +2,8 @@ import os
 from enum import Enum
 from typing import Optional, Union, List, Dict
 from pydantic import BaseModel, PositiveFloat, DirectoryPath, root_validator, PositiveInt, validator, FilePath
-from src.utils.optuna import SAMPLERS, PRUNERS
-from src.utils.optuna.types import Choice, Range, RandomInt, Uniform, LogUniform
+from ..optuna import SAMPLERS, PRUNERS
+from ..optuna.types import Choice, Range, RandomInt, Uniform, LogUniform
 
 
 class JobTypes(Enum):

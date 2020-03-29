@@ -1,4 +1,4 @@
-from src.utils.experiments import experiment, AutologgingBackend
+from src.experiments import experiment, AutologgingBackend
 from torch import manual_seed
 import tensorflow as tf
 from numpy.random import seed

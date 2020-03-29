@@ -1,14 +1,15 @@
 # TODO: Add support for remote job scheduling through Swarm or OpenFaas
-# TODO: Add support for running group of jobs in parallel / Hyperparams
+
 import os
-from dotenv import find_dotenv, load_dotenv
-from src.utils.cli import cli_decorator
-from src.utils.config import parse_config, get_validation_model
-from src.utils.config.models import DockerConfig, JobConfig, ExperimentConfig
-from src.utils.logging import logger, setup_logging
 import subprocess
-import docker
 from typing import List, Union
+from dotenv import find_dotenv, load_dotenv
+import docker
+
+from ..cli import cli_decorator
+from ..config import parse_config, get_validation_model
+from ..config.models import DockerConfig, JobConfig, ExperimentConfig
+from ..logging import logger, setup_logging
 
 
 def extract_string_from_docker_log(log):
@@ -96,7 +97,3 @@ def main(config_file):
     config = parse_config(config_file, get_validation_model)
     setup_logging(experiment_name=config.name)
     run_job(config)
-
-
-if __name__ == '__main__':
-    main()

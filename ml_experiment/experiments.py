@@ -5,18 +5,18 @@ import sys
 from math import ceil
 from datetime import timedelta
 import mlflow
+import ray
+import numpy as np
 from pytictoc import TicToc
+
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
 from .mlflow import create_mlflow_experiment, log_experiment_results, setup_autologging, \
     AutologgingBackendParam, AutologgingBackend
-from .optuna import create_optuna_study
+from .optuna import create_optuna_study, prune_trial
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
-from optuna.exceptions import TrialPruned
-import ray
-import numpy as np
 
 
 class DataLoader(object):
@@ -123,7 +123,7 @@ def run_group_remote(func: Callable,
                     trial.report(metrics[optimize_metric.name], i)
                     log_experiment_results(all_params, metrics, artifacts)
                     if trial.should_prune():
-                        raise TrialPruned()
+                        prune_trial()
             else:
                 metrics, artifacts = results
                 log_experiment_results(overridden_params, metrics, artifacts)

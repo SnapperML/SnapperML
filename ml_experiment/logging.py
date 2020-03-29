@@ -1,7 +1,7 @@
 """
 This module is for logging utility functions.
 """
-import logging.config
+import logging
 import os
 import coloredlogs
 
