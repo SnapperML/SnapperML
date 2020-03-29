@@ -76,11 +76,10 @@ def process_docker(config: DockerConfig, command: Union[List[str], str]):
         run_docker_container(image, command_single_expression)
 
 
-def run_job(job: JobConfig):
+def run_job(job: JobConfig, config_file: str):
     if isinstance(job, ExperimentConfig):
         run_commands = job.run if isinstance(job.run, list) else [job.run]
-        argv = ' '.join([f'--{k} {v}' for k, v in job.params.items()])
-        bash_commands = [f'PYTHONPATH=. python3 {cmd} {argv}' for cmd in run_commands]
+        bash_commands = [f'python3 {cmd} {config_file}' for cmd in run_commands]
     else:
         bash_commands = job.run
 
@@ -96,4 +95,4 @@ def main(config_file):
     load_dotenv(find_dotenv())
     config = parse_config(config_file, get_validation_model)
     setup_logging(experiment_name=config.name)
-    run_job(config)
+    run_job(config, config_file)

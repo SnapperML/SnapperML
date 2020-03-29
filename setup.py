@@ -24,7 +24,7 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         'docker==4.1.0',
-        'EasyProcess==0.2.10'
+        'EasyProcess==0.2.10',
         'mlflow',
         'gorilla==0.3.0',
         'optuna==1.1.0',

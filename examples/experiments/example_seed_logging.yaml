@@ -1,4 +1,4 @@
 name: "Sample Seed logging"
 kind: 'experiment'
 run:
-  - src/models/test_seed_logging.py
+  - examples/test_seed_logging.py
