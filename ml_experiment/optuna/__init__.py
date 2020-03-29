@@ -4,7 +4,7 @@ import optuna
 from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..config import Metric, GroupConfig
+    from ..config.models import Metric, GroupConfig
 
 PRUNERS = {
     'hyperband': optuna.pruners.HyperbandPruner,
