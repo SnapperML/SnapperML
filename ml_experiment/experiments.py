@@ -13,8 +13,8 @@ from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
-from .mlflow import create_mlflow_experiment, log_experiment_results, setup_autologging, \
-    AutologgingBackendParam, AutologgingBackend
+from .mlflow import create_mlflow_experiment, log_experiment_results, \
+    setup_autologging, AutologgingBackendParam
 from .optuna import create_optuna_study, prune_trial
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 
@@ -25,7 +25,7 @@ class DataLoader(object):
         raise DataNotLoaded()
 
 
-def parse_experiment_arguments(experiment_func: Callable):
+def _parse_experiment_arguments(experiment_func: Callable):
     parser = create_argument_parse_from_function(experiment_func, all_keywords=True, all_optional=True)
     parser.add_argument('--experiment_name', type=str, default=None)
     parser.add_argument('config_file', type=str)
@@ -38,7 +38,7 @@ def parse_experiment_arguments(experiment_func: Callable):
     return params, config
 
 
-def calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
+def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
     available_resources = ray.available_resources()
     available_gpus = available_resources.get('GPU', 0)
     available_cpus = available_resources.get('CPU', 1)
@@ -47,18 +47,18 @@ def calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int
     return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, num_trials]))
 
 
-def run_group(func: Callable,
-              overridden_params: dict,
-              optimize_metric: Optional[Metric],
-              group_config: GroupConfig,
-              data_loader: Optional[DataLoader],
-              **kwargs):
+def _run_group(func: Callable,
+               overridden_params: dict,
+               optimize_metric: Optional[Metric],
+               group_config: GroupConfig,
+               data_loader: Optional[DataLoader],
+               **kwargs):
     if not optimize_metric:
         raise NoMetricSpecified()
 
     cpu = group_config.resources_per_trial.cpu
     gpu = group_config.resources_per_trial.gpu
-    concurrent_workers = calculate_concurrent_workers(cpu, gpu, group_config.num_trials)
+    concurrent_workers = _calculate_concurrent_workers(cpu, gpu, group_config.num_trials)
     data_object_id = None
     futures = []
 
@@ -66,7 +66,7 @@ def run_group(func: Callable,
         data = data_loader.load_data()
         data_object_id = ray.put(data)
 
-    remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(run_group_remote)
+    remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
 
     for i in range(concurrent_workers):
         num_trials = group_config.num_trials // concurrent_workers
@@ -86,14 +86,14 @@ def run_group(func: Callable,
     return ray.get(futures)
 
 
-def run_group_remote(func: Callable,
-                     overridden_params: dict,
-                     optimize_metric: Optional[Metric],
-                     group_config: GroupConfig,
-                     object_id: Optional[int],
-                     autologging_backends: AutologgingBackendParam,
-                     log_seeds: bool,
-                     log_system_info: bool):
+def _run_group_remote(func: Callable,
+                      overridden_params: dict,
+                      optimize_metric: Optional[Metric],
+                      group_config: GroupConfig,
+                      object_id: Optional[int],
+                      autologging_backends: AutologgingBackendParam,
+                      log_seeds: bool,
+                      log_system_info: bool):
     is_generator = isgeneratorfunction(func)
     default_params = get_default_params_from_func(func)
     setup_logging(experiment_name=group_config.name)
@@ -135,28 +135,28 @@ def run_group_remote(func: Callable,
                         add_mlflow_callback=(not is_generator))
 
 
-def run_experiment(func: Callable,
-                   overridden_params: dict,
-                   config: ExperimentConfig,
-                   autologging_backends: AutologgingBackendParam,
-                   log_seeds: bool,
-                   log_system_info: bool):
+def _run_experiment(func: Callable,
+                    overridden_params: dict,
+                    config: ExperimentConfig,
+                    autologging_backends: AutologgingBackendParam,
+                    log_seeds: bool,
+                    log_system_info: bool):
     with mlflow.start_run():
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
-        results = run_job(func, overridden_params, config)
+        results = _run_job(func, overridden_params, config)
         if results:
             results = results if isgeneratorfunction(func) else results[func(**overridden_params)]
             for metrics, artifacts in results:
                 log_experiment_results(overridden_params, metrics, artifacts)
 
 
-def run_job(func: Callable, params: dict, config: JobConfig):
+def _run_job(func: Callable, params: dict, config: JobConfig):
     default_params = get_default_params_from_func(func)
     all_params = {**default_params, **config.params, **params}
     return func(**all_params)
 
 
-def initialize_ray(config: JobConfig):
+def _initialize_ray(config: JobConfig):
     if config.ray_config and config.ray_config.cluster_address:
         ray.init(address=config.ray_config.cluster_address)
     else:
@@ -183,7 +183,7 @@ def experiment(func: Optional[Callable] = None, *,
 
     @wraps(func)
     def wrapper():
-        overridden_params, config = parse_experiment_arguments(func)
+        overridden_params, config = _parse_experiment_arguments(func)
         config = config.copy(update=kwargs)
 
         setup_logging(experiment_name=config.name)
@@ -197,31 +197,31 @@ def experiment(func: Optional[Callable] = None, *,
 
         logger.info(f"Job Config -> {config.dict()}")
 
-        initialize_ray(config)
+        _initialize_ray(config)
 
         t = TicToc()
         t.tic()
 
         if config.kind == JobTypes.JOB:
-            run_job(func, overridden_params, config)
+            _run_job(func, overridden_params, config)
         else:
             create_mlflow_experiment(experiment_name=config.name)
             if config.kind == JobTypes.GROUP:
-                run_group(func,
-                          overridden_params,
-                          optimization_metric,
-                          config,
-                          data_loader,
-                          autologging_backends=autologging_backends,
-                          log_seeds=log_seeds,
-                          log_system_info=log_system_info)
+                _run_group(func,
+                           overridden_params,
+                           optimization_metric,
+                           config,
+                           data_loader,
+                           autologging_backends=autologging_backends,
+                           log_seeds=log_seeds,
+                           log_system_info=log_system_info)
             else:
-                run_experiment(func,
-                               overridden_params,
-                               config,
-                               autologging_backends,
-                               log_seeds,
-                               log_system_info)
+                _run_experiment(func,
+                                overridden_params,
+                                config,
+                                autologging_backends,
+                                log_seeds,
+                                log_system_info)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")
