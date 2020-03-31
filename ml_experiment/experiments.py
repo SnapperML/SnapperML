@@ -6,13 +6,14 @@ from math import ceil
 from datetime import timedelta
 import mlflow
 import ray
+from ray.remote_function import RemoteFunction
 import numpy as np
 from pytictoc import TicToc
 
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
 from .config import parse_config, get_validation_model
-from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric
+from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric, RayConfig
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam
 from .optuna import create_optuna_study, prune_trial
@@ -50,15 +51,15 @@ def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> in
 def _run_group(func: Callable,
                overridden_params: dict,
                optimize_metric: Optional[Metric],
-               group_config: GroupConfig,
+               config: GroupConfig,
                data_loader: Optional[DataLoader],
                **kwargs):
     if not optimize_metric:
         raise NoMetricSpecified()
 
-    cpu = group_config.resources_per_trial.cpu
-    gpu = group_config.resources_per_trial.gpu
-    concurrent_workers = _calculate_concurrent_workers(cpu, gpu, group_config.num_trials)
+    cpu = config.resources_per_trial.cpu
+    gpu = config.resources_per_trial.gpu
+    concurrent_workers = _calculate_concurrent_workers(cpu, gpu, config.num_trials)
     data_object_id = None
     futures = []
 
@@ -69,12 +70,12 @@ def _run_group(func: Callable,
     remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
 
     for i in range(concurrent_workers):
-        num_trials = group_config.num_trials // concurrent_workers
+        num_trials = config.num_trials // concurrent_workers
 
         if i == 0:
-            num_trials += group_config.num_trials % concurrent_workers
+            num_trials += config.num_trials % concurrent_workers
 
-        new_group_config = group_config.copy(update={'num_trials': num_trials})
+        new_group_config = config.copy(update={'num_trials': num_trials})
         object_id = remote_func.remote(func,
                                        overridden_params,
                                        optimize_metric,
@@ -141,6 +142,8 @@ def _run_experiment(func: Callable,
                     autologging_backends: AutologgingBackendParam,
                     log_seeds: bool,
                     log_system_info: bool):
+    mlflow.set_experiment(config.name)
+
     with mlflow.start_run():
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         results = _run_job(func, overridden_params, config)
@@ -160,7 +163,15 @@ def _initialize_ray(config: JobConfig):
     if config.ray_config and config.ray_config.cluster_address:
         ray.init(address=config.ray_config.cluster_address)
     else:
-        ray.init()
+        ray.init(log_to_driver=True)
+
+
+def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, **kwargs):
+    if ray_config:
+        object_id = ray.remote(remote_func).remote(*args, **kwargs)
+        ray.get(object_id)
+    else:
+        remote_func(*args, **kwargs)
 
 
 def experiment(func: Optional[Callable] = None, *,
@@ -197,31 +208,30 @@ def experiment(func: Optional[Callable] = None, *,
 
         logger.info(f"Job Config -> {config.dict()}")
 
-        _initialize_ray(config)
+        if config.kind == JobTypes.GROUP or config.ray_config:
+            _initialize_ray(config)
 
         t = TicToc()
         t.tic()
 
         if config.kind == JobTypes.JOB:
-            _run_job(func, overridden_params, config)
+            _job_runner(_run_job,
+                        config.ray_config,
+                        func=func,
+                        overridden_params=overridden_params,
+                        config=config)
         else:
             create_mlflow_experiment(experiment_name=config.name)
+            call_params = dict(func=func,
+                               overridden_params=overridden_params,
+                               config=config,
+                               autologging_backends=autologging_backends,
+                               log_seeds=log_seeds,
+                               log_system_info=log_system_info)
             if config.kind == JobTypes.GROUP:
-                _run_group(func,
-                           overridden_params,
-                           optimization_metric,
-                           config,
-                           data_loader,
-                           autologging_backends=autologging_backends,
-                           log_seeds=log_seeds,
-                           log_system_info=log_system_info)
+                _run_group(data_loader=data_loader, **call_params)
             else:
-                _run_experiment(func,
-                                overridden_params,
-                                config,
-                                autologging_backends,
-                                log_seeds,
-                                log_system_info)
+                _job_runner(_run_experiment, config.ray_config, **call_params)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")

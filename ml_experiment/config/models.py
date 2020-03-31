@@ -15,6 +15,11 @@ class JobTypes(Enum):
 class RayConfig(BaseModel):
     cluster_address: str
 
+    @validator('cluster_address', pre=True)
+    def convert_localhost(cls, v: str):
+        v_striped = v.strip()
+        return '' if v_striped == 'localhost' else v_striped
+
 
 class OptimizationDirection(Enum):
     MINIMIZE = 'minimize'
