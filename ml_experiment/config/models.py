@@ -60,6 +60,12 @@ class JobConfig(BaseModel):
     ray_config: Optional[RayConfig]
     google_cloud_config: Optional[GoogleCloudConfig]
 
+    @root_validator()
+    def check_docker_and_ray(cls, values):
+        if values.get('docker_config') and values.get('ray_config'):
+            raise ValueError('Executing on Docker and Ray are incompatible. Please, select just one way.')
+        return values
+
     class Config:
         extra = 'forbid'
 
