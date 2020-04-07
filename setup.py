@@ -36,6 +36,6 @@ setuptools.setup(
         'pytictoc==1.5.0',
         'coloredlogs==10.0',
         'py-cpuinfo==5.0.0',
-        'numpy==1.17.4',
+        'numpy>=1.17.4',
     ]
 )
