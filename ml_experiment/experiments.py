@@ -16,7 +16,7 @@ from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric, RayConfig
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam
-from .optuna import create_optuna_study, optimize_optuna_study, prune_trial
+from .optuna import create_optuna_study, optimize_optuna_study, prune_trial, sample_params_from_distributions
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 
 
@@ -120,7 +120,7 @@ def _run_group_remote(func: Callable,
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
 
-            param_space = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
+            param_space = sample_params_from_distributions(trial, group_config.param_space)
             all_params = {**default_params, **group_config.params, **param_space, **overridden_params}
             results = func(**all_params)
             metrics = {}
