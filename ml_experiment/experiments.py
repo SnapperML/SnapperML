@@ -6,9 +6,9 @@ from math import ceil
 from datetime import timedelta
 import mlflow
 import ray
-from ray.remote_function import RemoteFunction
 import numpy as np
 from pytictoc import TicToc
+from optuna import Study
 
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
@@ -16,7 +16,7 @@ from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric, RayConfig
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam
-from .optuna import create_optuna_study, prune_trial
+from .optuna import create_optuna_study, optimize_optuna_study, prune_trial
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 
 
@@ -57,10 +57,11 @@ def _extract_metrics_and_artifacts(result):
 
 def _run_group(func: Callable,
                overridden_params: dict,
-               optimize_metric: Optional[Metric],
                config: GroupConfig,
                data_loader: Optional[DataLoader],
                **kwargs):
+    optimize_metric = config.metric
+
     if not optimize_metric:
         raise NoMetricSpecified()
 
@@ -76,6 +77,8 @@ def _run_group(func: Callable,
 
     remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
 
+    study = create_optuna_study(config)
+
     for i in range(concurrent_workers):
         num_trials = config.num_trials // concurrent_workers
 
@@ -83,11 +86,12 @@ def _run_group(func: Callable,
             num_trials += config.num_trials % concurrent_workers
 
         new_group_config = config.copy(update={'num_trials': num_trials})
-        object_id = remote_func.remote(func,
-                                       overridden_params,
-                                       optimize_metric,
-                                       new_group_config,
-                                       data_object_id,
+        object_id = remote_func.remote(func=func,
+                                       overridden_params=overridden_params,
+                                       study=study,
+                                       optimize_metric=optimize_metric,
+                                       group_config=new_group_config,
+                                       object_id=data_object_id,
                                        **kwargs)
         futures.append(object_id)
 
@@ -96,6 +100,7 @@ def _run_group(func: Callable,
 
 def _run_group_remote(func: Callable,
                       overridden_params: dict,
+                      study: Study,
                       optimize_metric: Optional[Metric],
                       group_config: GroupConfig,
                       object_id: Optional[int],
@@ -105,19 +110,18 @@ def _run_group_remote(func: Callable,
     is_generator = isgeneratorfunction(func)
     default_params = get_default_params_from_func(func)
     setup_logging(experiment_name=group_config.name)
+    mlflow.set_experiment(group_config.name)
 
     if object_id:
         data = ray.get(object_id)
         DataLoader.load_data = lambda: data
 
     def objective(trial):
-        mlflow.set_experiment(group_config.name)
-
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
 
-            config_params = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
-            all_params = {**default_params, **config_params, **overridden_params}
+            param_space = {k: v(k, trial) if callable(v) else v for k, v in group_config.param_space.items()}
+            all_params = {**default_params, **group_config.params, **param_space, **overridden_params}
             results = func(**all_params)
             metrics = {}
             trial.set_user_attr('mlflow_run_id', run.info.run_id)
@@ -126,7 +130,6 @@ def _run_group_remote(func: Callable,
                 raise ExperimentError('Group main functions should always return something!')
 
             if is_generator:
-                # This overrides metrics variable
                 for i, result in enumerate(results):
                     metrics, artifacts = _extract_metrics_and_artifacts(result)
                     trial.report(metrics[optimize_metric.name], i)
@@ -135,13 +138,13 @@ def _run_group_remote(func: Callable,
                         prune_trial()
             else:
                 metrics, artifacts = _extract_metrics_and_artifacts(results)
-                log_experiment_results(overridden_params, metrics, artifacts)
+                log_experiment_results(all_params, metrics, artifacts)
             return metrics[optimize_metric.name]
 
-    create_optuna_study(objective=objective,
-                        group_config=group_config,
-                        metric=optimize_metric,
-                        add_mlflow_callback=(not is_generator))
+    optimize_optuna_study(study,
+                          objective=objective,
+                          group_config=group_config,
+                          add_mlflow_callback=(not is_generator))
 
 
 def _run_experiment(func: Callable,
@@ -154,20 +157,20 @@ def _run_experiment(func: Callable,
 
     with mlflow.start_run():
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
-        results = _run_job(func, overridden_params, config)
+        results, all_params = _run_job(func, overridden_params, config)
         if not results:
             return
         results = results if isgeneratorfunction(func) else [results]
         for result in results:
             if result:
                 metrics, artifacts = _extract_metrics_and_artifacts(result)
-                log_experiment_results(overridden_params, metrics, artifacts)
+                log_experiment_results(all_params, metrics, artifacts)
 
 
 def _run_job(func: Callable, params: dict, config: JobConfig):
     default_params = get_default_params_from_func(func)
     all_params = {**default_params, **config.params, **params}
-    return func(**all_params)
+    return func(**all_params), all_params
 
 
 def _initialize_ray(config: JobConfig):
@@ -180,9 +183,9 @@ def _initialize_ray(config: JobConfig):
 def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, **kwargs):
     if ray_config:
         object_id = ray.remote(remote_func).remote(*args, **kwargs)
-        ray.get(object_id)
+        return ray.get(object_id)
     else:
-        remote_func(*args, **kwargs)
+        return remote_func(*args, **kwargs)
 
 
 def experiment(func: Optional[Callable] = None, *,

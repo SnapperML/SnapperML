@@ -27,10 +27,7 @@ services:
     volumes:
       - ../:/mnt
     entrypoint: |
-      bash -c "mlflow server -h 0.0.0.0 -p 5000 \
-      --backend-store-uri='mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mlflow_storage:${MYSQL_PORT:-3306}/${MYSQL_DATABASE}' \
-      --default-artifact-root=${MLFLOW_ARTIFACT_STORE:-'./mlruns'} \
-      && /bin/bash"
+      bash -c "./docker/wait-for mlflow_storage:${MYSQL_PORT:-3306} -- ./docker/start_mlflow_server.sh && /bin/bash"
     depends_on:
       - mlflow_storage
       - optuna_storage

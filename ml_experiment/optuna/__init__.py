@@ -1,10 +1,9 @@
 import os
-import mlflow
 import optuna
 from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..config.models import Metric, GroupConfig
+    from ..config.models import GroupConfig
 
 PRUNERS = {
     'hyperband': optuna.pruners.HyperbandPruner,
@@ -18,14 +17,6 @@ SAMPLERS = {
     'tpe': optuna.samplers.TPESampler,
     'skopt': optuna.integration.SkoptSampler
 }
-
-
-def _create_mlflow_callback(metric: str) -> Callable:
-    def callback(_, trial):
-        trial_value = trial.value if trial.value is not None else float('nan')
-        mlflow.log_params(trial.params)
-        mlflow.log_metrics({metric: trial_value})
-    return callback
 
 
 def _get_storage_uri() -> str:
@@ -44,26 +35,30 @@ def _delete_optuna_study(study_name):
         pass
 
 
-def create_optuna_study(objective: Callable[[optuna.Trial], float],
-                        group_config: 'GroupConfig',
-                        metric: 'Metric',
-                        add_mlflow_callback=True) -> optuna.Study:
+def optimize_optuna_study(study: optuna.Study,
+                          objective: Callable[[optuna.Trial], float],
+                          group_config: 'GroupConfig',
+                          add_mlflow_callback=True) -> optuna.Study:
+    optuna.logging.enable_propagation()
+    optuna.logging.disable_default_handler()
+    study.optimize(objective,
+                   n_trials=group_config.num_trials,
+                   timeout=group_config.timeout_per_trial)
+    return study
+
+
+def create_optuna_study(group_config: 'GroupConfig') -> optuna.Study:
     optuna.logging.enable_propagation()
     optuna.logging.disable_default_handler()
     pruner = group_config.pruner and PRUNERS.get(group_config.pruner)()
     sampler = group_config.sampler and SAMPLERS.get(group_config.sampler)()
-    callbacks = [_create_mlflow_callback(metric.name)] if add_mlflow_callback else []
     _delete_optuna_study(study_name=group_config.name)
     study = optuna.create_study(study_name=group_config.name,
                                 sampler=sampler,
                                 storage=_get_storage_uri(),
-                                direction=metric.direction.value,
+                                direction=group_config.metric.direction.value,
                                 load_if_exists=True,
                                 pruner=pruner)
-    study.optimize(objective,
-                   n_trials=group_config.num_trials,
-                   timeout=group_config.timeout_per_trial,
-                   callbacks=callbacks)
     return study
 
 

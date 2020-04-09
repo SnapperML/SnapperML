@@ -8,7 +8,7 @@ import docker
 
 from ..cli import cli_decorator
 from ..config import parse_config, get_validation_model
-from ..config.models import DockerConfig, JobConfig, ExperimentConfig
+from ..config.models import DockerConfig, JobConfig, ExperimentConfig, GroupConfig
 from ..logging import logger, setup_logging
 
 
@@ -77,7 +77,7 @@ def process_docker(config: DockerConfig, command: Union[List[str], str]):
 
 
 def run_job(job: JobConfig, config_file: str):
-    if isinstance(job, ExperimentConfig):
+    if isinstance(job, ExperimentConfig) or isinstance(job, GroupConfig):
         run_commands = job.run if isinstance(job.run, list) else [job.run]
         bash_commands = [f'python3 {cmd} {config_file}' for cmd in run_commands]
     else:

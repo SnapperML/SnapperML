@@ -2,7 +2,6 @@ from enum import Enum
 import random
 import os
 import sys
-import platform
 import tempfile
 import shutil
 from typing import Optional, Union, List, Callable, Any
