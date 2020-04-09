@@ -1,6 +1,7 @@
 import os
 import optuna
-from typing import Callable, TYPE_CHECKING
+from typing import *
+from .types import ParamDistribution
 
 if TYPE_CHECKING:
     from ..config.models import GroupConfig
@@ -64,3 +65,16 @@ def create_optuna_study(group_config: 'GroupConfig') -> optuna.Study:
 
 def prune_trial():
     raise optuna.exceptions.TrialPruned()
+
+
+def sample_params_from_distributions(trial: optuna.Trial,
+                                     distributions: Dict[str, Union[ParamDistribution, List[ParamDistribution]]]):
+    params = {}
+
+    for k, distribution in distributions.items():
+        if isinstance(distributions, list):
+            params[k] = [d(trial) for d in distribution]
+        else:
+            params[k] = distribution(trial)
+
+    return params

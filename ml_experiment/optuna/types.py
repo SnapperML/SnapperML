@@ -1,5 +1,5 @@
 import re
-from typing import Callable, Any, Tuple
+from typing import *
 
 
 def validate_numerical_method_str(method_name, value, num_arguments=2) -> Tuple[float, ...]:
@@ -151,3 +151,6 @@ class RandomInt(Callable):
 
     def __repr__(self):
         return self.__str__()
+
+
+ParamDistribution = Union[Choice, Range, RandomInt, Uniform, LogUniform]

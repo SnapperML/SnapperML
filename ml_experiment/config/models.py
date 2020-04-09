@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional, Union, List, Dict
 from pydantic import BaseModel, PositiveFloat, DirectoryPath, root_validator, PositiveInt, validator, FilePath
 from ..optuna import SAMPLERS, PRUNERS
-from ..optuna.types import Choice, Range, RandomInt, Uniform, LogUniform
+from ..optuna.types import ParamDistribution
 
 
 class JobTypes(Enum):
@@ -83,7 +83,7 @@ class GroupConfig(JobConfig):
     resources_per_trial: TrialResourcesConfig = TrialResourcesConfig()
     # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]
-    param_space: Dict[str, Union[Choice, Range, RandomInt, Uniform, LogUniform]]
+    param_space: Dict[str, Union[ParamDistribution, List[ParamDistribution]]]
     metric: Optional[Metric]
 
     @validator('sampler')
