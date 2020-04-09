@@ -1,9 +1,9 @@
 name: "Autoencoder V1"
 kind: 'experiment'
 params:
-  encoding_dim: 3
-  optimizer: adadelta
-  epochs: 500
+  encoding_dim: 5
+  optimizer: adam
+  epochs: 100
 run:
   - modelling/train_autoencoder.py
 

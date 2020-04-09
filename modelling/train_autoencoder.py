@@ -2,10 +2,10 @@ import glob
 from typing import *
 from keras.layers import Input, Dense
 from keras.models import Model
-from keras import regularizers
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+from scipy.spatial.distance import euclidean
 import numpy as np
 from ml_experiment import experiment, AutologgingBackend, DataLoader
 
@@ -48,15 +48,14 @@ def create_model(input_size, encoding_dim, optimizer):
     encoded_input = Input(shape=(encoding_dim,))
     decoder_layer = autoencoder.layers[-1]
     decoder = Model(encoded_input, decoder_layer(encoded_input))
-    autoencoder.compile(Adam(learning_rate=1e-2), loss='binary_crossentropy')
+    autoencoder.compile(Adam(learning_rate=1e-3), loss='mse')
     return autoencoder, encoder, decoder
 
 
 @experiment(autologging_backends=AutologgingBackend.KERAS)
-def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128, l1_regularization=None):
-    """Simple autoencoder with Dropout"""
+def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128):
+    """Simple autoencoder"""
     train_datasets, val_datasets = MyDataLoader.load_data()
-    # regularizer = regularizers.l1(l1_regularization) if l1_regularization else None
     autoencoders = []
 
     for train, val in zip(train_datasets, val_datasets):
@@ -70,8 +69,26 @@ def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128, 
             batch_size=batch_size,
             shuffle=True,
             validation_data=(X_val, X_val),
-            verbose=1)
+            verbose=0)
         autoencoders.append((autoencoder, encoder, decoder))
+
+    X_val = [dataset[0] for dataset in val_datasets]
+    y_val = [dataset[1] for dataset in val_datasets]
+    X_val = np.concatenate(X_val, axis=0)
+    y_val = np.concatenate(y_val, axis=0)
+
+    predictions = [autoencoder.predict(X_val) for autoencoder, _, _ in autoencoders]
+    y_preds = []
+
+    for i, x in enumerate(X_val):
+        preds = [euclidean(x, X_pred[i]) for X_pred in predictions]
+        y_preds.append(np.argmin(preds))
+
+    y_preds = np.array(y_preds)
+    accuracy = np.mean(y_preds == y_val)
+
+    print(f'Validation Accuracy: {accuracy}')
+    return {'Validation Accuracy': accuracy}
 
 
 if __name__ == '__main__':
