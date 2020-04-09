@@ -1,8 +1,10 @@
 import glob
 from typing import *
-from keras.layers import Input, Dense
+from keras.layers import Input, Dense, Dropout
 from keras.models import Model
 from keras.optimizers import Adam
+from keras import regularizers
+from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from scipy.spatial.distance import euclidean
@@ -38,10 +40,11 @@ class MyDataLoader(DataLoader):
         return train_datasets, val_datasets
 
 
-def create_model(input_size, encoding_dim, optimizer):
+def create_model(input_size, encoding_dim, regularization, ps):
     """Single fully-connected neural layer as encoder and decoder"""
     input = Input(shape=(input_size,))
-    encoded = Dense(encoding_dim, activation='relu')(input)
+    encoded = Dropout(rate=ps)(input)
+    encoded = Dense(encoding_dim, activation='relu', activity_regularizer=regularizers.l1(regularization))(encoded)
     decoded = Dense(input_size, activation='sigmoid')(encoded)
     autoencoder = Model(input, decoded)
     encoder = Model(input, encoded)
@@ -53,7 +56,7 @@ def create_model(input_size, encoding_dim, optimizer):
 
 
 @experiment(autologging_backends=AutologgingBackend.KERAS)
-def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128):
+def main(encoding_dim: int, epochs: int, batch_size: int = 128, regularization: float = 0, ps: float = 0):
     """Simple autoencoder"""
     train_datasets, val_datasets = MyDataLoader.load_data()
     autoencoders = []
@@ -61,7 +64,8 @@ def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128):
     for train, val in zip(train_datasets, val_datasets):
         X_train, _ = train
         X_val, _ = val
-        autoencoder, encoder, decoder = create_model(X_train.shape[1], encoding_dim, optimizer)
+        early_stopping = EarlyStopping(patience=40, restore_best_weights=True)
+        autoencoder, encoder, decoder = create_model(X_train.shape[1], encoding_dim, regularization, ps)
         autoencoder.fit(
             X_train,
             X_train,
@@ -69,6 +73,7 @@ def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128):
             batch_size=batch_size,
             shuffle=True,
             validation_data=(X_val, X_val),
+            callbacks=[early_stopping],
             verbose=0)
         autoencoders.append((autoencoder, encoder, decoder))
 
@@ -87,8 +92,7 @@ def main(encoding_dim: int, optimizer: str, epochs: int, batch_size: int = 128):
     y_preds = np.array(y_preds)
     accuracy = np.mean(y_preds == y_val)
 
-    print(f'Validation Accuracy: {accuracy}')
-    return {'Validation Accuracy': accuracy}
+    return {'val_accuracy': accuracy}
 
 
 if __name__ == '__main__':
