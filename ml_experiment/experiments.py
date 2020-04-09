@@ -48,6 +48,13 @@ def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> in
     return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, num_trials]))
 
 
+def _extract_metrics_and_artifacts(result):
+    result = result if isinstance(result, tuple) else (result,)
+    metrics = result[0] if len(result) >= 1 else None
+    artifacts = result[1] if len(result) >= 2 else None
+    return metrics, artifacts
+
+
 def _run_group(func: Callable,
                overridden_params: dict,
                optimize_metric: Optional[Metric],
@@ -120,13 +127,14 @@ def _run_group_remote(func: Callable,
 
             if is_generator:
                 # This overrides metrics variable
-                for i, (metrics, artifacts) in enumerate(results):
+                for i, result in enumerate(results):
+                    metrics, artifacts = _extract_metrics_and_artifacts(result)
                     trial.report(metrics[optimize_metric.name], i)
                     log_experiment_results(all_params, metrics, artifacts)
                     if trial.should_prune():
                         prune_trial()
             else:
-                metrics, artifacts = results
+                metrics, artifacts = _extract_metrics_and_artifacts(results)
                 log_experiment_results(overridden_params, metrics, artifacts)
             return metrics[optimize_metric.name]
 
@@ -147,9 +155,12 @@ def _run_experiment(func: Callable,
     with mlflow.start_run():
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         results = _run_job(func, overridden_params, config)
-        if results:
-            results = results if isgeneratorfunction(func) else results[func(**overridden_params)]
-            for metrics, artifacts in results:
+        if not results:
+            return
+        results = results if isgeneratorfunction(func) else [results]
+        for result in results:
+            if result:
+                metrics, artifacts = _extract_metrics_and_artifacts(result)
                 log_experiment_results(overridden_params, metrics, artifacts)
 
 
