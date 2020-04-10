@@ -1,12 +1,15 @@
 name: "Autoencoder V1"
 kind: 'group'
-num_trials: 50
+num_trials: 100
 sampler: tpe
 
 param_space:
   encoding_dim: range(1, 20)
-  regularization: loguniform(0.0001, 0.1)
-  ps: uniform(0, 0.5)
+  ps: uniform(0, 0.7)
+  activation: choice(['selu', 'relu'])
+  tied_weights: choice([false, true])
+  unit_norm_constraint: choice([false, true])
+  weight_orthogonality: choice([false, true])
 
 params:
   epochs: 200
@@ -15,6 +18,8 @@ metric:
   name: val_accuracy
   direction: maximize
 
+ray_config:
+  num_cpus: 4
 run:
   - modelling/train_autoencoder.py
 

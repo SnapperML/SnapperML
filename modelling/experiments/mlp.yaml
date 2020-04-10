@@ -1,4 +1,4 @@
-name: "Autoencoder V1"
+name: "MLP"
 kind: 'group'
 num_trials: 50
 sampler: tpe
