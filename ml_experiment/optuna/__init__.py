@@ -72,9 +72,9 @@ def sample_params_from_distributions(trial: optuna.Trial,
     params = {}
 
     for k, distribution in distributions.items():
-        if isinstance(distributions, list):
-            params[k] = [d(trial) for d in distribution]
+        if isinstance(distribution, list):
+            params[k] = [d(k, trial) for d in distribution]
         else:
-            params[k] = distribution(trial)
+            params[k] = distribution(k, trial)
 
     return params

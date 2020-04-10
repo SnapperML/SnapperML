@@ -1,0 +1,20 @@
+name: "Autoencoder V1"
+kind: 'group'
+num_trials: 50
+sampler: tpe
+
+param_space:
+  encoding_dim: range(1, 20)
+  regularization: loguniform(0.0001, 0.1)
+  ps: uniform(0, 0.5)
+
+params:
+  epochs: 200
+
+metric:
+  name: val_accuracy
+  direction: maximize
+
+run:
+  - modelling/train_autoencoder.py
+

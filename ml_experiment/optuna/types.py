@@ -1,5 +1,7 @@
 import re
 from typing import *
+from pydantic import parse_obj_as, ValidationError
+import json
 
 
 def validate_numerical_method_str(method_name, value, num_arguments=2) -> Tuple[float, ...]:
@@ -28,10 +30,24 @@ class Choice(Callable):
 
     @classmethod
     def validate(cls, value):
-        if not isinstance(value, list):
+        if not isinstance(value, str):
             raise TypeError('List of choices is required')
+        try:
+            regex = r'choices\(\s*(\[.*\])\s*\)'
+            match = re.match(regex, value, re.IGNORECASE)
+            content = match.group(1)
+            content = json.loads(content)
+            if not isinstance(content, list):
+                raise Exception()
+        except Exception:
+            raise ValueError('Value must be of the form choices([value1, value2, ...])')
 
-        return cls(value)
+        try:
+            result = parse_obj_as(List[Union[ParamDistribution, any]], content)
+        except ValidationError:
+            result = content
+
+        return cls(result)
 
     def __str__(self):
         return f'choice({self.choices})'

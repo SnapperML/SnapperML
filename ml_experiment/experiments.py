@@ -1,4 +1,4 @@
-from typing import Union, Optional, Callable, cast
+from typing import Union, Optional, Callable, cast, Type
 from functools import wraps, partial
 from inspect import isgeneratorfunction
 import sys
@@ -69,11 +69,13 @@ def _run_group(func: Callable,
     gpu = config.resources_per_trial.gpu
     concurrent_workers = _calculate_concurrent_workers(cpu, gpu, config.num_trials)
     data_object_id = None
+    data_loader_class = None
     futures = []
 
     if data_loader:
         data = data_loader.load_data()
         data_object_id = ray.put(data)
+        data_loader_class = data_loader.__class__
 
     remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
 
@@ -92,6 +94,7 @@ def _run_group(func: Callable,
                                        optimize_metric=optimize_metric,
                                        group_config=new_group_config,
                                        object_id=data_object_id,
+                                       data_loader_class=data_loader_class,
                                        **kwargs)
         futures.append(object_id)
 
@@ -104,6 +107,7 @@ def _run_group_remote(func: Callable,
                       optimize_metric: Optional[Metric],
                       group_config: GroupConfig,
                       object_id: Optional[int],
+                      data_loader_class: Optional[Type],
                       autologging_backends: AutologgingBackendParam,
                       log_seeds: bool,
                       log_system_info: bool):
@@ -114,7 +118,7 @@ def _run_group_remote(func: Callable,
 
     if object_id:
         data = ray.get(object_id)
-        DataLoader.load_data = lambda: data
+        data_loader_class.load_data = lambda: data
 
     def objective(trial):
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
