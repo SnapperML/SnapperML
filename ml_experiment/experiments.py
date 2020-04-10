@@ -65,8 +65,8 @@ def _run_group(func: Callable,
     if not optimize_metric:
         raise NoMetricSpecified()
 
-    cpu = config.resources_per_trial.cpu
-    gpu = config.resources_per_trial.gpu
+    cpu = config.resources_per_worker.cpu
+    gpu = config.resources_per_worker.gpu
     concurrent_workers = _calculate_concurrent_workers(cpu, gpu, config.num_trials)
     data_object_id = None
     data_loader_class = None
@@ -178,10 +178,7 @@ def _run_job(func: Callable, params: dict, config: JobConfig):
 
 
 def _initialize_ray(config: JobConfig):
-    if config.ray_config and config.ray_config.cluster_address:
-        ray.init(address=config.ray_config.cluster_address)
-    else:
-        ray.init(log_to_driver=True)
+    ray.init(**config.ray_config.dict(), log_to_driver=True)
 
 
 def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, **kwargs):

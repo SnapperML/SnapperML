@@ -13,12 +13,15 @@ class JobTypes(Enum):
 
 
 class RayConfig(BaseModel):
-    cluster_address: str
+    address: Optional[str]
 
-    @validator('cluster_address', pre=True)
+    @validator('address', pre=True)
     def convert_localhost(cls, v: str):
         v_striped = v.strip()
         return '' if v_striped == 'localhost' else v_striped
+
+    class Config:
+        extra = 'allow'
 
 
 class OptimizationDirection(Enum):
@@ -31,7 +34,7 @@ class Metric(BaseModel):
     direction: OptimizationDirection = OptimizationDirection.MINIMIZE
 
 
-class TrialResourcesConfig(BaseModel):
+class WorkerResourcesConfig(BaseModel):
     cpu: PositiveFloat = 1.0
     gpu: PositiveFloat = 0.0
 
@@ -63,7 +66,7 @@ class JobConfig(BaseModel):
     docker_config: Optional[DockerConfig]
     params: dict = {}
     ray_config: Optional[RayConfig]
-    google_cloud_config: Optional[GoogleCloudConfig]
+    # google_cloud_config: Optional[GoogleCloudConfig]
 
     @root_validator()
     def check_docker_and_ray(cls, values):
@@ -80,7 +83,7 @@ class GroupConfig(JobConfig):
     sampler: Optional[str]
     pruner: Optional[str]
     num_trials: PositiveInt
-    resources_per_trial: TrialResourcesConfig = TrialResourcesConfig()
+    resources_per_worker: WorkerResourcesConfig = WorkerResourcesConfig()
     # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]
     param_space: Dict[str, Union[ParamDistribution, List[ParamDistribution]]]

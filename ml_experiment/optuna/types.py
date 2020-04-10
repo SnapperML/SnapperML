@@ -15,7 +15,7 @@ def validate_numerical_method_str(method_name, value, num_arguments=2) -> Tuple[
         return tuple([float(groups[i]) for i in range(0, len(groups), 2)])
     except Exception:
         params = ", ".join([f'param{i}' for i in range(1, num_arguments + 1)])
-        raise TypeError(f'Value must be of the form {method_name}({params})')
+        raise ValueError(f'Value must be of the form {method_name}({params})')
 
 
 class Choice(Callable):
@@ -33,17 +33,16 @@ class Choice(Callable):
         if not isinstance(value, str):
             raise TypeError('List of choices is required')
         try:
-            regex = r'choices\(\s*(\[.*\])\s*\)'
-            match = re.match(regex, value, re.IGNORECASE)
-            content = match.group(1)
-            content = json.loads(content)
+            value = value.strip()
+            regex = r'choice\(\s*(\[.*\])\s*\)'
+            match = re.findall(regex, value, re.IGNORECASE)
+            content = json.loads(match[0].replace('\'', '"'))
             if not isinstance(content, list):
                 raise Exception()
-        except Exception:
-            raise ValueError('Value must be of the form choices([value1, value2, ...])')
-
+        except Exception as e:
+            raise ValueError('Value must be of the form choice([value1, value2, ...])')
         try:
-            result = parse_obj_as(List[Union[ParamDistribution, any]], content)
+            result = parse_obj_as(List[Union[ParamDistribution, Any]], content)
         except ValidationError:
             result = content
 
@@ -129,7 +128,7 @@ class Range(Callable):
         try:
             start, stop, step = validate_numerical_method_str('range', value, num_arguments=3)
             return cls(start=int(start), stop=int(stop), step=int(step))
-        except TypeError:
+        except ValueError:
             start, stop = validate_numerical_method_str('range', value, num_arguments=2)
             return cls(start=int(start), stop=int(stop))
 
