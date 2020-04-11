@@ -38,8 +38,7 @@ def _delete_optuna_study(study_name):
 
 def optimize_optuna_study(study: optuna.Study,
                           objective: Callable[[optuna.Trial], float],
-                          group_config: 'GroupConfig',
-                          add_mlflow_callback=True) -> optuna.Study:
+                          group_config: 'GroupConfig') -> optuna.Study:
     optuna.logging.enable_propagation()
     optuna.logging.disable_default_handler()
     study.optimize(objective,
@@ -73,7 +72,7 @@ def sample_params_from_distributions(trial: optuna.Trial,
 
     for k, distribution in distributions.items():
         if isinstance(distribution, list):
-            params[k] = [d(k, trial) for d in distribution]
+            params[k] = [d(f'{k}_{i}', trial) for i, d in enumerate(distribution)]
         else:
             params[k] = distribution(k, trial)
 

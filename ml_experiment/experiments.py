@@ -8,7 +8,7 @@ import mlflow
 import ray
 import numpy as np
 from pytictoc import TicToc
-from optuna import Study
+import optuna
 
 from .logging import logger, setup_logging
 from .cli import create_argument_parse_from_function, get_default_params_from_func
@@ -23,6 +23,12 @@ from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 class DataLoader(object):
     @classmethod
     def load_data(cls):
+        raise DataNotLoaded()
+
+
+class Trial(object):
+    @classmethod
+    def get_current(cls) -> optuna.Trial:
         raise DataNotLoaded()
 
 
@@ -103,7 +109,7 @@ def _run_group(func: Callable,
 
 def _run_group_remote(func: Callable,
                       overridden_params: dict,
-                      study: Study,
+                      study: optuna.Study,
                       optimize_metric: Optional[Metric],
                       group_config: GroupConfig,
                       object_id: Optional[int],
@@ -123,7 +129,7 @@ def _run_group_remote(func: Callable,
     def objective(trial):
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
-
+            Trial.get_current = lambda: trial
             param_space = sample_params_from_distributions(trial, group_config.param_space)
             all_params = {**default_params, **group_config.params, **param_space, **overridden_params}
             results = func(**all_params)
@@ -145,10 +151,7 @@ def _run_group_remote(func: Callable,
                 log_experiment_results(all_params, metrics, artifacts)
             return metrics[optimize_metric.name]
 
-    optimize_optuna_study(study,
-                          objective=objective,
-                          group_config=group_config,
-                          add_mlflow_callback=(not is_generator))
+    optimize_optuna_study(study, objective=objective, group_config=group_config)
 
 
 def _run_experiment(func: Callable,

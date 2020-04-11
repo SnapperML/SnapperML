@@ -65,7 +65,7 @@ class JobConfig(BaseModel):
     run: Union[str, List[str]]
     docker_config: Optional[DockerConfig]
     params: dict = {}
-    ray_config: Optional[RayConfig]
+    ray_config: Optional[RayConfig] = RayConfig()
     # google_cloud_config: Optional[GoogleCloudConfig]
 
     @root_validator()
