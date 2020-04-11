@@ -1,0 +1,30 @@
+name: "MLP"
+kind: 'group'
+num_trials: 50
+sampler: tpe
+
+param_space:
+  layers:
+    - range(4, 20)
+    - range(4, 20)
+    - range(4, 20)
+    - range(4, 20)
+    - range(4, 20)
+  ps: uniform(0, 0.5)
+  lr: loguniform(0.001, 0.1)
+  one_cycle: choice([false, true])
+
+params:
+  epochs: 100
+  use_bn: true
+
+metric:
+  name: val_accuracy
+  direction: maximize
+
+ray_config:
+  num_cpus: 4
+
+run:
+  - modelling/train_mlp.py
+

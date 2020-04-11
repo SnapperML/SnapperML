@@ -1,7 +1,6 @@
-import glob
 from typing import *
 import numpy as np
-from ml_experiment import experiment, AutologgingBackend, DataLoader
+from ml_experiment import experiment, AutologgingBackend
 
 from keras.layers import Dense, Dropout, Input
 from keras.models import Sequential, Model
@@ -10,39 +9,10 @@ from keras import constraints
 import keras.backend as K
 import tensorflow as tf
 from keras.callbacks import EarlyStopping
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from modelling.utils.data import SplitDataLoader, SEED
 from scipy.spatial.distance import euclidean
 from tied_autoencoder_keras import DenseLayerAutoencoder
 from modelling.utils.one_cycle import OneCycleLR
-
-VALIDATION_SPLIT = 0.2
-SEED = 1234
-
-np.random.seed(SEED)
-
-Dataset = Tuple[np.ndarray, np.ndarray]
-
-
-class MyDataLoader(DataLoader):
-    @classmethod
-    def load_data(cls) -> Tuple[List[Dataset], List[Dataset]]:
-        train_files = glob.glob('data/raw/QGSJet-*-train.txt')
-        datasets = [np.genfromtxt(file, delimiter=',') for file in train_files]
-        train_datasets, val_datasets, = [], []
-
-        for i, dataset in enumerate(datasets):
-            class_vector = np.full(dataset.shape[0], i)
-            X_train, X_val, y_train, y_val = train_test_split(dataset, class_vector,
-                                                              test_size=VALIDATION_SPLIT,
-                                                              random_state=SEED)
-            scaler = MinMaxScaler()
-            X_train = scaler.fit_transform(X_train)
-            X_val = scaler.transform(X_val)
-            train_datasets.append((X_train, y_train))
-            val_datasets.append((X_val, y_val))
-
-        return train_datasets, val_datasets
 
 
 class WeightsOrthogonalityConstraint(constraints.Constraint):
@@ -110,6 +80,7 @@ def create_untied_model(
         unit_norm_constraint: bool = False,
         uncorrelated_features: bool = False,
         weight_orthogonality: bool = False):
+    np.random.seed(SEED)
     autoencoder = Sequential()
     autoencoder.add(Dropout(rate=ps))
     decoding_dim = [input_size] + encoding_dim[:-1]
@@ -157,7 +128,7 @@ def create_model(input_size: int, encoding_dim: List[int], lr: float,
     return autoencoder
 
 
-@experiment(autologging_backends=AutologgingBackend.KERAS, data_loader=MyDataLoader)
+@experiment(autologging_backends=AutologgingBackend.KERAS, data_loader=SplitDataLoader)
 def main(encoding_dim: Union[int, List[int]],
          epochs: int,
          batch_size: int = 128,
@@ -168,7 +139,7 @@ def main(encoding_dim: Union[int, List[int]],
          tied_weights: bool = False,
          unit_norm_constraint: bool = False,
          weight_orthogonality: bool = False):
-    train_datasets, val_datasets = MyDataLoader.load_data()
+    train_datasets, val_datasets = SplitDataLoader.load_data()
     autoencoders = []
 
     for train, val in zip(train_datasets, val_datasets):
