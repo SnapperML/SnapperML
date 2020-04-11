@@ -5,7 +5,7 @@ from ml_experiment import experiment, AutologgingBackend, DataLoader
 
 from keras.layers import Dense, Dropout, Input
 from keras.models import Sequential, Model
-from keras.optimizers import Adam
+from keras.optimizers import SGD
 from keras import constraints
 import keras.backend as K
 import tensorflow as tf
@@ -14,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from scipy.spatial.distance import euclidean
 from tied_autoencoder_keras import DenseLayerAutoencoder
+from modelling.utils.one_cycle import OneCycleLR
 
 VALIDATION_SPLIT = 0.2
 SEED = 1234
@@ -139,7 +140,7 @@ def create_untied_model(
     return autoencoder
 
 
-def create_model(input_size: int, encoding_dim: List[int],
+def create_model(input_size: int, encoding_dim: List[int], lr: float,
                  ps: float, activation: str, tied_weights: bool, **kwargs):
     """Single fully-connected neural layer as encoder and decoder"""
     if not isinstance(encoding_dim, list):
@@ -152,7 +153,7 @@ def create_model(input_size: int, encoding_dim: List[int],
     else:
         autoencoder = create_untied_model(input_size, encoding_dim, ps, activation, **kwargs)
 
-    autoencoder.compile(Adam(learning_rate=1e-3), loss='mse')
+    autoencoder.compile(SGD(learning_rate=lr), loss='mse')
     return autoencoder
 
 
@@ -162,6 +163,8 @@ def main(encoding_dim: Union[int, List[int]],
          batch_size: int = 128,
          ps: float = 0,
          activation: str = 'relu',
+         one_cycle: bool = True,
+         lr: float = 1e-3,
          tied_weights: bool = False,
          unit_norm_constraint: bool = False,
          weight_orthogonality: bool = False):
@@ -171,7 +174,9 @@ def main(encoding_dim: Union[int, List[int]],
     for train, val in zip(train_datasets, val_datasets):
         X_train, _ = train
         X_val, _ = val
-        early_stopping = EarlyStopping(patience=50, restore_best_weights=True)
+        callbacks = [EarlyStopping(patience=50, restore_best_weights=True)]
+        if one_cycle:
+            callbacks.append(OneCycleLR(lr, verbose=False))
         autoencoder = create_model(
             X_train.shape[1],
             encoding_dim=encoding_dim,
@@ -180,6 +185,7 @@ def main(encoding_dim: Union[int, List[int]],
             unit_norm_constraint=unit_norm_constraint,
             weight_orthogonality=weight_orthogonality,
             activation=activation,
+            lr=lr
         )
         autoencoder.fit(
             X_train,
@@ -188,8 +194,8 @@ def main(encoding_dim: Union[int, List[int]],
             batch_size=batch_size,
             shuffle=True,
             validation_data=(X_val, X_val),
-            callbacks=[early_stopping],
-            verbose=0)
+            callbacks=callbacks,
+            verbose=1)
         autoencoders.append(autoencoder)
 
     X_val = [dataset[0] for dataset in val_datasets]

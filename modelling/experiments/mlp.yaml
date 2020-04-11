@@ -4,17 +4,27 @@ num_trials: 50
 sampler: tpe
 
 param_space:
-  encoding_dim: range(1, 20)
-  regularization: loguniform(0.0001, 0.1)
+  layers:
+    - range(4, 20)
+    - range(4, 20)
+    - range(4, 20)
+    - range(4, 20)
+    - range(4, 20)
   ps: uniform(0, 0.5)
+  lr: loguniform(0.001, 0.1)
+  one_cycle: choice([false, true])
 
 params:
-  epochs: 200
+  epochs: 100
+  use_bn: true
 
 metric:
   name: val_accuracy
   direction: maximize
 
+ray_config:
+  num_cpus: 4
+
 run:
-  - modelling/train_autoencoder.py
+  - modelling/train_mlp.py
 

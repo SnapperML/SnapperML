@@ -42,15 +42,15 @@ def create_model(output_size, layers, ps, optimizer, activation, use_bn) -> Mode
 
     model = Sequential()
 
-    for units, p in zip(layers, ps):
+    for i, (units, p) in enumerate(zip(layers, ps)):
         model.add(Dense(units))
         if use_bn:
-            model.add(BatchNormalization)
+            model.add(BatchNormalization())
         model.add(Activation(activation=activation))
         model.add(Dropout(rate=p))
 
     model.add(Dense(output_size, activation='sigmoid'))
-    model.compile(optimizer, loss='categorical_crossentropy')
+    model.compile(optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
 
 
@@ -89,11 +89,11 @@ def main(layers: List[int],
 
     history = model.fit(
         X_train,
-        X_train,
+        y_train,
         epochs=epochs,
         batch_size=batch_size,
         shuffle=True,
-        validation_data=(X_val, X_val),
+        validation_data=(X_val, y_val),
         callbacks=callbacks,
         verbose=0)
 

@@ -5,11 +5,13 @@ sampler: tpe
 
 param_space:
   encoding_dim: range(1, 20)
-  ps: uniform(0, 0.7)
+  ps: uniform(0, 0.5)
+  lr: loguniform(0.001, 0.1)
   activation: choice(['selu', 'relu'])
   tied_weights: choice([false, true])
   unit_norm_constraint: choice([false, true])
   weight_orthogonality: choice([false, true])
+  one_cycle: choice([false, true])
 
 params:
   epochs: 200
@@ -20,6 +22,7 @@ metric:
 
 ray_config:
   num_cpus: 4
+
 run:
   - modelling/train_autoencoder.py
 
