@@ -1,22 +1,14 @@
-name: "MLP"
+name: "SVM"
 kind: 'group'
-num_trials: 50
+num_trials: 100
 sampler: tpe
+pruner: shp
 
 param_space:
-  layers:
-    - range(4, 20)
-    - range(4, 20)
-    - range(4, 20)
-    - range(4, 20)
-    - range(4, 20)
-  ps: uniform(0, 0.5)
-  lr: loguniform(0.001, 0.1)
-  one_cycle: choice([false, true])
-
-params:
-  epochs: 100
-  use_bn: true
+  C: logspace(0.01, 1000)
+  kernel: choice(['rbf', 'poly', 'linear'])
+  gamma: choice(['scale', 'auto'])
+  degree: range(1, 4)
 
 metric:
   name: val_accuracy
