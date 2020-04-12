@@ -1,0 +1,23 @@
+name: "XGBoost"
+kind: 'group'
+num_trials: 5
+sampler: tpe
+
+param_space:
+  n_estimators: choice([10, 100, 250, 500, 1000, 2500])
+  learning_rate: loguniform(0.0001, 1)
+  max_depth: range(2, 15)
+  gamma: choice([0, 0.5, 2, 10, 20])
+  min_child_weight: loguniform(0.01, 1)
+  subsample: uniform(0.1, 0.9)
+
+metric:
+  name: val_accuracy
+  direction: maximize
+
+ray_config:
+  num_cpus: 4
+
+run:
+  - modelling/train_xgboost.py
+

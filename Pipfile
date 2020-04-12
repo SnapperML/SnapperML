@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 sklearn = "*"
 tied-autoencoder-keras = "*"
+xgboost = "*"
 
 [requires]
 python_version = "3.7"
