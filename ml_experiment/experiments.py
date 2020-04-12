@@ -136,7 +136,7 @@ def _run_group_remote(func: Callable,
             metrics = {}
             trial.set_user_attr('mlflow_run_id', run.info.run_id)
 
-            if not results:
+            if results is None:
                 raise ExperimentError('Group main functions should always return something!')
 
             if is_generator:
