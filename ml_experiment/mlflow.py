@@ -18,6 +18,7 @@ class AutologgingBackend(Enum):
     TENSORFLOW = "tensorflow"
     KERAS = "keras"
     FASTAI = "fastai"
+    XGBOOST = 'xgboost'
 
 
 AutologgingBackendParam = Union[List[AutologgingBackend], AutologgingBackend, None]
@@ -130,6 +131,11 @@ def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds:
         mlflow.fastai.autolog()
         patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
         logger.info("Enabled autologging for Fastai")
+    elif backend == AutologgingBackend.XGBOOST:
+        import mlflow.xgboost
+        mlflow.xgboost.autolog()
+        # patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
+        logger.info("Enabled autologging for Xgboost")
     elif backend:
         raise Exception(f'Autologging backend {backend} not supported')
 
