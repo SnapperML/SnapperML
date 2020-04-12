@@ -1,14 +1,13 @@
 name: "SVM"
 kind: 'group'
-num_trials: 100
+num_trials: 50
 sampler: tpe
-pruner: shp
 
 param_space:
-  C: logspace(0.01, 1000)
+  C: loguniform(0.01, 1000)
   kernel: choice(['rbf', 'poly', 'linear'])
   gamma: choice(['scale', 'auto'])
-  degree: range(1, 4)
+  degree: range(2, 5)
 
 metric:
   name: val_accuracy
@@ -18,5 +17,5 @@ ray_config:
   num_cpus: 4
 
 run:
-  - modelling/train_mlp.py
+  - modelling/train_svm.py
 

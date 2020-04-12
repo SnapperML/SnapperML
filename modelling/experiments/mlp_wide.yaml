@@ -5,17 +5,16 @@ sampler: tpe
 
 param_space:
   layers:
-    - range(4, 20)
-    - range(4, 20)
-    - range(4, 20)
-    - range(4, 20)
-    - range(4, 20)
+    - range(10, 100)
+    - range(10, 100)
+    - range(10, 100)
   ps: uniform(0, 0.2)
   lr: loguniform(0.001, 0.1)
 
 params:
   epochs: 100
   use_bn: true
+  one_cycle: true
 
 metric:
   name: val_accuracy

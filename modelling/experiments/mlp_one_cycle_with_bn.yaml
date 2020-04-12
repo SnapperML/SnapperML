@@ -1,7 +1,6 @@
 name: "MLP"
 kind: 'group'
-num_trials: 50
-sampler: tpe
+num_trials: 1
 
 param_space:
   layers:
@@ -10,13 +9,13 @@ param_space:
     - range(4, 20)
     - range(4, 20)
     - range(4, 20)
-  ps: uniform(0, 0.5)
+  ps: uniform(0, 0.2)
   lr: loguniform(0.001, 0.1)
-  one_cycle: choice([false, true])
 
 params:
   epochs: 100
   use_bn: true
+  one_cycle: true
 
 metric:
   name: val_accuracy
