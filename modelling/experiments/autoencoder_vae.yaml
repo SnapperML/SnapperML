@@ -1,0 +1,26 @@
+name: "Variational Autoencoder"
+kind: 'group'
+num_trials: 50
+sampler: tpe
+
+param_space:
+  encoding_dim:
+    - range(2, 15)
+  latent_dim: range(2, 5)
+  activation: choice(['selu', 'relu'])
+  one_cycle: choice([false, true])
+
+params:
+  ps: 0
+  epochs: 200
+
+metric:
+  name: val_accuracy
+  direction: maximize
+
+ray_config:
+  num_cpus: 4
+
+run:
+  - modelling/train_vae.py
+

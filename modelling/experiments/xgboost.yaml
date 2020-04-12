@@ -1,6 +1,6 @@
 name: "XGBoost"
 kind: 'group'
-num_trials: 5
+num_trials: 1
 sampler: tpe
 
 param_space:

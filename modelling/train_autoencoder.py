@@ -166,7 +166,7 @@ def main(encoding_dim: Union[int, List[int]],
             shuffle=True,
             validation_data=(X_val, X_val),
             callbacks=callbacks,
-            verbose=1)
+            verbose=0)
         autoencoders.append(autoencoder)
 
     X_val = [dataset[0] for dataset in val_datasets]

@@ -2,161 +2,108 @@ from typing import *
 import numpy as np
 from ml_experiment import experiment, AutologgingBackend
 
-from keras.layers import Dense, Dropout, Input
+from keras.layers import Dense, Dropout, Input, Lambda
 from keras.models import Sequential, Model
+from keras.losses import mse
 from keras.optimizers import SGD
-from keras import constraints
 import keras.backend as K
-import tensorflow as tf
 from keras.callbacks import EarlyStopping
 from modelling.utils.data import SplitDataLoader, SEED
 from scipy.spatial.distance import euclidean
-from tied_autoencoder_keras import DenseLayerAutoencoder
 from modelling.utils.one_cycle import OneCycleLR
 
 
-class WeightsOrthogonalityConstraint(constraints.Constraint):
-    def __init__(self, encoding_dim, weightage=1.0, axis=0):
-        self.encoding_dim = encoding_dim
-        self.weightage = weightage
-        self.axis = axis
+def sampling(args):
+    """Reparameterization trick by sampling from an isotropic unit Gaussian.
 
-    def weights_orthogonality(self, w):
-        if self.axis == 1:
-            w = K.transpose(w)
-        if self.encoding_dim > 1:
-            m = K.dot(K.transpose(w), w) - K.eye(self.encoding_dim)
-            return self.weightage * K.sqrt(K.sum(K.square(m)))
-        else:
-            m = K.sum(w ** 2) - 1.
-            return m
+    # Arguments
+        args (tensor): mean and log of variance of Q(z|X)
 
-    def __call__(self, w):
-        return self.weights_orthogonality(w)
+    # Returns
+        z (tensor): sampled latent vector
+    """
+    z_mean, z_log_var = args
+    batch = K.shape(z_mean)[0]
+    dim = K.int_shape(z_mean)[1]
+    # by default, random_normal has mean = 0 and std = 1.0
+    epsilon = K.random_normal(shape=(batch, dim))
+    return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
 
-class UncorrelatedFeaturesConstraint(constraints.Constraint):
-    def __init__(self, encoding_dim, weightage=1.0):
-        self.encoding_dim = encoding_dim
-        self.weightage = weightage
-
-    def get_covariance(self, x):
-        x_centered = K.transpose(x - K.mean(x, axis=0, keepdims=True))
-        covariance = K.dot(x_centered, K.transpose(x_centered)) / tf.cast(x_centered.get_shape()[0], tf.float32)
-        return covariance
-
-    # Constraint penalty
-    def uncorrelated_feature(self, x):
-        if self.encoding_dim <= 1:
-            return 0.0
-        else:
-            output = self.covariance - tf.math.multiply(self.covariance, K.eye(self.encoding_dim))
-            return K.sum(K.square(output))
-
-    def __call__(self, x):
-        self.covariance = self.get_covariance(x)
-        return self.weightage * self.uncorrelated_feature(x)
+def create_loss(input_dim, inputs, outputs, mu, sigma):
+    # VAE loss = mse_loss or xent_loss + kl_loss
+    reconstruction_loss = mse(inputs, outputs) * input_dim
+    kl_loss = 1 + sigma - K.square(mu) - K.exp(sigma)
+    kl_loss = K.sum(kl_loss, axis=-1)
+    kl_loss *= -0.5
+    return K.mean(reconstruction_loss + kl_loss)
 
 
-def get_constraints(encoding_dim: int,
-                    unit_norm_constraint: bool = False,
-                    uncorrelated_features: bool = False,
-                    weight_orthogonality: bool = False):
-    kernel_constraint, kernel_regularizer, activity_regularizer = None, None, None
-    if unit_norm_constraint:
-        kernel_constraint = constraints.UnitNorm(axis=0)
-    if uncorrelated_features:
-        activity_regularizer = UncorrelatedFeaturesConstraint(encoding_dim, weightage=1.0)
-    if weight_orthogonality:
-        kernel_regularizer = WeightsOrthogonalityConstraint(encoding_dim, weightage=1.0, axis=0)
-    return kernel_constraint, kernel_regularizer, activity_regularizer
-
-
-def create_untied_model(
+def create_model(
         input_size: int,
         encoding_dim: Union[List[int], int],
+        latent_dim: int,
         ps: float,
-        activation: str = 'relu',
-        unit_norm_constraint: bool = False,
-        uncorrelated_features: bool = False,
-        weight_orthogonality: bool = False):
+        lr: float,
+        activation: str = 'relu'):
     np.random.seed(SEED)
-    autoencoder = Sequential()
-    autoencoder.add(Dropout(rate=ps))
     decoding_dim = [input_size] + encoding_dim[:-1]
-    kernel_constraint, kernel_regularizer, activity_regularizer = get_constraints(encoding_dim[-1],
-                                                                                  unit_norm_constraint,
-                                                                                  weight_orthogonality,
-                                                                                  uncorrelated_features)
+
+    inputs = Input(shape=(input_size, ), name='encoder_input')
+    encoder = Dropout(rate=ps)(inputs)
+
     for i, units in enumerate(encoding_dim):
         kwargs = {'input_shape': (input_size,)} if i == 0 else {}
-        kwargs['kernel_regularizer'] = kernel_regularizer
-        kwargs['activity_regularizer'] = activity_regularizer if i == len(encoding_dim) - 1 else None
-        encoder = Dense(units,
-                        activation=activation,
-                        use_bias=True,
-                        kernel_constraint=kernel_constraint,
-                        **kwargs)
-        autoencoder.add(encoder)
+        encoder = Dense(units, activation=activation, **kwargs)(encoder)
+
+    mu = Dense(latent_dim, name='mu')(encoder)
+    sigma = Dense(latent_dim, name='log_var')(encoder)
+    z = Lambda(sampling, output_shape=(latent_dim,), name='z')([mu, sigma])
+    encoder = Model(inputs, [mu, sigma, z], name='encoder')
+
+    latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
+    decoder = latent_inputs
 
     for i, units in enumerate(decoding_dim[::-1]):
         layer_activation = 'sigmoid' if i == len(encoding_dim) - 1 else activation
-        decoder = Dense(units,
-                        activation=layer_activation,
-                        use_bias=True,
-                        kernel_constraint=kernel_constraint,
-                        kernel_regularizer=kernel_regularizer)
-        autoencoder.add(decoder)
+        decoder = Dense(units, activation=layer_activation)(decoder)
 
-    return autoencoder
-
-
-def create_model(input_size: int, encoding_dim: List[int], lr: float,
-                 ps: float, activation: str, tied_weights: bool, **kwargs):
-    """Single fully-connected neural layer as encoder and decoder"""
-    if not isinstance(encoding_dim, list):
-        encoding_dim = [encoding_dim]
-
-    if tied_weights:
-        inputs = Input(shape=(input_size,))
-        x = DenseLayerAutoencoder(encoding_dim, dropout=ps)(inputs)
-        autoencoder = Model(inputs=inputs, outputs=x)
-    else:
-        autoencoder = create_untied_model(input_size, encoding_dim, ps, activation, **kwargs)
-
+    decoder = Model(latent_inputs, decoder, name='decoder')
+    outputs = decoder(encoder(inputs)[2])
+    autoencoder = Model(inputs, outputs, name='vae_mlp')
+    loss = create_loss(input_size, inputs, outputs, mu, sigma)
+    autoencoder.add_loss(loss)
     autoencoder.compile(SGD(learning_rate=lr), loss='mse')
-    return autoencoder
+    return autoencoder, encoder, decoder
 
 
 @experiment(autologging_backends=AutologgingBackend.KERAS, data_loader=SplitDataLoader)
 def main(encoding_dim: Union[int, List[int]],
          epochs: int,
+         latent_dim: int,
          batch_size: int = 128,
          ps: float = 0,
          activation: str = 'relu',
          one_cycle: bool = True,
-         lr: float = 1e-3,
-         tied_weights: bool = False,
-         unit_norm_constraint: bool = False,
-         weight_orthogonality: bool = False):
+         lr: float = 1e-3):
     train_datasets, val_datasets = SplitDataLoader.load_data()
     autoencoders = []
 
     for train, val in zip(train_datasets, val_datasets):
         X_train, _ = train
         X_val, _ = val
+
         callbacks = [EarlyStopping(patience=50, restore_best_weights=True)]
         if one_cycle:
             callbacks.append(OneCycleLR(lr, verbose=False))
-        autoencoder = create_model(
+
+        autoencoder, _, _ = create_model(
             X_train.shape[1],
             encoding_dim=encoding_dim,
             ps=ps,
-            tied_weights=tied_weights,
-            unit_norm_constraint=unit_norm_constraint,
-            weight_orthogonality=weight_orthogonality,
             activation=activation,
-            lr=lr
+            latent_dim=latent_dim,
+            lr=lr,
         )
         autoencoder.fit(
             X_train,
@@ -166,7 +113,8 @@ def main(encoding_dim: Union[int, List[int]],
             shuffle=True,
             validation_data=(X_val, X_val),
             callbacks=callbacks,
-            verbose=1)
+            verbose=0)
+
         autoencoders.append(autoencoder)
 
     X_val = [dataset[0] for dataset in val_datasets]
