@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 from inspect import getfullargspec
-from typing import Optional, Union, List, Dict, Any, Type
+from typing import *
 from pydantic import BaseModel, PositiveFloat, DirectoryPath, \
     root_validator, PositiveInt, validator, FilePath, create_model
 from ..optuna import SAMPLERS, PRUNERS
@@ -109,7 +109,9 @@ class ExperimentConfig(JobConfig):
     kind = JobTypes.EXPERIMENT
 
 
-def create_model_from_signature(func, model_name: str, base_model: Type[BaseModel]):
+def create_model_from_signature(func: Callable,
+                                model_name: str,
+                                base_model: Type[BaseModel] = BaseModel):
     args, _, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = getfullargspec(func)
     defaults = defaults or []
     args = args or []
@@ -123,6 +125,7 @@ def create_model_from_signature(func, model_name: str, base_model: Type[BaseMode
     class Config:
         extra = 'allow'
 
+    # Allow extra params if there is a **kwargs parameter in the function signature
     config = Config if varkw else None
 
     return create_model(
@@ -132,3 +135,7 @@ def create_model_from_signature(func, model_name: str, base_model: Type[BaseMode
         __base__=base_model,
         __config__=config,
     )
+
+
+def replace_model_field(__new_model_name__: str = None, __base_model__: Type[BaseModel] = BaseModel, **kwargs):
+    return create_model(__new_model_name__ or __base_model__.__name__, **kwargs, __base__=__base_model__)

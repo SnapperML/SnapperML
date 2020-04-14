@@ -1,4 +1,4 @@
-from typing import Union, Optional, Callable, cast, Type
+from typing import *
 from functools import wraps, partial
 from inspect import isgeneratorfunction
 import sys
@@ -9,11 +9,13 @@ import ray
 import numpy as np
 from pytictoc import TicToc
 import optuna
+from pydantic
 
 from .logging import logger, setup_logging
-from .cli import create_argument_parse_from_function, get_default_params_from_func
+from .cli import create_argument_parse_from_function
 from .config import parse_config, get_validation_model
-from .config.models import GroupConfig, ExperimentConfig, JobTypes, JobConfig, Metric, RayConfig
+from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
+    JobConfig, Metric, RayConfig, create_model_from_signature, replace_model_field
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam
 from .optuna import create_optuna_study, optimize_optuna_study, prune_trial, sample_params_from_distributions
@@ -32,17 +34,26 @@ class Trial(object):
         raise DataNotLoaded()
 
 
-def _parse_experiment_arguments(experiment_func: Callable):
+def _generate_validation_model_with_signature(config: dict, func: Callable) -> Type[JobConfig]:
+    model = get_validation_model(config)
+    params_model = create_model_from_signature(func, 'JobParameters')
+    return replace_model_field(__base_model__=model, params=params_model)
+
+
+def _parse_experiment_arguments(experiment_func: Callable) -> JobConfig:
     parser = create_argument_parse_from_function(experiment_func, all_keywords=True, all_optional=True)
     parser.add_argument('--experiment_name', type=str, default=None)
     parser.add_argument('config_file', type=str)
-    arguments = parser.parse_args()
-    params = vars(arguments)
+
+    params = vars(parser.parse_args())
     config_file = params.pop('config_file')
-    config = parse_config(config_file, get_validation_model)
+    config = parse_config(config_file, lambda c: _generate_validation_model_with_signature(c, experiment_func))
     experiment_name = params.pop('experiment_name') or config.name
     config.name = experiment_name
-    return params, config
+
+    all_params = {**config.params, **params}
+    config = config.copy(update={'params': all_params})
+    return config
 
 
 def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
@@ -62,7 +73,6 @@ def _extract_metrics_and_artifacts(result):
 
 
 def _run_group(func: Callable,
-               overridden_params: dict,
                config: GroupConfig,
                data_loader: Optional[DataLoader],
                **kwargs):
@@ -95,7 +105,6 @@ def _run_group(func: Callable,
 
         new_group_config = config.copy(update={'num_trials': num_trials})
         object_id = remote_func.remote(func=func,
-                                       overridden_params=overridden_params,
                                        study=study,
                                        optimize_metric=optimize_metric,
                                        group_config=new_group_config,
@@ -108,7 +117,6 @@ def _run_group(func: Callable,
 
 
 def _run_group_remote(func: Callable,
-                      overridden_params: dict,
                       study: optuna.Study,
                       optimize_metric: Optional[Metric],
                       group_config: GroupConfig,
@@ -118,7 +126,6 @@ def _run_group_remote(func: Callable,
                       log_seeds: bool,
                       log_system_info: bool):
     is_generator = isgeneratorfunction(func)
-    default_params = get_default_params_from_func(func)
     setup_logging(experiment_name=group_config.name)
     mlflow.set_experiment(group_config.name)
 
@@ -131,7 +138,7 @@ def _run_group_remote(func: Callable,
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
             Trial.get_current = lambda: trial
             param_space = sample_params_from_distributions(trial, group_config.param_space)
-            all_params = {**default_params, **group_config.params, **param_space, **overridden_params}
+            all_params = {**group_config.params, **param_space}
             results = func(**all_params)
             metrics = {}
             trial.set_user_attr('mlflow_run_id', run.info.run_id)
@@ -155,7 +162,6 @@ def _run_group_remote(func: Callable,
 
 
 def _run_experiment(func: Callable,
-                    overridden_params: dict,
                     config: ExperimentConfig,
                     autologging_backends: AutologgingBackendParam,
                     log_seeds: bool,
@@ -164,7 +170,7 @@ def _run_experiment(func: Callable,
 
     with mlflow.start_run():
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
-        results, all_params = _run_job(func, overridden_params, config)
+        results, all_params = _run_job(func, config)
         if not results:
             return
         results = results if isgeneratorfunction(func) else [results]
@@ -174,10 +180,8 @@ def _run_experiment(func: Callable,
                 log_experiment_results(all_params, metrics, artifacts)
 
 
-def _run_job(func: Callable, params: dict, config: JobConfig):
-    default_params = get_default_params_from_func(func)
-    all_params = {**default_params, **config.params, **params}
-    return func(**all_params), all_params
+def _run_job(func: Callable, config: JobConfig):
+    return func(**config.params)
 
 
 def _initialize_ray(config: JobConfig):
@@ -212,7 +216,7 @@ def experiment(func: Optional[Callable] = None, *,
 
     @wraps(func)
     def wrapper():
-        overridden_params, config = _parse_experiment_arguments(func)
+        config = _parse_experiment_arguments(func)
         config = config.copy(update=kwargs)
 
         setup_logging(experiment_name=config.name)
@@ -233,15 +237,10 @@ def experiment(func: Optional[Callable] = None, *,
         t.tic()
 
         if config.kind == JobTypes.JOB:
-            _job_runner(_run_job,
-                        config.ray_config,
-                        func=func,
-                        overridden_params=overridden_params,
-                        config=config)
+            _job_runner(_run_job, config.ray_config, func=func, config=config)
         else:
             create_mlflow_experiment(experiment_name=config.name)
             call_params = dict(func=func,
-                               overridden_params=overridden_params,
                                config=config,
                                autologging_backends=autologging_backends,
                                log_seeds=log_seeds,
@@ -253,7 +252,6 @@ def experiment(func: Optional[Callable] = None, *,
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")
-
         ray.shutdown()
 
     return wrapper
