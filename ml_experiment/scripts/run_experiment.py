@@ -2,11 +2,12 @@
 
 import os
 import subprocess
+from pathlib import Path
 from typing import List, Union
 from dotenv import find_dotenv, load_dotenv
 import docker
+import typer
 
-from ..cli import cli_decorator
 from ..config import parse_config, get_validation_model
 from ..config.models import DockerConfig, JobConfig, ExperimentConfig, GroupConfig
 from ..logging import logger, setup_logging
@@ -90,9 +91,22 @@ def run_job(job: JobConfig, config_file: str):
             subprocess.run(commands, shell=True)
 
 
-@cli_decorator
-def main(config_file):
+app = typer.Typer()
+
+ExistentFile = typer.Argument(
+    ...,
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
+    writable=False,
+    readable=True,
+    resolve_path=True,
+)
+
+
+@app.command()
+def run(config_file: Path = ExistentFile):
     load_dotenv(find_dotenv())
     config = parse_config(config_file, get_validation_model)
     setup_logging(experiment_name=config.name)
-    run_job(config, config_file)
+    run_job(config, str(config_file))

@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/aguillenATC/TFG-AntonioMolner",
     packages=setuptools.find_packages(),
     entry_points={
-        'console_scripts': ['ml-experiment=ml_experiment.scripts.run_experiment:main'],
+        'console_scripts': ['ml-experiment=ml_experiment.scripts.run_experiment:app'],
     },
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -36,6 +36,9 @@ setuptools.setup(
         'pytictoc>=1.5.0',
         'coloredlogs>=10.0',
         'py-cpuinfo>=5.0.0',
+        'typer',
+        'shellingham',
+        'colorama',
         'numpy>=1.17.4',
     ]
 )

@@ -1,6 +1,7 @@
 import os
 import sys
 import yaml
+from pathlib import Path
 
 from ..logging import logger
 from typing import Callable, Type, TypeVar, Union
@@ -13,7 +14,10 @@ T = TypeVar('T', bound=BaseModel)
 ModelFactory = Callable[[dict], Type[T]]
 
 
-def parse_config(config_file: str, model: Union[BaseModel, ModelFactory] = None) -> T:
+def parse_config(config_file: Union[str, Path], model: Union[BaseModel, ModelFactory] = None) -> T:
+    if isinstance(config_file, Path):
+        config_file = str(config_file.absolute())
+
     with open(config_file, "r") as f:
         yaml_document = os.path.expandvars(f.read())
         config = yaml.safe_load(yaml_document)

@@ -1,7 +1,6 @@
 from docstring_parser import parse as parse_docstring
 from inspect import signature
 import argparse
-from functools import wraps, partial
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):
@@ -81,22 +80,6 @@ def create_argument_parse_from_function(func, all_keywords=False, all_optional=F
             add_argument(parameter, optional, all_keywords, as_optional=all_optional)
 
     return parser
-
-
-def cli_decorator(func=None, *, description=""):
-    """Decorator to create a CLI around a callable.
-    It takes automatically its positional and keyword arguments
-    and generates the argument parser. """
-    if func is None:
-        return partial(cli_decorator, description=description)
-    parser = create_argument_parse_from_function(func, description=description)
-
-    @wraps(func)
-    def inner():
-        args = parser.parse_args()
-        return func(**vars(args))
-
-    return inner
 
 
 def get_default_params_from_func(func):
