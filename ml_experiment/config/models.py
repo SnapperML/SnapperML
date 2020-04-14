@@ -1,7 +1,9 @@
 import os
 from enum import Enum
-from typing import Optional, Union, List, Dict
-from pydantic import BaseModel, PositiveFloat, DirectoryPath, root_validator, PositiveInt, validator, FilePath
+from inspect import getfullargspec
+from typing import Optional, Union, List, Dict, Any, Type
+from pydantic import BaseModel, PositiveFloat, DirectoryPath, \
+    root_validator, PositiveInt, validator, FilePath, create_model
 from ..optuna import SAMPLERS, PRUNERS
 from ..optuna.types import ParamDistribution
 
@@ -66,6 +68,7 @@ class JobConfig(BaseModel):
     docker_config: Optional[DockerConfig]
     params: dict = {}
     ray_config: Optional[RayConfig] = RayConfig()
+
     # google_cloud_config: Optional[GoogleCloudConfig]
 
     @root_validator()
@@ -104,3 +107,28 @@ class GroupConfig(JobConfig):
 
 class ExperimentConfig(JobConfig):
     kind = JobTypes.EXPERIMENT
+
+
+def create_model_from_signature(func, model_name: str, base_model: Type[BaseModel]):
+    args, _, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = getfullargspec(func)
+    defaults = defaults or []
+    args = args or []
+
+    non_default_args = len(args) - len(defaults)
+    defaults = (...,) * non_default_args + defaults
+
+    keyword_only_params = {param: kwonlydefaults.get(param, Any) for param in kwonlyargs}
+    params = {param: (annotations.get(param, Any), default) for param, default in zip(args, defaults)}
+
+    class Config:
+        extra = 'allow'
+
+    config = Config if varkw else None
+
+    return create_model(
+        model_name,
+        **params,
+        **keyword_only_params,
+        __base__=base_model,
+        __config__=config,
+    )
