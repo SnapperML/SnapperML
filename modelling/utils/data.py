@@ -20,6 +20,7 @@ class SplitDataLoader(DataLoader):
         train_datasets, val_datasets, = [], []
 
         for i, dataset in enumerate(datasets):
+            dataset = dataset[:, 3:-1]
             class_vector = np.full(dataset.shape[0], i)
             X_train, X_val, y_train, y_val = train_test_split(dataset, class_vector,
                                                               test_size=VALIDATION_SPLIT,
@@ -41,7 +42,7 @@ class UnifiedDataLoader(DataLoader):
         X, y = [], []
 
         for i, dataset in enumerate(datasets):
-            X.append(dataset)
+            X.append(dataset[:, 3:-1])
             y.append(np.full(dataset.shape[0], i))
 
         X = np.concatenate(X, axis=0)
