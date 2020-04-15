@@ -81,10 +81,14 @@ class JobConfig(BaseModel):
         extra = 'forbid'
 
 
+PrunerEnum = Enum('PrunerEnum', zip(PRUNERS.keys(), PRUNERS.keys()), module=__name__)
+SamplerEnum = Enum('SamplerEnum', zip(SAMPLERS.keys(), SAMPLERS.keys()), module=__name__)
+
+
 class GroupConfig(JobConfig):
     kind = JobTypes.JOB
-    sampler: Optional[str]
-    pruner: Optional[str]
+    sampler: SamplerEnum
+    pruner: PrunerEnum
     num_trials: PositiveInt
     resources_per_worker: WorkerResourcesConfig = WorkerResourcesConfig()
     # TODO: Improve by adding dict of classes
