@@ -1,6 +1,6 @@
 name: "XGBoost"
 kind: 'group'
-num_trials: 1
+num_trials: 100
 sampler: tpe
 
 param_space:
@@ -14,9 +14,6 @@ param_space:
 metric:
   name: val_accuracy
   direction: maximize
-
-ray_config:
-  num_cpus: 4
 
 run:
   - modelling/train_xgboost.py

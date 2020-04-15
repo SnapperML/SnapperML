@@ -37,7 +37,7 @@ def main(layers: List[int],
          batch_size: int = 128,
          ps: Union[List[float], float] = 0,
          one_cycle: bool = True,
-         activation='relu',
+         activation: str = 'relu',
          use_bn=True,
          lr: float = 1e-3):
     """Simple autoencoder"""
