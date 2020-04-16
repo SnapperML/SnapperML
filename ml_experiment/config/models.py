@@ -44,7 +44,7 @@ class WorkerResourcesConfig(BaseModel):
 
 
 class DockerConfig(BaseModel):
-    dockerfile: Optional[str]
+    dockerfile: Optional[FilePath]
     image: Optional[str]
     context: Optional[DirectoryPath] = None
     args: dict = {}

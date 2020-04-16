@@ -34,13 +34,11 @@ def extract_docker_config_params(docker_config):
     return dockerfile, context, image, build_args
 
 
-def build_image(client, context, dockerfile, build_args):
+def build_image(client: docker.APIClient, context: Path, dockerfile: Path, build_args: dict):
     if not context:
-        head, tail = os.path.split(dockerfile)
-        build_params = {'path': head, 'dockerfile': tail}
+        build_params = {'path': dockerfile.parent, 'dockerfile': dockerfile.name}
     else:
-        dockerfile_file = open(dockerfile, 'rb')
-        build_params = {'path': context, 'fileobj': dockerfile_file}
+        build_params = {'path': context, 'fileobj': dockerfile.open('rb')}
     logs = client.build(rm=True, buildargs=build_args, decode=True, **build_params)
     logs_str = []
     for log in logs:
@@ -51,7 +49,7 @@ def build_image(client, context, dockerfile, build_args):
     return logs_str[-1].strip().split(' ')[-1]
 
 
-def run_docker_container(image, command):
+def run_docker_container(image: str, command):
     client = docker.from_env()
     container = client.containers.run(
         image,
@@ -101,7 +99,7 @@ def validate_dict(value: str) -> dict:
         return {}
     try:
         return dict(item.strip().split("=") for item in value.split(";"))
-    except Exception as e:
+    except Exception:
         raise typer.BadParameter(
             "It should be comma-separated list of field:position pairs, e.g. Date:0,Amount:2,Payee:5,Memo:9")
 
@@ -114,7 +112,7 @@ def validate_file_or_dict(value: Union[dict, str]) -> dict:
             return parse_config(value)
         else:
             return validate_dict(value)
-    except Exception as e:
+    except Exception:
         raise typer.BadParameter('It should be an existent yaml file or a dictionary')
 
 
@@ -129,7 +127,7 @@ def validate_existent_file(value: Union[List[Path], Path], extension='.py'):
 
     current_dir = Path('.').absolute()
     for file in value:
-        if file.suffix != extension:
+        if extension and file.suffix != extension:
             raise typer.BadParameter(f'File should have {extension} extension')
         if current_dir not in list(file.parents):
             raise typer.BadParameter('Running scripts from outside the working directory is not supported.')
@@ -163,10 +161,23 @@ ExistentFileOption = lambda extension, *args, **kwargs: typer.Option(
     **kwargs
 )
 
+ExistentDir = lambda *args, **kwargs: typer.Option(
+    *args,
+    **kwargs,
+    exists=True,
+    file_okay=False,
+    dir_okay=True,
+    readable=True,
+    resolve_path=True,
+)
+
 TyperDict = lambda *args: typer.Option('', *args, callback=validate_dict, metavar="DICT")
 FileOrDict = lambda *args: typer.Option({}, *args, callback=validate_file_or_dict, metavar="FILE | DICT")
 
+tracking_uri = None
 
+
+# TODO: Add .py extension restriction when params/params_space is used.
 @app.command()
 def run(scripts: List[Path] = ExistentFile('.py', None),
         config_file: Path = ExistentFileOption('.yaml', None, '--config_file'),
@@ -180,6 +191,9 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         timeout_per_trial: float = typer.Option(None, '--timeout_per_trial', min=0, metavar='POSITIVE_FLOAT'),
         metric_key: str = typer.Option(None, '--metric_key'),
         metric_direction: OptimizationDirection = typer.Option(None, '--metric_direction'),
+        docker_image: str = typer.Option(None, '--docker_image'),
+        docker_context: Path = ExistentDir(None, '--docker_context'),
+        dockerfile: Path = ExistentFileOption(None, None),
         ray_config: str = FileOrDict('--ray_config')):
     load_dotenv(find_dotenv())
 
@@ -190,6 +204,10 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         params = {**config.params, **params}
         ray_config = {**config.ray_config.dict(), **ray_config}
         scripts = scripts or config.run
+        if config.docker_config:
+            docker_image = docker_image or config.docker_config.dockerfile
+            dockerfile = dockerfile or config.docker_config.dockerfile
+            docker_context = docker_context or config.docker_config.context
         config = config.dict(exclude_defaults=True)
     else:
         config = {}
@@ -212,6 +230,13 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 
     job_config = {k: v for k, v in job_config.items() if v}
 
+    if docker_image or docker_context:
+        job_config['docker_config'] = {
+            'image': docker_image,
+            'dockerfile': dockerfile,
+            'context': docker_context
+        }
+
     try:
         if kind == JobTypes.GROUP:
             group_config = {
@@ -231,7 +256,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
             result = JobConfig(**job_config)
     except ValidationError as e:
         print(e)
-        exit(1)
+        raise typer.Exit()
 
     setup_logging(experiment_name=result.name)
 
@@ -245,24 +270,5 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
     file_content = json.loads(result.json(exclude_defaults=True))
     file_content['kind'] = kind.value
     yaml.dump(file_content, fp)
-    print(file_content)
-    print(fp.read())
     run_job(result, fp.name)
     fp.close()
-
-
-# TODO: Add commands for CRUD operations over experiments
-
-@app.command(name='list')
-def list_experiments():
-    pass
-
-
-@app.command(name='delete')
-def delete_experiment(experiment_name: str):
-    pass
-
-
-@app.command(name='rename')
-def rename_experiment(experiment_name: str, new_name: str):
-    pass
