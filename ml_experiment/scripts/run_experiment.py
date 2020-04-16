@@ -3,13 +3,18 @@
 import os
 import subprocess
 from pathlib import Path
-from typing import List, Union
+import tempfile
+from typing import *
 from dotenv import find_dotenv, load_dotenv
 import docker
 import typer
+from pydantic import ValidationError
+import yaml
+import json
 
 from ..config import parse_config, get_validation_model
-from ..config.models import DockerConfig, JobConfig, ExperimentConfig, GroupConfig
+from ..config.models import DockerConfig, JobConfig, ExperimentConfig,\
+    GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric
 from ..logging import logger, setup_logging
 
 
@@ -91,22 +96,151 @@ def run_job(job: JobConfig, config_file: str):
             subprocess.run(commands, shell=True)
 
 
+def validate_dict(value: str) -> dict:
+    value = value.strip()
+    if not value:
+        return {}
+    try:
+        return dict(item.strip().split("=") for item in value.split(";"))
+    except Exception as e:
+        raise typer.BadParameter(
+            "It should be comma-separated list of field:position pairs, e.g. Date:0,Amount:2,Payee:5,Memo:9")
+
+
+def validate_file_or_dict(value: Union[dict, str]) -> dict:
+    if isinstance(value, dict):
+        return value
+    try:
+        if os.path.isfile(value):
+            return parse_config(value)
+        else:
+            return validate_dict(value)
+    except Exception as e:
+        raise typer.BadParameter('It should be an existent yaml file or a dictionary')
+
+
+def validate_existent_file(value: Union[List[Path], Path], extension='.py'):
+    if not value:
+        return value
+
+    is_singleton = not isinstance(value, list)
+
+    if is_singleton:
+        value = [value]
+
+    current_dir = Path('.').absolute()
+    for file in value:
+        if file.suffix != extension:
+            raise typer.BadParameter(f'File should have {extension} extension')
+        if current_dir not in list(file.parents):
+            raise typer.BadParameter('Running scripts from outside the working directory is not supported.')
+
+    return value[0] if is_singleton else value
+
+
 app = typer.Typer()
 
-ExistentFile = typer.Argument(
-    ...,
+ExistentFile = lambda extension, *args, **kwargs: typer.Argument(
+    *args,
+    callback=lambda value: validate_existent_file(value, extension),
     exists=True,
     file_okay=True,
     dir_okay=False,
     writable=False,
     readable=True,
     resolve_path=True,
+    **kwargs
 )
+
+ExistentFileOption = lambda extension, *args, **kwargs: typer.Option(
+    *args,
+    callback=lambda value: validate_existent_file(value, extension),
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
+    writable=False,
+    readable=True,
+    resolve_path=True,
+    **kwargs
+)
+
+TyperDict = lambda *args: typer.Option('', *args, callback=validate_dict, metavar="DICT")
+FileOrDict = lambda *args: typer.Option({}, *args, callback=validate_file_or_dict, metavar="FILE | DICT")
 
 
 @app.command()
-def run(config_file: Path = ExistentFile):
+def run(scripts: List[Path] = ExistentFile('.py', None),
+        config_file: Path = ExistentFileOption('.yaml', None, '--config_file'),
+        name: str = typer.Option(None),
+        kind: JobTypes = typer.Option(None),
+        params: str = TyperDict(),
+        param_space: str = TyperDict('--param_space'),
+        sampler: SamplerEnum = typer.Option(None),
+        pruner: PrunerEnum = typer.Option(None),
+        num_trials: int = typer.Option(None, '--num_trials', min=0, metavar='POSITIVE_INT'),
+        timeout_per_trial: float = typer.Option(None, '--timeout_per_trial', min=0, metavar='POSITIVE_FLOAT'),
+        metric_key: str = typer.Option(None, '--metric_key'),
+        metric_direction: OptimizationDirection = typer.Option(None, '--metric_direction'),
+        ray_config: str = FileOrDict('--ray_config')):
     load_dotenv(find_dotenv())
-    config = parse_config(config_file, get_validation_model)
-    setup_logging(experiment_name=config.name)
-    run_job(config, str(config_file))
+
+    if config_file:
+        config = parse_config(config_file, get_validation_model)
+        kind = kind or config.kind
+        name = name or config.name
+        params = {**config.params, **params}
+        ray_config = {**config.ray_config.dict(), **ray_config}
+        scripts = scripts or config.run
+        config = config.dict(exclude_defaults=True)
+    else:
+        config = {}
+
+    if metric_key:
+        metric = Metric(name=metric_key, metric_direction=metric_direction)
+    else:
+        metric = None
+
+    # Job type inference based on input parameters
+    if param_space and not kind:
+        kind = JobTypes.GROUP
+
+    job_config = {
+        'params': params,
+        'name': name,
+        'ray_config': ray_config,
+        'run': scripts
+    }
+
+    job_config = {k: v for k, v in job_config.items() if v}
+
+    try:
+        if kind == JobTypes.GROUP:
+            group_config = {
+                'sampler': sampler,
+                'pruner': pruner,
+                'num_trials': num_trials,
+                'timeout_per_trial': timeout_per_trial,
+                'metric': metric,
+                'param_space': param_space,
+            }
+            group_config = {k: v for k, v in group_config.items() if v}
+            group_config = {**job_config, **config, **group_config}
+            result = GroupConfig.parse_obj(group_config)
+        elif kind == JobTypes.EXPERIMENT:
+            result = ExperimentConfig(**job_config)
+        else:
+            result = JobConfig(**job_config)
+    except ValidationError as e:
+        print(e)
+        exit(1)
+
+    setup_logging(experiment_name=result.name)
+
+    fp = tempfile.NamedTemporaryFile(mode='w+', delete=False)
+    # Avoid raising non-serializable errors
+    if isinstance(result, GroupConfig):
+        result.param_space = {k: str(v) for k, v in result.param_space.items()}
+    file_content = json.loads(result.json(exclude_defaults=True))
+    file_content['kind'] = kind.value
+    yaml.dump(file_content, fp)
+    run_job(result, fp.name)

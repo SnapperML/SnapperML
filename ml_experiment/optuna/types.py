@@ -1,7 +1,10 @@
 import re
 from typing import *
 from pydantic import parse_obj_as, ValidationError
+from optuna import Trial
 import json
+
+T = TypeVar('T')
 
 
 def validate_numerical_method_str(method_name, value, num_arguments=2) -> Tuple[float, ...]:
@@ -18,7 +21,7 @@ def validate_numerical_method_str(method_name, value, num_arguments=2) -> Tuple[
         raise ValueError(f'Value must be of the form {method_name}({params})')
 
 
-class Choice(Callable):
+class Choice(Callable[[str, Trial], T]):
     output_value = Any
 
     def __init__(self, choices):
@@ -30,6 +33,8 @@ class Choice(Callable):
 
     @classmethod
     def validate(cls, value):
+        if isinstance(value, cls):
+            return value
         if not isinstance(value, str):
             raise TypeError('List of choices is required')
         try:
@@ -49,7 +54,7 @@ class Choice(Callable):
         return cls(result)
 
     def __str__(self):
-        return f'choice({self.choices})'
+        return f'choice({self.choices})'.lower()
 
     def __call__(self, name, trial):
         return trial.suggest_categorical(name, self.choices)
@@ -58,7 +63,7 @@ class Choice(Callable):
         return self.__str__()
 
 
-class Uniform(Callable):
+class Uniform(Callable[[str, Trial], float]):
     output_value = float
 
     def __init__(self, low, high):
@@ -71,6 +76,8 @@ class Uniform(Callable):
 
     @classmethod
     def validate(cls, value):
+        if isinstance(value, cls):
+            return value
         low, high = validate_numerical_method_str('uniform', value)
         return cls(low=low, high=high)
 
@@ -84,7 +91,7 @@ class Uniform(Callable):
         return self.__str__()
 
 
-class LogUniform(Callable):
+class LogUniform(Callable[[str, Trial], float]):
     output_value = float
 
     def __init__(self, low, high):
@@ -97,6 +104,8 @@ class LogUniform(Callable):
 
     @classmethod
     def validate(cls, value):
+        if isinstance(value, cls):
+            return value
         low, high = validate_numerical_method_str('loguniform', value)
         return cls(low=low, high=high)
 
@@ -110,7 +119,7 @@ class LogUniform(Callable):
         return self.__str__()
 
 
-class Range(Callable):
+class Range(Callable[[str, Trial], int]):
     output_value = int
 
     def __init__(self, start: int, stop: int, step=1):
@@ -125,6 +134,8 @@ class Range(Callable):
 
     @classmethod
     def validate(cls, value):
+        if isinstance(value, cls):
+            return value
         try:
             start, stop, step = validate_numerical_method_str('range', value, num_arguments=3)
             return cls(start=int(start), stop=int(stop), step=int(step))
@@ -142,7 +153,7 @@ class Range(Callable):
         return self.__str__()
 
 
-class RandomInt(Callable):
+class RandomInt(Callable[[str, Trial], int]):
     output_value = int
 
     def __init__(self, low, high):
@@ -155,6 +166,8 @@ class RandomInt(Callable):
 
     @classmethod
     def validate(cls, value):
+        if isinstance(value, cls):
+            return value
         low, high = validate_numerical_method_str('randint', value, num_arguments=2)
         return cls(low=int(low), high=int(high))
 
@@ -168,4 +181,5 @@ class RandomInt(Callable):
         return self.__str__()
 
 
-ParamDistribution = Union[Choice, Range, RandomInt, Uniform, LogUniform]
+ParamDistribution = Union[Choice[Any], Range, RandomInt, Uniform, LogUniform]
+ParamDistributionBase = Callable[[str, Trial], T]
