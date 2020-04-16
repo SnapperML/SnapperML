@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import *
 
 
 def monkey_patch_imported_function(original_func: Callable, new_function: Callable, target: any):
@@ -16,3 +16,12 @@ def monkey_patch_imported_function(original_func: Callable, new_function: Callab
     for key in scope.keys():
         if scope[key] == original_func:
             scope[key] = new_function
+
+
+def recursive_map(func: Callable, seq: Union[Dict, Sequence]):
+    if isinstance(seq, Sequence):
+        return [recursive_map(func, item) for item in seq]
+    elif isinstance(seq, Dict):
+        return {k: recursive_map(func, v) for k, v in seq.items()}
+    else:
+        return func(seq)

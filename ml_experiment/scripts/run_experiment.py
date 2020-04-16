@@ -1,5 +1,3 @@
-# TODO: Add support for remote job scheduling through Swarm or OpenFaas
-
 import os
 import subprocess
 from pathlib import Path
@@ -13,9 +11,10 @@ import yaml
 import json
 
 from ..config import parse_config, get_validation_model
-from ..config.models import DockerConfig, JobConfig, ExperimentConfig,\
+from ..config.models import DockerConfig, JobConfig, ExperimentConfig, \
     GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric
 from ..logging import logger, setup_logging
+from ..utils import recursive_map
 
 
 def extract_string_from_docker_log(log):
@@ -236,11 +235,34 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 
     setup_logging(experiment_name=result.name)
 
-    fp = tempfile.NamedTemporaryFile(mode='w+', delete=False)
+    fp = tempfile.NamedTemporaryFile(mode='w+')
+
     # Avoid raising non-serializable errors
     if isinstance(result, GroupConfig):
-        result.param_space = {k: str(v) for k, v in result.param_space.items()}
+        result.param_space = recursive_map(
+            lambda x: str(x) if isinstance(x, Callable) else x, result.param_space)
+
     file_content = json.loads(result.json(exclude_defaults=True))
     file_content['kind'] = kind.value
     yaml.dump(file_content, fp)
+    print(file_content)
+    print(fp.read())
     run_job(result, fp.name)
+    fp.close()
+
+
+# TODO: Add commands for CRUD operations over experiments
+
+@app.command(name='list')
+def list_experiments():
+    pass
+
+
+@app.command(name='delete')
+def delete_experiment(experiment_name: str):
+    pass
+
+
+@app.command(name='rename')
+def rename_experiment(experiment_name: str, new_name: str):
+    pass
