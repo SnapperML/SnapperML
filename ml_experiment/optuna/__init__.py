@@ -50,8 +50,8 @@ def optimize_optuna_study(study: optuna.Study,
 def create_optuna_study(group_config: 'GroupConfig') -> optuna.Study:
     optuna.logging.enable_propagation()
     optuna.logging.disable_default_handler()
-    pruner = group_config.pruner and PRUNERS.get(group_config.pruner)()
-    sampler = group_config.sampler and SAMPLERS.get(group_config.sampler)()
+    pruner = group_config.pruner and PRUNERS.get(group_config.pruner.value)()
+    sampler = group_config.sampler and SAMPLERS.get(group_config.sampler.value)()
     _delete_optuna_study(study_name=group_config.name)
     study = optuna.create_study(study_name=group_config.name,
                                 sampler=sampler,

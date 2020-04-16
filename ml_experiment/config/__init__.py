@@ -24,7 +24,7 @@ def parse_config(config_file: Union[str, Path], model: Union[BaseModel, ModelFac
         if model:
             try:
                 model = model(config) if callable(model) else model
-                return model(**config)
+                return model.parse_obj(config)
             except ValidationError as e:
                 logger.error(e)
                 sys.exit(1)

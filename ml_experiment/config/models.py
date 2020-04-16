@@ -19,8 +19,10 @@ class RayConfig(BaseModel):
 
     @validator('address', pre=True)
     def convert_localhost(cls, v: str):
-        v_striped = v.strip()
-        return '' if v_striped == 'localhost' else v_striped
+        if v:
+            v_striped = v.strip()
+            return '' if v_striped == 'localhost' else v_striped
+        return v
 
     class Config:
         extra = 'allow'
@@ -61,15 +63,12 @@ class GoogleCloudConfig(BaseModel):
 
 
 class JobConfig(BaseModel):
-    # TODO: Improve by adding restrictions according signature
-    kind: JobTypes = JobTypes.JOB
     name: str
-    run: Union[str, List[str]]
+    kind: JobTypes = JobTypes.JOB
+    run: Union[FilePath, List[FilePath]]
     docker_config: Optional[DockerConfig]
     params: dict = {}
     ray_config: Optional[RayConfig] = RayConfig()
-
-    # google_cloud_config: Optional[GoogleCloudConfig]
 
     @root_validator()
     def check_docker_and_ray(cls, values):
@@ -87,26 +86,14 @@ SamplerEnum = Enum('SamplerEnum', zip(SAMPLERS.keys(), SAMPLERS.keys()), module=
 
 class GroupConfig(JobConfig):
     kind = JobTypes.JOB
-    sampler: SamplerEnum
-    pruner: PrunerEnum
+    sampler: Optional[SamplerEnum]
+    pruner: Optional[PrunerEnum]
     num_trials: PositiveInt
     resources_per_worker: WorkerResourcesConfig = WorkerResourcesConfig()
     # TODO: Improve by adding dict of classes
     timeout_per_trial: Optional[PositiveFloat]
     param_space: Dict[str, Union[ParamDistribution, List[ParamDistribution]]]
     metric: Optional[Metric]
-
-    @validator('sampler')
-    def sampler_must_exist(cls, value):
-        if value not in SAMPLERS:
-            raise ValueError(f'Sampler must be one of the following: {list(SAMPLERS.keys())}')
-        return value
-
-    @validator('pruner')
-    def pruner_must_exist(cls, value):
-        if value not in PRUNERS:
-            raise ValueError(f'Pruner must be one of the following: {list(PRUNERS.keys())}')
-        return value
 
 
 class ExperimentConfig(JobConfig):
