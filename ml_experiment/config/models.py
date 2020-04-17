@@ -3,9 +3,9 @@ from enum import Enum
 from inspect import getfullargspec
 from typing import *
 from pydantic import BaseModel, PositiveFloat, DirectoryPath, \
-    root_validator, PositiveInt, validator, FilePath, create_model
+    root_validator, PositiveInt, validator, FilePath, create_model, BaseConfig
 from ..optuna import SAMPLERS, PRUNERS
-from ..optuna.types import ParamDistribution
+from ..optuna.types import ParamDistributionBase, ParamDistribution
 
 
 class JobTypes(Enum):
@@ -47,7 +47,7 @@ class DockerConfig(BaseModel):
     dockerfile: Optional[FilePath]
     image: Optional[str]
     context: Optional[DirectoryPath] = None
-    args: dict = {}
+    args: Dict = {}
 
     @root_validator()
     def check_dockerfile_and_image(cls, values):
@@ -102,7 +102,7 @@ class ExperimentConfig(JobConfig):
 
 def create_model_from_signature(func: Callable,
                                 model_name: str,
-                                base_model: Type[BaseModel] = BaseModel):
+                                allow_factory_types: bool = False):
     args, _, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = getfullargspec(func)
     defaults = defaults or []
     args = args or []
@@ -110,22 +110,33 @@ def create_model_from_signature(func: Callable,
     non_default_args = len(args) - len(defaults)
     defaults = (...,) * non_default_args + defaults
 
-    keyword_only_params = {param: kwonlydefaults.get(param, Any) for param in kwonlyargs}
-    params = {param: (annotations.get(param, Any), default) for param, default in zip(args, defaults)}
+    params = dict(zip(args, defaults))
+    kwonlyparams = {param: kwonlydefaults.get(param, ...) for param in kwonlyargs}
+    all_params = {**params, **kwonlyparams}
+    model_params = {}
 
-    class Config:
-        extra = 'allow'
+    for param, default in all_params.items():
+        annotation = annotations.get(param, Any)
 
-    # Allow extra params if there is a **kwargs parameter in the function signature
-    config = Config if varkw else None
+        if allow_factory_types:
+            annotation_args = getattr(annotation, '__args__', None)
+            # If annotation is a wrapper type
+            if annotation_args and len(annotation_args) == 1:
+                # Replace  T[X] -> T[ParamDistribution[X]]
+                required_distribution = ParamDistributionBase[annotation_args[0]]
+                wrapper_annotation = annotation.copy_with((required_distribution,))
+                annotation = Union[annotation, wrapper_annotation]
+            elif annotation in [list, tuple]:
+                annotation = Union[annotation, List[ParamDistributionBase[Any]], ParamDistributionBase[List]]
+            annotation = Union[annotation, ParamDistributionBase[annotation]]
 
-    return create_model(
-        model_name,
-        **params,
-        **keyword_only_params,
-        __base__=base_model,
-        __config__=config,
-    )
+        model_params[param] = (annotation, default)
+
+    class Config(BaseConfig):
+        # Allow extra params if there is a **kwargs parameter in the function signature
+        extra = 'allow' if varkw else 'forbid'
+
+    return create_model(model_name, **model_params, __config__=Config)
 
 
 def replace_model_field(__new_model_name__: str = None, __base_model__: Type[BaseModel] = BaseModel, **kwargs):

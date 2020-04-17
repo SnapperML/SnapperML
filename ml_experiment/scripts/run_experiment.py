@@ -172,7 +172,7 @@ ExistentDir = lambda *args, **kwargs: typer.Option(
 )
 
 TyperDict = lambda *args: typer.Option('', *args, callback=validate_dict, metavar="DICT")
-FileOrDict = lambda *args: typer.Option({}, *args, callback=validate_file_or_dict, metavar="FILE | DICT")
+FileOrDict = lambda *args: typer.Option(*args, callback=validate_file_or_dict, metavar="FILE | DICT")
 
 tracking_uri = None
 
@@ -183,8 +183,8 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         config_file: Path = ExistentFileOption('.yaml', None, '--config_file'),
         name: str = typer.Option(None),
         kind: JobTypes = typer.Option(None),
-        params: str = TyperDict(),
-        param_space: str = TyperDict('--param_space'),
+        params: str = FileOrDict({}),
+        param_space: str = FileOrDict({}, '--param_space'),
         sampler: SamplerEnum = typer.Option(None),
         pruner: PrunerEnum = typer.Option(None),
         num_trials: int = typer.Option(None, '--num_trials', min=0, metavar='POSITIVE_INT'),
@@ -193,8 +193,9 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         metric_direction: OptimizationDirection = typer.Option(None, '--metric_direction'),
         docker_image: str = typer.Option(None, '--docker_image'),
         docker_context: Path = ExistentDir(None, '--docker_context'),
+        docker_build_args: str = FileOrDict({}, '--docker_context'),
         dockerfile: Path = ExistentFileOption(None, None),
-        ray_config: str = FileOrDict('--ray_config')):
+        ray_config: str = FileOrDict({}, '--ray_config')):
     load_dotenv(find_dotenv())
 
     if config_file:
@@ -208,6 +209,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
             docker_image = docker_image or config.docker_config.dockerfile
             dockerfile = dockerfile or config.docker_config.dockerfile
             docker_context = docker_context or config.docker_config.context
+            docker_build_args = {**docker_build_args, **config.docker_config.args}
         config = config.dict(exclude_defaults=True)
     else:
         config = {}
@@ -234,7 +236,8 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         job_config['docker_config'] = {
             'image': docker_image,
             'dockerfile': dockerfile,
-            'context': docker_context
+            'context': docker_context,
+            'args': docker_build_args
         }
 
     try:
