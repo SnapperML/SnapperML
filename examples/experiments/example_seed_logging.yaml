@@ -1,4 +1,0 @@
-name: "Sample Seed logging"
-kind: 'experiment'
-run:
-  - examples/test_seed_logging.py
