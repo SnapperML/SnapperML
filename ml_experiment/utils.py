@@ -1,4 +1,5 @@
 from typing import *
+from docstring_parser import parse as parse_docstring
 
 
 def monkey_patch_imported_function(original_func: Callable, new_function: Callable, target: any):
@@ -25,3 +26,11 @@ def recursive_map(func: Callable, seq: Union[Dict, Sequence]):
         return {k: recursive_map(func, v) for k, v in seq.items()}
     else:
         return func(seq)
+
+
+def get_description_from_function(func):
+    description = ''
+    if func.__doc__:
+        docstring = parse_docstring(func.__doc__)
+        description = f'{docstring.short_description}\n\n{docstring.long_description or ""}'
+    return description

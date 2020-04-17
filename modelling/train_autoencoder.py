@@ -145,7 +145,8 @@ def main(encoding_dim: Union[int, List[int]],
     for train, val in zip(train_datasets, val_datasets):
         X_train, _ = train
         X_val, _ = val
-        callbacks = [EarlyStopping(patience=50, restore_best_weights=True)]
+        # callbacks = [EarlyStopping(patience=50, restore_best_weights=True)]
+        callbacks = []
         if one_cycle:
             callbacks.append(OneCycleLR(lr, verbose=False))
         autoencoder = create_model(
@@ -176,6 +177,8 @@ def main(encoding_dim: Union[int, List[int]],
 
     predictions = [autoencoder.predict(X_val) for autoencoder in autoencoders]
     y_preds = []
+
+    print(predictions)
 
     for i, x in enumerate(X_val):
         preds = [euclidean(x, X_pred[i]) for X_pred in predictions]
