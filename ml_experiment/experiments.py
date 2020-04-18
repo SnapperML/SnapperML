@@ -5,8 +5,10 @@ import sys
 from math import ceil
 from datetime import timedelta
 import mlflow
+from mlflow.entities import RunStatus
 import ray
 import numpy as np
+import traceback
 from pytictoc import TicToc
 import optuna
 
@@ -15,7 +17,7 @@ from .config import parse_config, get_validation_model, ValidationError
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
     JobConfig, Metric, RayConfig, create_model_from_signature, replace_model_field
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
-    setup_autologging, AutologgingBackendParam
+    setup_autologging, AutologgingBackendParam, log_text_file
 from .optuna import create_optuna_study, optimize_optuna_study, prune_trial, sample_params_from_distributions
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 
@@ -30,6 +32,32 @@ class Trial(object):
     @classmethod
     def get_current(cls) -> optuna.Trial:
         raise DataNotLoaded()
+
+
+class MlflowRunWithErrorHandling:
+    def __init__(self, delete_if_failed: bool, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+        self.delete_if_failed = True
+        self.run = None
+
+    def __enter__(self):
+        self.run = mlflow.start_run(*self.args, **self.kwargs)
+        return self.run
+
+    def __exit__(self, exception_type, exception_value, _):
+        if exception_type:
+            mlflow.set_tag('Status', 'Failed')
+            if self.delete_if_failed:
+                mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
+                mlflow.delete_run(self.run.info.run_id)
+            else:
+                log_text_file('traceback.txt', traceback.format_exc())
+                mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
+                logger.exception(exception_value)
+        else:
+            mlflow.end_run(RunStatus.to_string(RunStatus.FINISHED))
+        return exception_type is None
 
 
 def _parse_experiment_arguments(experiment_func: Callable) -> JobConfig:
@@ -122,6 +150,7 @@ def _run_group_remote(func: Callable,
                       data_loader_class: Optional[Type],
                       autologging_backends: AutologgingBackendParam,
                       log_seeds: bool,
+                      delete_if_failed: bool,
                       log_system_info: bool):
     is_generator = isgeneratorfunction(func)
     setup_logging(experiment_name=group_config.name)
@@ -132,7 +161,8 @@ def _run_group_remote(func: Callable,
         data_loader_class.load_data = lambda: data
 
     def objective(trial):
-        with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
+        with MlflowRunWithErrorHandling(delete_if_failed=delete_if_failed, run_name=f'Trial {trial.number}') as run:
+            raise ValueError('Testing')
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
             mlflow.set_tag('mlflow.source.name', getfile(func))
             Trial.get_current = lambda: trial
@@ -164,9 +194,10 @@ def _run_experiment(func: Callable,
                     config: ExperimentConfig,
                     autologging_backends: AutologgingBackendParam,
                     log_seeds: bool,
-                    log_system_info: bool):
+                    log_system_info: bool,
+                    delete_if_failed: bool):
     mlflow.set_experiment(config.name)
-    with mlflow.start_run():
+    with MlflowRunWithErrorHandling(delete_if_failed=delete_if_failed):
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         mlflow.set_tag('mlflow.source.name', getfile(func))
         results, all_params = _run_job(func, config)
@@ -202,6 +233,7 @@ def experiment(func: Optional[Callable] = None, *,
                data_loader: Optional[DataLoader] = None,
                log_seeds: bool = True,
                log_system_info: bool = True,
+               delete_if_failed: bool = False,
                **kwargs):
     if func is None:
         return partial(experiment,
@@ -244,6 +276,7 @@ def experiment(func: Optional[Callable] = None, *,
                                config=config,
                                autologging_backends=autologging_backends,
                                log_seeds=log_seeds,
+                               delete_if_failed=delete_if_failed,
                                log_system_info=log_system_info)
             if config.kind == JobTypes.GROUP:
                 _run_group(data_loader=data_loader, **call_params)
