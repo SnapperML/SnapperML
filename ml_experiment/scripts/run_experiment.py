@@ -11,11 +11,12 @@ import yaml
 import json
 import pystache
 
-from ..config import parse_config, get_validation_model
+from ..config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS
 from ..config.models import DockerConfig, JobConfig, ExperimentConfig, \
     GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric, Run
 from ..logging import logger, setup_logging
 from ..utils import recursive_map
+
 
 
 def extract_string_from_docker_log(log):
@@ -104,7 +105,7 @@ def validate_dict(value: str) -> dict:
         return dict(item.strip().split("=") for item in value.split(";"))
     except Exception:
         raise typer.BadParameter(
-            "It should be comma-separated list of field:position pairs, e.g. Date:0,Amount:2,Payee:5,Memo:9")
+            'It should be semicolon-separated list of field=value pairs, e.g. "date=0; amount=1"')
 
 
 def validate_file_or_dict(value: Union[dict, str]) -> dict:
@@ -116,22 +117,23 @@ def validate_file_or_dict(value: Union[dict, str]) -> dict:
         else:
             return validate_dict(value)
     except Exception:
-        raise typer.BadParameter('It should be an existent yaml file or a dictionary')
+        raise typer.BadParameter('It should be dictionary of the form "k1=v1; k2=v2" or an existent YAML or JSON file')
 
 
-def validate_existent_file(value: Union[List[Path], Path], extension='.py'):
+def validate_existent_file(value: Union[List[Path], Path], extensions: Union[str, List[str]] = '.py'):
     if not value:
         return value
 
     is_singleton = not isinstance(value, list)
+    extensions = [extensions] if isinstance(extensions, str) else extensions
 
     if is_singleton:
         value = [value]
 
     current_dir = Path('.').absolute()
     for file in value:
-        if extension and file.suffix != extension:
-            raise typer.BadParameter(f'File should have {extension} extension')
+        if extensions and file.suffix not in extensions:
+            raise typer.BadParameter(f'File should have one of the following extensions: {",".join(extensions)}')
         if current_dir not in list(file.parents):
             raise typer.BadParameter('Running scripts from outside the working directory is not supported.')
 
@@ -174,8 +176,11 @@ ExistentDir = lambda *args, **kwargs: typer.Option(
     resolve_path=True,
 )
 
-TyperDict = lambda *args: typer.Option('', *args, callback=validate_dict, metavar="DICT")
-FileOrDict = lambda *args: typer.Option(*args, callback=validate_file_or_dict, metavar="FILE | DICT")
+FileOrDict = lambda *args: typer.Option(
+    *args,
+    callback=validate_file_or_dict,
+    metavar="FILE | DICT"
+)
 
 tracking_uri = None
 
@@ -183,7 +188,7 @@ tracking_uri = None
 # TODO: Add .py extension restriction when params/params_space is used.
 @app.command()
 def run(scripts: List[Path] = ExistentFile('.py', None),
-        config_file: Path = ExistentFileOption('.yaml', None, '--config_file'),
+        config_file: Path = ExistentFileOption(SUPPORTED_EXTENSIONS, None, '--config_file'),
         name: str = typer.Option(None),
         kind: JobTypes = typer.Option(None),
         params: str = FileOrDict({}),
@@ -267,15 +272,15 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 
     setup_logging(experiment_name=result.name)
 
-    fp = tempfile.NamedTemporaryFile(mode='w+')
-
     # Avoid raising non-serializable errors
     if isinstance(result, GroupConfig):
         result.param_space = recursive_map(
             lambda x: str(x) if isinstance(x, Callable) else x, result.param_space)
 
-    file_content = json.loads(result.json(exclude_defaults=True))
-    file_content['kind'] = kind.value
-    yaml.dump(file_content, fp)
+    fp = tempfile.NamedTemporaryFile(mode='w+', suffix='.json')
+    file_content = result.json(exclude_defaults=True)
+    fp.write(file_content)
+    fp.flush()
+    os.fsync(fp.fileno())
     run_job(result, fp.name)
     fp.close()

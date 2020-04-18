@@ -11,7 +11,7 @@ from pytictoc import TicToc
 import optuna
 
 from .logging import logger, setup_logging
-from .config import parse_config, get_validation_model
+from .config import parse_config, get_validation_model, ValidationError
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
     JobConfig, Metric, RayConfig, create_model_from_signature, replace_model_field
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
@@ -33,22 +33,25 @@ class Trial(object):
 
 
 def _parse_experiment_arguments(experiment_func: Callable) -> JobConfig:
-    config = parse_config(sys.argv[1], get_validation_model)
-    """
-    params_model = create_model_from_signature(experiment_func, 'Parameters')
-    model = replace_model_field(config.name, config.__class__, params=params_model)
+    try:
+        config = parse_config(sys.argv[1], get_validation_model)
+        """
+        params_model = create_model_from_signature(experiment_func, 'Parameters')
+        model = replace_model_field(config.name, config.__class__, params=params_model)
 
-    if isinstance(config, GroupConfig):
-        param_space_model = create_model_from_signature(experiment_func,
-                                                        config.name,
-                                                        allow_factory_types=True)
-        model = replace_model_field(config.name, model, param_space=param_space_model)
+        if isinstance(config, GroupConfig):
+            param_space_model = create_model_from_signature(experiment_func,
+                                                            config.name,
+                                                            allow_factory_types=True)
+            model = replace_model_field(config.name, model, param_space=param_space_model)
 
-    import pprint
-    print(pprint.pprint(model.__fields__['param_space']))
-    model.validate(config.dict(exclude_defaults=True))
-    """
-    return config
+        import pprint
+        print(pprint.pprint(model.__fields__['param_space']))
+        model.validate(config.dict(exclude_defaults=True))
+        """
+        return config
+    except ValidationError:
+        exit(1)
 
 
 def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
