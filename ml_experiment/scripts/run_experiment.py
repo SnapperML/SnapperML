@@ -9,10 +9,11 @@ import typer
 from pydantic import ValidationError
 import yaml
 import json
+import pystache
 
 from ..config import parse_config, get_validation_model
 from ..config.models import DockerConfig, JobConfig, ExperimentConfig, \
-    GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric
+    GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric, Run
 from ..logging import logger, setup_logging
 from ..utils import recursive_map
 
@@ -36,9 +37,9 @@ def extract_docker_config_params(docker_config):
 
 def build_image(client: docker.APIClient, context: Path, dockerfile: Path, build_args: dict):
     if not context:
-        build_params = {'path': dockerfile.parent, 'dockerfile': dockerfile.name}
+        build_params = {'path': str(dockerfile.parent.absolute()), 'dockerfile': dockerfile.name}
     else:
-        build_params = {'path': context, 'fileobj': dockerfile.open('rb')}
+        build_params = {'path': str(context.absolute()), 'fileobj': dockerfile.open('rb')}
     logs = client.build(rm=True, buildargs=build_args, decode=True, **build_params)
     logs_str = []
     for log in logs:
@@ -80,11 +81,13 @@ def process_docker(config: DockerConfig, command: Union[List[str], str]):
 
 
 def run_job(job: JobConfig, config_file: str):
+    run_commands: List[Run] = job.run if isinstance(job.run, list) else [job.run]
+
     if isinstance(job, ExperimentConfig) or isinstance(job, GroupConfig):
-        run_commands = job.run if isinstance(job.run, list) else [job.run]
-        bash_commands = [f'python3 {cmd} {config_file}' for cmd in run_commands]
+        bash_commands = [f'python3 {cmd.command} {config_file}' for cmd in run_commands]
     else:
-        bash_commands = job.run
+        bash_commands = [pystache.render(cmd.command, job.params) if cmd.template else cmd.command
+                         for cmd in run_commands]
 
     if job.docker_config:
         process_docker(job.docker_config, bash_commands)
@@ -193,7 +196,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         metric_direction: OptimizationDirection = typer.Option(None, '--metric_direction'),
         docker_image: str = typer.Option(None, '--docker_image'),
         docker_context: Path = ExistentDir(None, '--docker_context'),
-        docker_build_args: str = FileOrDict({}, '--docker_context'),
+        docker_build_args: str = FileOrDict({}, '--docker_build_args'),
         dockerfile: Path = ExistentFileOption(None, None),
         ray_config: str = FileOrDict({}, '--ray_config')):
     load_dotenv(find_dotenv())
@@ -202,9 +205,10 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         config = parse_config(config_file, get_validation_model)
         kind = kind or config.kind
         name = name or config.name
-        params = {**config.params, **params}
-        ray_config = {**config.ray_config.dict(), **ray_config}
         scripts = scripts or config.run
+        params = {**config.params, **params}
+        if config.ray_config:
+            ray_config = {**config.ray_config.dict(), **ray_config}
         if config.docker_config:
             docker_image = docker_image or config.docker_config.dockerfile
             dockerfile = dockerfile or config.docker_config.dockerfile
@@ -232,7 +236,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 
     job_config = {k: v for k, v in job_config.items() if v}
 
-    if docker_image or docker_context:
+    if docker_image or dockerfile:
         job_config['docker_config'] = {
             'image': docker_image,
             'dockerfile': dockerfile,

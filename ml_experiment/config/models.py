@@ -56,6 +56,11 @@ class DockerConfig(BaseModel):
         return values
 
 
+class Run(BaseModel):
+    command: Union[FilePath, str]
+    template: bool = False
+
+
 class GoogleCloudConfig(BaseModel):
     credentials_keyfile: FilePath = None
     job_spec: dict
@@ -65,10 +70,10 @@ class GoogleCloudConfig(BaseModel):
 class JobConfig(BaseModel):
     name: str
     kind: JobTypes = JobTypes.JOB
-    run: Union[FilePath, List[FilePath]]
+    run: List[Run]
     docker_config: Optional[DockerConfig]
     params: dict = {}
-    ray_config: Optional[RayConfig] = RayConfig()
+    ray_config: Optional[RayConfig]
 
     @root_validator()
     def check_docker_and_ray(cls, values):
