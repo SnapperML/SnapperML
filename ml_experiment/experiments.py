@@ -1,6 +1,6 @@
 from typing import *
 from functools import wraps, partial
-from inspect import isgeneratorfunction
+from inspect import isgeneratorfunction, getfile
 import sys
 from math import ceil
 from datetime import timedelta
@@ -9,10 +9,8 @@ import ray
 import numpy as np
 from pytictoc import TicToc
 import optuna
-from pydantic
 
 from .logging import logger, setup_logging
-from .cli import create_argument_parse_from_function
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
     JobConfig, Metric, RayConfig, create_model_from_signature, replace_model_field
@@ -34,25 +32,22 @@ class Trial(object):
         raise DataNotLoaded()
 
 
-def _generate_validation_model_with_signature(config: dict, func: Callable) -> Type[JobConfig]:
-    model = get_validation_model(config)
-    params_model = create_model_from_signature(func, 'JobParameters')
-    return replace_model_field(__base_model__=model, params=params_model)
-
-
 def _parse_experiment_arguments(experiment_func: Callable) -> JobConfig:
-    parser = create_argument_parse_from_function(experiment_func, all_keywords=True, all_optional=True)
-    parser.add_argument('--experiment_name', type=str, default=None)
-    parser.add_argument('config_file', type=str)
+    config = parse_config(sys.argv[1], get_validation_model)
+    """
+    params_model = create_model_from_signature(experiment_func, 'Parameters')
+    model = replace_model_field(config.name, config.__class__, params=params_model)
 
-    params = vars(parser.parse_args())
-    config_file = params.pop('config_file')
-    config = parse_config(config_file, lambda c: _generate_validation_model_with_signature(c, experiment_func))
-    experiment_name = params.pop('experiment_name') or config.name
-    config.name = experiment_name
+    if isinstance(config, GroupConfig):
+        param_space_model = create_model_from_signature(experiment_func,
+                                                        config.name,
+                                                        allow_factory_types=True)
+        model = replace_model_field(config.name, model, param_space=param_space_model)
 
-    all_params = {**config.params, **params}
-    config = config.copy(update={'params': all_params})
+    import pprint
+    print(pprint.pprint(model.__fields__['param_space']))
+    model.validate(config.dict(exclude_defaults=True))
+    """
     return config
 
 
@@ -136,6 +131,7 @@ def _run_group_remote(func: Callable,
     def objective(trial):
         with mlflow.start_run(run_name=f'Trial {trial.number}') as run:
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
+            mlflow.set_tag('mlflow.source.name', getfile(func))
             Trial.get_current = lambda: trial
             param_space = sample_params_from_distributions(trial, group_config.param_space)
             all_params = {**group_config.params, **param_space}
@@ -167,9 +163,9 @@ def _run_experiment(func: Callable,
                     log_seeds: bool,
                     log_system_info: bool):
     mlflow.set_experiment(config.name)
-
     with mlflow.start_run():
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
+        mlflow.set_tag('mlflow.source.name', getfile(func))
         results, all_params = _run_job(func, config)
         if not results:
             return
@@ -185,7 +181,8 @@ def _run_job(func: Callable, config: JobConfig):
 
 
 def _initialize_ray(config: JobConfig):
-    ray.init(**config.ray_config.dict(), log_to_driver=True)
+    params = config.ray_config.dict() if config.ray_config else {}
+    return ray.init(**params, log_to_driver=True)
 
 
 def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, **kwargs):

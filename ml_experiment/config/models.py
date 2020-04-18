@@ -81,6 +81,32 @@ class JobConfig(BaseModel):
             raise ValueError('Executing on Docker and Ray are incompatible. Please, select just one way.')
         return values
 
+    """
+    @root_validator()
+    def check_run_commands(cls, values):
+        for cmd in values['run']:
+            command = cmd.command
+            if values['kind'] in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
+                if isinstance(command, str) or not command.exists():
+                    raise ValueError('Script does not exists')
+                elif command.suffix() != '.py':
+                    raise ValueError('Script should be a python file when running an experiment or a group')
+        return values
+    """
+
+    @validator('run', pre=True)
+    def convert_to_run(cls, value):
+        if isinstance(value, str) or isinstance(value, FilePath):
+            return [Run(command=value)]
+        if isinstance(value, List):
+            return [x for v in value for x in cls.convert_to_run(v)]
+        elif isinstance(value, Run):
+            return [value]
+        elif isinstance(value, Dict):
+            return [Run(**value)]
+        else:
+            raise ValueError()
+
     class Config:
         extra = 'forbid'
 
