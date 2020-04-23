@@ -1,9 +1,11 @@
 from typing import *
 from functools import wraps, partial
+from dataclasses import dataclass
 from inspect import isgeneratorfunction, getfile
 import sys
 from math import ceil
 from datetime import timedelta
+
 import mlflow
 from mlflow.entities import RunStatus
 import ray
@@ -34,18 +36,50 @@ class Trial(object):
         raise DataNotLoaded()
 
 
+class Callback:
+    def on_job_start(self, config: JobConfig):
+        pass
+
+    def on_job_end(self, config: JobConfig, exception: Optional[Exception]):
+        pass
+
+    def on_info_logged(self, config: JobConfig, metrics: Dict[str, Any], artifacts: Dict[Dict, Any], **kwargs):
+        pass
+
+
+@dataclass
+class CallbacksHandler:
+    callbacks: List[Callback]
+    config: JobConfig
+
+    def on_job_start(self):
+        for callback in self.callbacks:
+            callback.on_job_start(self.config)
+
+    def on_job_end(self, exception: Optional[Exception]):
+        for callback in self.callbacks:
+            callback.on_job_end(self.config, exception)
+
+    def on_info_logged(self, metrics, artifacts, **kwargs):
+        for callback in self.callbacks:
+            callback.on_info_logged(self.config, metrics, artifacts, **kwargs)
+
+
 class MlflowRunWithErrorHandling:
-    def __init__(self, delete_if_failed: bool, *args, **kwargs):
+    def __init__(self, callbacks_handler: CallbacksHandler, delete_if_failed: bool, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
-        self.delete_if_failed = True
+        self.delete_if_failed = delete_if_failed
+        self.callbacks_handler = callbacks_handler
         self.run = None
 
     def __enter__(self):
         self.run = mlflow.start_run(*self.args, **self.kwargs)
+        self.callbacks_handler.on_job_start()
         return self.run
 
     def __exit__(self, exception_type, exception_value, _):
+        self.callbacks_handler.on_job_end(exception=exception_value)
         if exception_type:
             mlflow.set_tag('Status', 'Failed')
             if self.delete_if_failed:
@@ -101,6 +135,7 @@ def _extract_metrics_and_artifacts(result):
 def _run_group(func: Callable,
                config: GroupConfig,
                data_loader: Optional[DataLoader],
+               callbacks_handler: CallbacksHandler,
                **kwargs):
     optimize_metric = config.metric
 
@@ -113,6 +148,8 @@ def _run_group(func: Callable,
     data_object_id = None
     data_loader_class = None
     futures = []
+
+    callbacks_handler.on_job_start()
 
     if data_loader:
         data = data_loader.load_data()
@@ -136,10 +173,17 @@ def _run_group(func: Callable,
                                        group_config=new_group_config,
                                        object_id=data_object_id,
                                        data_loader_class=data_loader_class,
+                                       callbacks_handler=callbacks_handler,
                                        **kwargs)
         futures.append(object_id)
 
-    return ray.get(futures)
+    try:
+        result = ray.get(futures)
+    except Exception as e:
+        callbacks_handler.on_job_end(e)
+    else:
+        callbacks_handler.on_job_end(None)
+        return result
 
 
 def _run_group_remote(func: Callable,
@@ -149,6 +193,7 @@ def _run_group_remote(func: Callable,
                       object_id: Optional[int],
                       data_loader_class: Optional[Type],
                       autologging_backends: AutologgingBackendParam,
+                      callbacks_handler: CallbacksHandler,
                       log_seeds: bool,
                       delete_if_failed: bool,
                       log_system_info: bool):
@@ -162,7 +207,6 @@ def _run_group_remote(func: Callable,
 
     def objective(trial):
         with MlflowRunWithErrorHandling(delete_if_failed=delete_if_failed, run_name=f'Trial {trial.number}') as run:
-            raise ValueError('Testing')
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
             mlflow.set_tag('mlflow.source.name', getfile(func))
             Trial.get_current = lambda: trial
@@ -180,11 +224,13 @@ def _run_group_remote(func: Callable,
                     metrics, artifacts = _extract_metrics_and_artifacts(result)
                     trial.report(metrics[optimize_metric.name], i)
                     log_experiment_results(all_params, metrics, artifacts)
+                    callbacks_handler.on_info_logged(metrics, artifacts)
                     if trial.should_prune():
                         prune_trial()
             else:
                 metrics, artifacts = _extract_metrics_and_artifacts(results)
                 log_experiment_results(all_params, metrics, artifacts)
+                callbacks_handler.on_info_logged(metrics, artifacts)
             return metrics[optimize_metric.name]
 
     optimize_optuna_study(study, objective=objective, group_config=group_config)
@@ -193,11 +239,12 @@ def _run_group_remote(func: Callable,
 def _run_experiment(func: Callable,
                     config: ExperimentConfig,
                     autologging_backends: AutologgingBackendParam,
+                    callbacks_handler: CallbacksHandler,
                     log_seeds: bool,
                     log_system_info: bool,
                     delete_if_failed: bool):
     mlflow.set_experiment(config.name)
-    with MlflowRunWithErrorHandling(delete_if_failed=delete_if_failed):
+    with MlflowRunWithErrorHandling(callbacks_handler, delete_if_failed=delete_if_failed):
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         mlflow.set_tag('mlflow.source.name', getfile(func))
         results, all_params = _run_job(func, config)
@@ -208,6 +255,7 @@ def _run_experiment(func: Callable,
             if result:
                 metrics, artifacts = _extract_metrics_and_artifacts(result)
                 log_experiment_results(all_params, metrics, artifacts)
+                callbacks_handler.on_info_logged(metrics, artifacts)
 
 
 def _run_job(func: Callable, config: JobConfig):
@@ -228,6 +276,7 @@ def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, *
 
 
 def experiment(func: Optional[Callable] = None, *,
+               callbacks: Iterable[Callback],
                autologging_backends: AutologgingBackendParam = None,
                optimization_metric: Union[Metric, str, None] = None,
                data_loader: Optional[DataLoader] = None,
@@ -237,8 +286,14 @@ def experiment(func: Optional[Callable] = None, *,
                **kwargs):
     if func is None:
         return partial(experiment,
+                       callbacks=callbacks,
                        autologging_backends=autologging_backends,
-                       optimize_metric=optimization_metric)
+                       optimize_metric=optimization_metric,
+                       data_loader=data_loader,
+                       log_seeds=log_seeds,
+                       log_system_info=log_system_info,
+                       delete_if_failed=delete_if_failed,
+                       **kwargs)
 
     if isinstance(optimization_metric, str):
         optimization_metric = Metric(name=optimization_metric)
@@ -250,6 +305,7 @@ def experiment(func: Optional[Callable] = None, *,
     def wrapper():
         config = _parse_experiment_arguments(func)
         config = config.copy(update=kwargs)
+        callbacks_handler = CallbacksHandler(callbacks=list(callbacks), config=config)
 
         setup_logging(experiment_name=config.name)
         logger.info(f'======== Starting job {config.name} in {sys.argv[0]} =========')
