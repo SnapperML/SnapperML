@@ -1,6 +1,5 @@
 from typing import *
 from functools import wraps, partial
-from dataclasses import dataclass
 from inspect import isgeneratorfunction, getfile
 import sys
 from math import ceil
@@ -14,13 +13,14 @@ import traceback
 from pytictoc import TicToc
 import optuna
 
+from .callbacks.core import Callback, CallbacksHandler
 from .logging import logger, setup_logging
-from .config import parse_config, get_validation_model, ValidationError
+from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
-    JobConfig, Metric, RayConfig, create_model_from_signature, replace_model_field
+    JobConfig, Metric, RayConfig
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam, log_text_file
-from .optuna import create_optuna_study, optimize_optuna_study, prune_trial, sample_params_from_distributions
+from .optuna import create_optuna_study, optimize_optuna_study, sample_params_from_distributions
 from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 
 
@@ -36,51 +36,39 @@ class Trial(object):
         raise DataNotLoaded()
 
 
-class Callback:
-    def on_job_start(self, config: JobConfig):
-        pass
-
-    def on_job_end(self, config: JobConfig, exception: Optional[Exception]):
-        pass
-
-    def on_info_logged(self, config: JobConfig, metrics: Dict[str, Any], artifacts: Dict[Dict, Any], **kwargs):
-        pass
-
-
-@dataclass
-class CallbacksHandler:
-    callbacks: List[Callback]
-    config: JobConfig
-
-    def on_job_start(self):
-        for callback in self.callbacks:
-            callback.on_job_start(self.config)
-
-    def on_job_end(self, exception: Optional[Exception]):
-        for callback in self.callbacks:
-            callback.on_job_end(self.config, exception)
-
-    def on_info_logged(self, metrics, artifacts, **kwargs):
-        for callback in self.callbacks:
-            callback.on_info_logged(self.config, metrics, artifacts, **kwargs)
-
-
 class MlflowRunWithErrorHandling:
-    def __init__(self, callbacks_handler: CallbacksHandler, delete_if_failed: bool, *args, **kwargs):
+    def __init__(self,
+                 callbacks_handler: CallbacksHandler,
+                 delete_if_failed: bool,
+                 trial: Optional[optuna.Trial] = None,
+                 *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
         self.delete_if_failed = delete_if_failed
         self.callbacks_handler = callbacks_handler
+        self.trial = trial
         self.run = None
+        self.finish_callback_params = {}
 
     def __enter__(self):
         self.run = mlflow.start_run(*self.args, **self.kwargs)
-        self.callbacks_handler.on_job_start()
-        return self.run
+        if not self.trial:
+            self.callbacks_handler.on_job_start(run_id=self.run.info.run_id)
+        return self.run, self.finish_callback_params
 
     def __exit__(self, exception_type, exception_value, _):
-        self.callbacks_handler.on_job_end(exception=exception_value)
-        if exception_type:
+        is_pruned_exception = exception_type != optuna.exceptions.TrialPruned
+        exception_value = None if is_pruned_exception else exception_value
+
+        if self.trial:
+            self.callbacks_handler.on_trial_end(trial=self.trial,
+                                                exception=exception_value,
+                                                **self.finish_callback_params)
+        else:
+            self.callbacks_handler.on_job_end(exception=exception_value,
+                                              **self.finish_callback_params)
+
+        if exception_type and is_pruned_exception:
             mlflow.set_tag('Status', 'Failed')
             if self.delete_if_failed:
                 mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
@@ -91,29 +79,12 @@ class MlflowRunWithErrorHandling:
                 logger.exception(exception_value)
         else:
             mlflow.end_run(RunStatus.to_string(RunStatus.FINISHED))
+
         return exception_type is None
 
 
-def _parse_experiment_arguments(experiment_func: Callable) -> JobConfig:
-    try:
-        config = parse_config(sys.argv[1], get_validation_model)
-        """
-        params_model = create_model_from_signature(experiment_func, 'Parameters')
-        model = replace_model_field(config.name, config.__class__, params=params_model)
-
-        if isinstance(config, GroupConfig):
-            param_space_model = create_model_from_signature(experiment_func,
-                                                            config.name,
-                                                            allow_factory_types=True)
-            model = replace_model_field(config.name, model, param_space=param_space_model)
-
-        import pprint
-        print(pprint.pprint(model.__fields__['param_space']))
-        model.validate(config.dict(exclude_defaults=True))
-        """
-        return config
-    except ValidationError:
-        exit(1)
+def _parse_experiment_arguments() -> JobConfig:
+    return parse_config(sys.argv[1], get_validation_model)
 
 
 def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
@@ -171,7 +142,7 @@ def _run_group(func: Callable,
                                        study=study,
                                        optimize_metric=optimize_metric,
                                        group_config=new_group_config,
-                                       object_id=data_object_id,
+                                       data=data_object_id,
                                        data_loader_class=data_loader_class,
                                        callbacks_handler=callbacks_handler,
                                        **kwargs)
@@ -180,9 +151,9 @@ def _run_group(func: Callable,
     try:
         result = ray.get(futures)
     except Exception as e:
-        callbacks_handler.on_job_end(e)
+        callbacks_handler.on_job_end(exception=e)
     else:
-        callbacks_handler.on_job_end(None)
+        callbacks_handler.on_job_end(exception=None)
         return result
 
 
@@ -190,7 +161,7 @@ def _run_group_remote(func: Callable,
                       study: optuna.Study,
                       optimize_metric: Optional[Metric],
                       group_config: GroupConfig,
-                      object_id: Optional[int],
+                      data: Optional[Any],
                       data_loader_class: Optional[Type],
                       autologging_backends: AutologgingBackendParam,
                       callbacks_handler: CallbacksHandler,
@@ -201,20 +172,33 @@ def _run_group_remote(func: Callable,
     setup_logging(experiment_name=group_config.name)
     mlflow.set_experiment(group_config.name)
 
-    if object_id:
-        data = ray.get(object_id)
+    if data:
         data_loader_class.load_data = lambda: data
 
-    def objective(trial):
-        with MlflowRunWithErrorHandling(delete_if_failed=delete_if_failed, run_name=f'Trial {trial.number}') as run:
+    def objective(trial: optuna.Trial):
+        with MlflowRunWithErrorHandling(callbacks_handler=callbacks_handler,
+                                        delete_if_failed=delete_if_failed,
+                                        trial=trial,
+                                        run_name=f'Trial {trial.number}') as (run, finish_param):
+            # Connect mlflow runs with optuna trials
+            run_id = run.info.run_id
+            finish_param['metric'] = None
+            trial.set_user_attr('mlflow_run_id', run_id)
+
+            logger.info(f'======== Starting Trial {trial.number} =========')
+
             setup_autologging(func, autologging_backends, log_seeds, log_system_info)
-            mlflow.set_tag('mlflow.source.name', getfile(func))
             Trial.get_current = lambda: trial
-            param_space = sample_params_from_distributions(trial, group_config.param_space)
-            all_params = {**group_config.params, **param_space}
+
+            # Fix default_worker.py name in Mlflow server
+            mlflow.set_tag('mlflow.source.name', getfile(func))
+
+            sampled_params = sample_params_from_distributions(trial, group_config.param_space)
+            callbacks_handler.on_trial_start(trial=trial, sampled_params=sampled_params)
+
+            all_params = {**group_config.params, **sampled_params}
             results = func(**all_params)
             metrics = {}
-            trial.set_user_attr('mlflow_run_id', run.info.run_id)
 
             if results is None:
                 raise ExperimentError('Group main functions should always return something!')
@@ -224,14 +208,19 @@ def _run_group_remote(func: Callable,
                     metrics, artifacts = _extract_metrics_and_artifacts(result)
                     trial.report(metrics[optimize_metric.name], i)
                     log_experiment_results(all_params, metrics, artifacts)
-                    callbacks_handler.on_info_logged(metrics, artifacts)
+                    callbacks_handler.on_info_logged(metrics=metrics, artifacts=artifacts)
                     if trial.should_prune():
-                        prune_trial()
+                        raise optuna.exceptions.TrialPruned()
             else:
                 metrics, artifacts = _extract_metrics_and_artifacts(results)
                 log_experiment_results(all_params, metrics, artifacts)
-                callbacks_handler.on_info_logged(metrics, artifacts)
-            return metrics[optimize_metric.name]
+                callbacks_handler.on_info_logged(metrics=metrics, artifacts=artifacts)
+
+            metric = metrics[optimize_metric.name]
+            finish_param['metric'] = metric
+
+            logger.info(f'======== Finished Trial {trial.number} =========')
+            return metric
 
     optimize_optuna_study(study, objective=objective, group_config=group_config)
 
@@ -255,7 +244,7 @@ def _run_experiment(func: Callable,
             if result:
                 metrics, artifacts = _extract_metrics_and_artifacts(result)
                 log_experiment_results(all_params, metrics, artifacts)
-                callbacks_handler.on_info_logged(metrics, artifacts)
+                callbacks_handler.on_info_logged(metrics=metrics, artifacts=artifacts)
 
 
 def _run_job(func: Callable, config: JobConfig):
@@ -276,7 +265,7 @@ def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, *
 
 
 def experiment(func: Optional[Callable] = None, *,
-               callbacks: Iterable[Callback],
+               callbacks: Optional[Iterable[Callback]] = None,
                autologging_backends: AutologgingBackendParam = None,
                optimization_metric: Union[Metric, str, None] = None,
                data_loader: Optional[DataLoader] = None,
@@ -303,9 +292,9 @@ def experiment(func: Optional[Callable] = None, *,
 
     @wraps(func)
     def wrapper():
-        config = _parse_experiment_arguments(func)
+        config = _parse_experiment_arguments()
         config = config.copy(update=kwargs)
-        callbacks_handler = CallbacksHandler(callbacks=list(callbacks), config=config)
+        callbacks_handler = CallbacksHandler(callbacks=list(callbacks or []), config=config)
 
         setup_logging(experiment_name=config.name)
         logger.info(f'======== Starting job {config.name} in {sys.argv[0]} =========')
@@ -332,6 +321,7 @@ def experiment(func: Optional[Callable] = None, *,
                                config=config,
                                autologging_backends=autologging_backends,
                                log_seeds=log_seeds,
+                               callbacks_handler=callbacks_handler,
                                delete_if_failed=delete_if_failed,
                                log_system_info=log_system_info)
             if config.kind == JobTypes.GROUP:

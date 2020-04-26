@@ -62,10 +62,6 @@ def create_optuna_study(group_config: 'GroupConfig') -> optuna.Study:
     return study
 
 
-def prune_trial():
-    raise optuna.exceptions.TrialPruned()
-
-
 def sample_params_from_distributions(trial: optuna.Trial,
                                      distributions: Dict[str, Union[ParamDistribution, List[ParamDistribution]]]):
     params = {}
