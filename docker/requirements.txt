@@ -80,8 +80,7 @@ Markdown==3.1.1
 MarkupSafe==1.1.1
 matplotlib==3.1.2
 mccabe==0.6.1
-ml-experiment==0.0.1
-mlflow==1.7.2.dev0
+mlflow
 more-itertools==8.2.0
 multidict==4.7.5
 murmurhash==1.0.2
@@ -106,7 +105,6 @@ prometheus-client==0.7.1
 prometheus-flask-exporter==0.13.0
 prompt-toolkit==3.0.3
 protobuf==3.11.1
-psycopg2==2.8.4
 psycopg2-binary==2.8.4
 ptyprocess==0.6.0
 py==1.8.1
