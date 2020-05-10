@@ -1,12 +1,12 @@
 from modelling.utils.data import UnifiedDataLoader, SEED
 import numpy as np
-from ml_experiment import experiment, AutologgingBackend, Trial
+from ml_experiment import job, AutologgingBackend, Trial
 from ml_experiment.integrations import XGBoostPruningCallback
 import xgboost as xgb
 from xgboost.callback import print_evaluation
 
 
-@experiment(data_loader=UnifiedDataLoader, autologging_backends=AutologgingBackend.XGBOOST)
+@job(data_loader=UnifiedDataLoader, autologging_backends=AutologgingBackend.XGBOOST)
 def main(n_estimators: int,
          learning_rate: float,
          max_depth: int,

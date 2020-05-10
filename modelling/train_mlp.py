@@ -5,7 +5,7 @@ from keras.optimizers import Adam, SGD
 from keras.callbacks import EarlyStopping
 from modelling.utils.data import UnifiedDataLoader
 import numpy as np
-from ml_experiment import experiment, AutologgingBackend, Trial
+from ml_experiment import job, AutologgingBackend, Trial
 from ml_experiment.integrations import KerasPruningCallback
 from modelling.utils.one_cycle import OneCycleLR
 
@@ -31,7 +31,7 @@ def create_model(output_size, layers, ps, optimizer, activation, use_bn) -> Mode
     return model
 
 
-@experiment(autologging_backends=AutologgingBackend.KERAS, data_loader=UnifiedDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS, data_loader=UnifiedDataLoader)
 def main(layers: List[int],
          epochs: int,
          batch_size: int = 128,

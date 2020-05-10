@@ -1,12 +1,15 @@
 from typing import *
 from modelling.utils.data import UnifiedDataLoader, SEED
 import numpy as np
-from ml_experiment import experiment
+from ml_experiment import job
+from ml_experiment.callbacks.notifiers import DesktopNotifier
 from sklearn.svm import LinearSVC
 from sklearn.kernel_approximation import Nystroem
 
+notifier = DesktopNotifier(send_message_for_trials=True)
 
-@experiment(data_loader=UnifiedDataLoader)
+
+@job(data_loader=UnifiedDataLoader(), callbacks=[notifier])
 def main(C: float = 1.0, kernel: str = 'rbf', degree: int = 3, gamma: Any = 'scale'):
     np.random.seed(SEED)
     X_train, X_val, y_train, y_val = UnifiedDataLoader.load_data()

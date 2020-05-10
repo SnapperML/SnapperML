@@ -1,6 +1,6 @@
 from typing import *
 import numpy as np
-from ml_experiment import experiment, AutologgingBackend
+from ml_experiment import job, AutologgingBackend
 
 from keras.layers import Dense, Dropout, Input
 from keras.models import Sequential, Model
@@ -128,7 +128,7 @@ def create_model(input_size: int, encoding_dim: List[int], lr: float,
     return autoencoder
 
 
-@experiment(autologging_backends=AutologgingBackend.KERAS, data_loader=SplitDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS, data_loader=SplitDataLoader)
 def main(encoding_dim: Union[int, List[int]],
          epochs: int,
          batch_size: int = 128,

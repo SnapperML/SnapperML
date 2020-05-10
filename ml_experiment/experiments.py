@@ -264,17 +264,17 @@ def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, *
         return remote_func(*args, **kwargs)
 
 
-def experiment(func: Optional[Callable] = None, *,
-               callbacks: Optional[Iterable[Callback]] = None,
-               autologging_backends: AutologgingBackendParam = None,
-               optimization_metric: Union[Metric, str, None] = None,
-               data_loader: Optional[DataLoader] = None,
-               log_seeds: bool = True,
-               log_system_info: bool = True,
-               delete_if_failed: bool = False,
-               **kwargs):
+def job(func: Optional[Callable] = None, *,
+        callbacks: Optional[Iterable[Callback]] = None,
+        autologging_backends: AutologgingBackendParam = None,
+        optimization_metric: Union[Metric, str, None] = None,
+        data_loader: Optional[DataLoader] = None,
+        log_seeds: bool = True,
+        log_system_info: bool = True,
+        delete_if_failed: bool = False,
+        **kwargs):
     if func is None:
-        return partial(experiment,
+        return partial(job,
                        callbacks=callbacks,
                        autologging_backends=autologging_backends,
                        optimize_metric=optimization_metric,
