@@ -1,6 +1,25 @@
 # Diseño del marco de trabajo
 
-- Herramientas (y el por qué)
 
-- Comparativa herramientas para la reproductibilidad (Polyaxon y similares)
+## Herramientas utilizadas
 
+
+## Estructura general
+
+
+## Tracking de experimentos
+
+
+## Hiperparametrización y entrenamiento distribuido
+
+
+## Sistema de notificaciones y callbacks
+
+
+## Interfaz Web
+
+
+## Otras herramientas para la reproducibilidad
+
+
+## Futuro desarrollo
