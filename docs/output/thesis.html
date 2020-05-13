@@ -161,7 +161,9 @@
                 </ul></li>
                 <li><a href="#introducción"><span class="toc-section-number">2</span> Introducción</a>
                 <ul>
-                <li><a href="#herramientas-para-el-análisis-de-rayos-cósmicos"><span class="toc-section-number">2.1</span> Herramientas para el análisis de rayos cósmicos</a></li>
+                <li><a href="#el-problema-de-la-reproducibilidad"><span class="toc-section-number">2.1</span> El problema de la reproducibilidad</a></li>
+                <li><a href="#clasificación-de-primarios"><span class="toc-section-number">2.2</span> Clasificación de primarios</a></li>
+                <li><a href="#herramientas-para-el-análisis-de-rayos-cósmicos"><span class="toc-section-number">2.3</span> Herramientas para el análisis de rayos cósmicos</a></li>
                 </ul></li>
                 <li><a href="#fundamentos"><span class="toc-section-number">3</span> Fundamentos</a>
                 <ul>
@@ -191,7 +193,7 @@
                 <li><a href="#resultados"><span class="toc-section-number">8.2</span> Resultados</a></li>
                 </ul></li>
                 <li><a href="#anexo-manual-de-usuario"><span class="toc-section-number">9</span> Anexo: Manual de Usuario</a></li>
-                <li><a href="#referencias"><span class="toc-section-number">10</span> Referencias</a></li>
+                <li><a href="#referencias">Referencias</a></li>
                 </ul>
             </div>
                                 <h1 class="unnumbered" data-number="" id="listado-de-figuras">Listado de figuras</h1>
@@ -213,12 +215,13 @@
                                 <p>En relación con el primer objetivo, se debe desarrollar una especificación de buenas prácticas basadas en problemas existentes, con el objetivo de reducir aquella deuda técnica que concierne a este tipo de proyectos, tanto durante el desarrollo o experimentación, como en el momento de compartir el trabajo con otras personas. Estas buenas prácticas son bastante comunes en el desarrollo de software, pero no tanto en ciencia de datos, debido, entre otros motivos, a la heterogeneidad de perfiles que componen este campo. Dentro de esta relación entre el desarrollo de software y el desarrollo de proyectos de machine learning o ciencia de datos en general, se van tener en cuenta también aspectos relacionados con el despliegue e integración de software, lo que se conoce como DevOps, cuya aplicación al machine learning es más bien conocida como MLOps.</p>
                                 <p>El tercer y último objetivo comprende el desarrollo de un proyecto de machine learning real, enfocado al modelado y a la experimentación. El alcance comprende el entendimiento del problema, procesado de datos, y modelado.</p>
                                 <h1 data-number="2" id="introducción"><span class="header-section-number">2</span> Introducción</h1>
-                                <p>Hoy en día, los proyectos de ciencia de datos se desarrollan de una forma destructurada en muchos casos, lo cual lo hacen muy difícil de reproducir. Siendo conscientes de las dificultades que conlleva ser rigurosos con el desarrollo de este tipo de trabajos para asegurar la reproducibilidad, este trabajo presenta un framework que facilita el rastreo de experimentos y la operacionalziación del machine learning, combinando tecnologías open source existentes y apoyadas fuertemente por la comunidad. Estas tecnologías incluyen Docker, Mlflow, Ray, entre otros. El framework ofrece también un flujo de trabajo opionionado para el diseño y ejecución de experimentos en un entorno local o remoto. Para facilitar la integración con código existente, se ofrece además un sistema de rastreo automático para los frameworks de Deep Learning más famosos: Tensorflow, Keras,Fastai, además de otros paquetes de Machine Learning como Xgboost y Lightgdm. Por otro parte, se ofrece un soporte de primera clase para el entrenamiento de modelos y la hyperparametrización en entornos distribuidos. Todas estas caracteristicas se hacen accesibles al usuario por medio de un paquete de Python con el que instrumentalizar el código existente, y un CLI con el que empaquetas y ejecutar trabajos.</p>
-                                <ul>
-                                <li>Rayos cósmicos</li>
-                                <li>Remarcar problemas en la reproductibilidad</li>
-                                </ul>
-                                <h2 data-number="2.1" id="herramientas-para-el-análisis-de-rayos-cósmicos"><span class="header-section-number">2.1</span> Herramientas para el análisis de rayos cósmicos</h2>
+                                <h2 data-number="2.1" id="el-problema-de-la-reproducibilidad"><span class="header-section-number">2.1</span> El problema de la reproducibilidad</h2>
+                                <p>Hoy en día, los proyectos de ciencia de datos se desarrollan de una forma desestructurada en la mayoría casos, lo cual lo hacen muy difícil de reproducir. Siendo conscientes de las dificultades que conlleva ser rigurosos con el desarrollo de este tipo de trabajos para asegurar la reproducibilidad, este trabajo presenta un framework que facilita el rastreo de experimentos y la operacionalziación del machine learning, combinando tecnologías open source existentes y apoyadas fuertemente por la comunidad. Estas tecnologías incluyen Docker, Mlflow, Ray, entre otros.</p>
+                                <p>El framework ofrece un flujo de trabajo opionionado para el diseño y ejecución de experimentos en un entorno local o remoto. Para facilitar la integración con código existente, se ofrece además un sistema de rastreo automático para los frameworks de Deep Learning más famosos: Tensorflow, Keras,Fastai, además de otros paquetes de Machine Learning como Xgboost y Lightgdm. Por otro parte, se ofrece un soporte de primera clase para el entrenamiento de modelos y la hyperparametrización en entornos distribuidos. Todas estas caracteristicas se hacen accesibles al usuario por medio de un paquete de Python con el que instrumentalizar el código existente, y un CLI con el que empaquetas y ejecutar trabajos.</p>
+                                <p>La reproducibilidad es un reto en la investigación moderna y produce bastante debate <span class="citation" data-cites="Hutson725">(Hutson 2018)</span> <span class="citation" data-cites="freire_et_al:DR:2016:5817">(Freire et al. 2016)</span> <span class="citation" data-cites="freire2">(Freire et al. 2012)</span>. Entre los diferentes tipos de trabajos reproducibles, este trabajo se centra en trabajos computacionales, desarrollando un flujo de trabajo específico bastado en losn principios de Control de Versiones, Automatización, Rastreo y Aislamiento del entorno <span class="citation" data-cites="Olorisade2017ReproducibilityIM">(Olorisade et al. 2017)</span> <span class="citation" data-cites="10.1371/journal.pcbi.1005510">(Wilson 2017)</span>. El control de versiones permite rastrear los diferentes ficheros del proyecto y sus cambios, así como facilitar la colaboración. Automatizar los procesos, desde ficheros de shell hasta pipelines de alto nivel, permite que otra persona puede reproducir los pasos del trabajo fácilmente. Estos pasos incluyen: creación de ficheros, preprocesado de datos, ajuste de modelos, etc. Durante la ejecución de estos pasos, se generan gráficos, artifacts, nuevos datos, etc. Por este motivo, es necesario proporcionar una forma sistematica de recolectar toda esa información generada y mostrarla desde un único punto.</p>
+                                <p>Finalmente, el aislamiento del sistema anfitrion mediante el uso de contenedores o máquinas virtuales, permite ampliar el ámbito de control sobre los experimentos, proporcionando un “escenario común” para la ejecución de los mismo. De otra forma, los factores externos al proyecto, como las versiones de las paquetes de análisis, los drivers de la GPU, o la propia versión del sistema operativo donde se ejecuten pueden incrementar la estocasticidad del experimento. Otra ventaja de aislar las dependencias y la imagen del sistema operativo (entre otros factores), combinado con la automatización de los diferentes procesos, es que que facilita enormemente la ejecución de los experimentos y los hace dependiente de la plataforma, evitando tener que instalar las diferentes dependencias, modificar ficheros de configuración, etc. Por no decir que las dependencias del proyecto pueden ser incompatibles con las globales instaladas en el sistema.</p>
+                                <h2 data-number="2.2" id="clasificación-de-primarios"><span class="header-section-number">2.2</span> Clasificación de primarios</h2>
+                                <h2 data-number="2.3" id="herramientas-para-el-análisis-de-rayos-cósmicos"><span class="header-section-number">2.3</span> Herramientas para el análisis de rayos cósmicos</h2>
                                 <ul>
                                 <li>ROOT Framework</li>
                                 <li>Corkiska</li>
@@ -226,7 +229,6 @@
                                 </ul>
                                 <h1 data-number="3" id="fundamentos"><span class="header-section-number">3</span> Fundamentos</h1>
                                 <h2 data-number="3.1" id="reproducibilidad"><span class="header-section-number">3.1</span> Reproducibilidad</h2>
-                                <p>https://arxiv.org/pdf/1709.01154.pdf</p>
                                 <p>While the studies provide useful reports of their results, they lack information on access to the dataset in the form and order as used in the original study (as against raw data), the software environment used, randomization control and the implementation of proposed techniques. In order to increase the chances of being reproduced, researchers should ensure that details about and/or access to information about these factors are provided in their reports.</p>
                                 <p>Independent verification of published claims for the purpose of credibility confirmation, extension and building a ‘body of knowledge’ is a standard scientific practice [13]. Machine learning methods based research are not excluded from this strict scientific research requirement. However, it may sometimes be hard or even impossible to replicate computational studies of this nature [12]. This is why the minimum standard expected of any computational study is for it to be reproducible [11]. In order for a study to be reproduced, an independent researcher will need at least full information and artefacts of the experiment - datasets, experiment parameters, similar software and hardware environment etc., as used in the original study. However, the experience in studies today shows a lack of sufficient information that can enable an independent researcher reproduce majority of the studies successfully.</p>
                                 <h2 data-number="3.2" id="aspectos-críticos"><span class="header-section-number">3.2</span> Aspectos críticos</h2>
@@ -279,6 +281,23 @@
 
                                 ...which you should create using your reference manager.
                                 -->
-                                <h1 data-number="10" id="referencias"><span class="header-section-number">10</span> Referencias</h1>
+                                <h1 class="unnumbered" data-number="" id="referencias">Referencias</h1>
+                                <div id="refs" class="references hanging-indent" role="doc-bibliography">
+                                <div id="ref-freire2">
+                                <p>Freire, J., Bonnet, P. &amp; Shasha, D., 2012. Computational reproducibility: State-of-the-art, challenges, and database research opportunities. In <em>Proceedings of the 2012 acm sigmod international conference on management of data</em>. SIGMOD ’12. New York, NY, USA: Association for Computing Machinery, pp. 593–596. Available at: <a href="https://doi.org/10.1145/2213836.2213908">https://doi.org/10.1145/2213836.2213908</a>.</p>
+                                </div>
+                                <div id="ref-freire_et_al:DR:2016:5817">
+                                <p>Freire, J., Fuhr, N. &amp; Rauber, A., 2016. Reproducibility of Data-Oriented Experiments in e-Science (Dagstuhl Seminar 16041) J. Freire, N. Fuhr, &amp; A. Rauber, eds. <em>Dagstuhl Reports</em>, 6(1), pp.108–159. Available at: <a href="http://drops.dagstuhl.de/opus/volltexte/2016/5817">http://drops.dagstuhl.de/opus/volltexte/2016/5817</a>.</p>
+                                </div>
+                                <div id="ref-Hutson725">
+                                <p>Hutson, M., 2018. Artificial intelligence faces reproducibility crisis. <em>Science</em>, 359(6377), pp.725–726. Available at: <a href="https://science.sciencemag.org/content/359/6377/725">https://science.sciencemag.org/content/359/6377/725</a>.</p>
+                                </div>
+                                <div id="ref-Olorisade2017ReproducibilityIM">
+                                <p>Olorisade, B.K., Brereton, P. &amp; Andras, P., 2017. Reproducibility in machine learning-based studies: An example of text mining.</p>
+                                </div>
+                                <div id="ref-10.1371/journal.pcbi.1005510">
+                                <p>Wilson, J.A.C., Greg AND Bryan, 2017. Good enough practices in scientific computing. <em>PLOS Computational Biology</em>, 13(6), pp.1–20. Available at: <a href="https://doi.org/10.1371/journal.pcbi.1005510">https://doi.org/10.1371/journal.pcbi.1005510</a>.</p>
+                                </div>
+                                </div>
             </body>
 </html>

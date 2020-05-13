@@ -4,7 +4,6 @@
 ## Reproducibilidad
 
 
-https://arxiv.org/pdf/1709.01154.pdf
 
 
 While the
