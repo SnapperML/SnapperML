@@ -42,9 +42,3 @@ Otra ventaja de aislar las dependencias y la imagen del sistema operativo (entre
 
 
 
-
-## Herramientas para el análisis de rayos cósmicos
-
-- ROOT Framework
-- Corkiska
-- CERN

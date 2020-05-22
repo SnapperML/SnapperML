@@ -3,29 +3,50 @@
 
 ## Reproducibilidad
 
+Los estudios suelen ofrecer los resultados en forma de gráficas y tablas, pero en muchos casos
+carecen de la información necesaria para poder constrastar los resultados. Está información suele
+ser, el entorno de ejecución, los datos originales y la implementación de los propios métodos (modelos,
+algoritmos, etc) entre otros. Para aumentar la accesibilidad de los estudios, los investigadores deben asegurarse
+de ofrecer esta información además de las gráficas y tablas.
+
+La verificación independiente tiene como objetivo la confirmación de credibilidad y la extensión del conocimento
+en un area. La investigación relativa al Machine Learning o a otras areas donde se haga uso del mismo, no
+está exenta de este requisito de la investigación científica. Por tanto, adoptando un flujo de trabajo reproducible, estamos
+ofreciendo a la audiencia las herramientas necesarias que demuestran las decisiones tomadas y que permiten validar nuestros resultados.
+Por otro lado, para que un estudio computacional pueda  ser reproducido correctamente por un investigador independiente
+ es necesario el acceso completo a los datos, código, parametros de los experimentos, información sobre el entorno de ejecución, etc.
+ 
+ 
+Otro motivo de interés para la búsqueda de la reproducibilidad es el de facilitar el uso de nuestros métodos por el resto
+de la comunidad científica o incluso en aplicaciones comerciales. Ofreciendo acceso a los datos y al código, como se ha comentado antes,
+permitimos que nuestros métodos se puedan aplicar a otros problemas, tanto en investigación como para fines comerciales, así como
+facilita la extensión de nuestro trabajo.
 
 
+En los ultimos años nos hemos encontrado con muchos casos de publicaciones cientificas que
+muestran resultados dificiles o incluso imposibles de reproducir. Este fenómeno se conoce como
+la crisis de la reproducibilidad, donde incluso estudios prominentes no se puden reproducir.
+Este fenómeno ha estudiado de manera extensiva en otros campos, pero en el area del Machine Learning
+está tomando últimamente mucho importancia. Esto es debido a que tradicionalmente, los experimentos
+científicos se deben describir de tal forma que cualquiera pueda replicarlos, sin embargo, los experimentos
+computacionales tienes varias complicaciones que los hacen particularmente dificiles de replicar: versiones
+de software, dependencias concretas, variaciones del hardware, etc.
 
-While the
-studies provide useful reports of their results, they lack information on access to
-the dataset in the form and order as used in the original study (as against raw data),
-the software environment used, randomization control and the implementation
-of proposed techniques. In order to increase the chances of being reproduced,
-researchers should ensure that details about and/or access to information about
-these factors are provided in their reports.
+Con motivo de esta crisis de la reproducibilidad que afecta en gran medida a AI/ML, conferencias como
+NeurIPS han optado por añadir la reproducibilidad como un factor en su proceso de revisión, e implementan
+políticas para alentar el código compartido. Por otro lado, algunos autores (incluido nosotros) han propuesto
+herramientas para facilitar la reproducibilidad, otros han propuesto una serie de reglas o heurísticas que
+para evaluar este aspecto.
 
 
-Independent verification of published claims for the purpose of credibility confirmation, extension
-and building a ‘body of knowledge’ is a standard scientific practice [13]. Machine learning methods
-based research are not excluded from this strict scientific research requirement. However, it may
-sometimes be hard or even impossible to replicate computational studies of this nature [12]. This is
-why the minimum standard expected of any computational study is for it to be reproducible [11].
-In order for a study to be reproduced, an independent researcher will need at least full information
-and artefacts of the experiment - datasets, experiment parameters, similar software and hardware
-environment etc., as used in the original study. However, the experience in studies today shows a lack
-of sufficient information that can enable an independent researcher reproduce majority of the studies
-successfully.
+### Aspectos críticos
 
+
+- Conjunto de datos: La información sobre la localización y el proceso de extracción de los datos.
+
+- Preprocesado de datos: Los diferentes pasos del proceso de transformación de los datos.
+
+- 
 
 
 ## Aspectos críticos
