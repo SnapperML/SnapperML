@@ -66,7 +66,8 @@ y cuales son inherentes del estudio científico en cuestión. Entre los niveles 
 Una vez hecha separación del problema en tres capas, podemos ver claramente que la reproducibilidad computacional debe ser nuestro
 objetivo a la hora de desarrollar el framework. Mientras que la reproducibilidad empírica se puede conseguir
 en mayor medida, haciendo los datos accesibles, la reproducibilidad estadística se consigue mediante el desarrollo de un diseño inicial
-del estudio. El establecer las bases estadísticas sobre las que se va a desarrollar el estudio de antemano, nos puede ayudar además a evitar
+del estudio. En este diseño se especifica la hipótesis base, las asunciones del problema, los test estadísticos a realizar, y los p-valores correspondientes.
+El establecer las bases estadísticas sobre las que se va a desarrollar el estudio de antemano, nos puede ayudar además a evitar
 problemas como el p-hacking.
 
 
