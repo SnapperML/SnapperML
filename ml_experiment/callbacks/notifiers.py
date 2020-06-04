@@ -113,7 +113,16 @@ def create_trial_finish_message(config: JobConfig,
 
 
 class NotifierBase(Callback):
-    def __init__(self):
+    """
+    Base class for notifiers
+
+    To create a new type of notifier, you'll need to inherit from this class, and implement one
+    or more methods as required for your purposes. Specifically, the send_message method should be override.
+    Arguably the easiest way to get started is to look at the source code for some of the pre-defined ones.
+    """
+    send_message_for_trials: bool
+
+    def __post_init__(self):
         self.job_timer: Optional[TicToc] = None
         self.trial_timers: Dict[int, TicToc] = {}
         self.sampled_params_dict: Dict[int, Dict] = {}
@@ -124,64 +133,59 @@ class NotifierBase(Callback):
         self.job_timer = TicToc()
         self.job_timer.tic()
         run_id = kwargs.get('run_id')
-        return create_job_start_message(config, datetime.now(), run_id)
+        message = create_job_start_message(config, datetime.now(), run_id)
+        self.send_message(message)
 
     def on_job_end(self, config, exception):
-        return create_job_finish_message(
+        message = create_job_finish_message(
             config=config,
             exception=exception,
             finish_date=datetime.now(),
             duration_seconds=self.job_timer.tocvalue(),
             study=self.study)
+        self.send_message(message)
 
     def on_trial_start(self, config, trial, sampled_params, **kwargs):
+        if not self.send_message_for_trials:
+            return
+
         if not self.study:
             self.study = trial.study
         timer = TicToc()
         timer.tic()
         self.trial_timers[trial.number] = timer
         self.sampled_params_dict[trial.number] = sampled_params
-        return create_trial_start_message(config, sampled_params, trial, datetime.now())
+        message = create_trial_start_message(config, sampled_params, trial, datetime.now())
+        self.send_message(message)
 
     def on_trial_end(self, config, trial, metric, exception):
         duration = self.trial_timers[trial.number].tocvalue()
         sampled_params = self.sampled_params_dict[trial.number]
-        return create_trial_finish_message(config,
-                                           exception=exception,
-                                           sampled_params=sampled_params,
-                                           trial=trial,
-                                           metric=metric,
-                                           finish_date=datetime.now(),
-                                           duration_seconds=duration)
+        message = create_trial_finish_message(config,
+                                              exception=exception,
+                                              sampled_params=sampled_params,
+                                              trial=trial,
+                                              metric=metric,
+                                              finish_date=datetime.now(),
+                                              duration_seconds=duration)
+        self.send_message(message)
+
+    def send_message(self, msg: str) -> None:
+        """
+        This method should be override by your custom logic
+        :param msg: The preprocessed messaged generated from the experiment information
+        """
+        pass
 
 
 @dataclass
 class TelegramNotifier(NotifierBase):
     token: str
     chat_id: int
-    send_message_for_trials: bool = False
 
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
         self.bot = telegram.Bot(self.token)
-
-    def on_job_start(self, *args, **kwargs):
-        message = super().on_job_start(*args, **kwargs)
-        self.send_message(message)
-
-    def on_job_end(self, *args, **kwargs):
-        message = super().on_job_end(*args, **kwargs)
-        self.send_message(message)
-
-    def on_trial_start(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_start(*args, **kwargs)
-            self.send_message(message)
-
-    def on_trial_end(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_end(*args, **kwargs)
-            self.send_message(message)
 
     def send_message(self, message: str):
         self.bot.send_message(self.chat_id, message)
@@ -189,95 +193,39 @@ class TelegramNotifier(NotifierBase):
 
 @dataclass
 class DesktopNotifier(NotifierBase):
-    send_message_for_trials: bool = False
-
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
 
-    def on_job_start(self, *args, **kwargs):
-        message = super().on_job_start(*args, **kwargs)
-        subject = message.split('\n')[0]
-        show_desktop_notification(subject, message)
+    def send_message(self, msg: str):
+        subject = msg.split('\n')[0]
+        show_desktop_notification(subject, msg)
 
-    def on_job_end(self, *args, **kwargs):
-        message = super().on_job_end(*args, **kwargs)
-        subject = message.split('\n')[0]
-        show_desktop_notification(subject, message)
-
-    def on_trial_start(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_start(*args, **kwargs)
-            subject = message.split('\n')[0]
-            show_desktop_notification(subject, message)
-
-    def on_trial_end(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_end(*args, **kwargs)
-            subject = message.split('\n')[0]
-            show_desktop_notification(subject, message)
 
 @dataclass
 class SlackNotifier(NotifierBase):
     webhook_url: str
     channel: str
-    username: str = "Knock Knock"
-    send_message_for_trials: bool = False
+    username: str
 
     def __post_init__(self):
-        super().__init__()
+        super().__post_init__()
 
-    def on_job_start(self, *args, **kwargs):
-        message = super().on_job_start(*args, **kwargs)
-        send_slack_message(self.webhook_url, self.channel, message, self.username)
-
-    def on_job_end(self, config: JobConfig, exception: Optional[Exception]):
-        message = super().on_job_end(config=config, exception=exception)
-        icon_emoji = ':x:' if exception else ':tada:'
-        send_slack_message(self.webhook_url, self.channel, message, self.username, icon_emoji=icon_emoji)
-
-    def on_trial_start(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_start(*args, **kwargs)
-            send_slack_message(self.webhook_url, self.channel, message, self.username)
-
-    def on_trial_end(self, exception: Optional[Exception], *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_end(*args, **kwargs, exception=exception)
-            icon_emoji = ':x:' if exception else ':tada:'
-            send_slack_message(self.webhook_url, self.channel, message, self.username, icon_emoji=icon_emoji)
+    def send_message(self, msg: str, **kwargs):
+        icon_emoji = ':x:' if 'exception' in kwargs else ':tada:'
+        send_slack_message(self.webhook_url, self.channel, msg, self.username, icon_emoji=icon_emoji)
 
 
 @dataclass
 class EmailNotifier(NotifierBase):
     sender_email: str
     recipient_emails: List[str]
-    send_message_for_trials: bool = False
 
     def __post_init__(self):
+        super().__post_init__()
         self._yag_sender = create_yag_sender(self.recipient_emails, self.sender_email)
+
         super().__init__()
 
-    def send_message(self, subject: str, msg: str):
+    def send_message(self, msg: str):
+        subject = msg.split('\n')[0]
         return send_email(self._yag_sender, self.recipient_emails, subject, msg)
-
-    def on_job_start(self, *args, **kwargs):
-        message = super().on_job_start(*args, **kwargs)
-        subject = message.split('\n')[0]
-        self.send_message(subject, message)
-
-    def on_job_end(self, *args, **kwargs):
-        message = super().on_job_end(*args, **kwargs)
-        subject = message.split('\n')[0]
-        self.send_message(subject, message)
-
-    def on_trial_start(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_start(*args, **kwargs)
-            subject = message.split('\n')[0]
-            self.send_message(subject, message)
-
-    def on_trial_end(self, *args, **kwargs):
-        if self.send_message_for_trials:
-            message = super().on_trial_end(*args, **kwargs)
-            subject = message.split('\n')[0]
-            self.send_message(subject, message)
