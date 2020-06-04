@@ -248,14 +248,12 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 
     try:
         if kind == JobTypes.GROUP:
-            group_config = {
-                'sampler': sampler,
-                'pruner': pruner,
-                'num_trials': num_trials,
-                'timeout_per_trial': timeout_per_trial,
-                'metric': metric,
-                'param_space': param_space,
-            }
+            group_config = dict(sampler=sampler,
+                                pruner=pruner,
+                                num_trials=num_trials,
+                                timeout_per_trial=timeout_per_trial,
+                                metric=metric,
+                                param_space=param_space)
             group_config = {k: v for k, v in group_config.items() if v}
             group_config = {**job_config, **config, **group_config}
             result = GroupConfig.parse_obj(group_config)

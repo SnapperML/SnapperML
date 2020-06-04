@@ -25,12 +25,35 @@ from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
 
 
 class DataLoader(object):
+    """
+    Base class for Data loaders.
+
+    The main purpose of data loaders is to provide an easy way to share data
+    across processes when running a group of experiments, also known as
+    hyperparameter tuning.
+
+    When this abstract class is implemented (using a subclass)
+    and that subclass is added as the argument *data_loader* to the experiment main function
+    decorator, a shared resource will be created. This shared resource is the result
+    of executing the implemented function, load_data. The key point here is that the load_data
+    function will be only called once by the master process and then its result will be shared among
+    the rest workers. In this way, we can avoid expensive computation being duplicated for each worker.
+
+    The shared data will be stored in the Plasma Object Store of ray, so you should take into account
+    its limitations: https://docs.ray.io/en/latest/serialization.htm
+    """
     @classmethod
     def load_data(cls):
         raise DataNotLoaded()
 
 
 class Trial(object):
+    """
+    This class makes the current Optuna Trial object accessible.
+
+    It can be used to model complex hyperparameter spaces.
+    More information here: https://optuna.readthedocs.io/en/latest/tutorial/configurations.html
+    """
     @classmethod
     def get_current(cls) -> optuna.Trial:
         raise DataNotLoaded()
@@ -273,6 +296,23 @@ def job(func: Optional[Callable] = None, *,
         log_system_info: bool = True,
         delete_if_failed: bool = False,
         **kwargs):
+    """
+    Experiment decorator.
+    :param func: Experiment main function
+    :param callbacks: List of callbacks to notify when some event occur
+    :param autologging_backends: List of frameworks whose autologging functionality will be enabled.
+    :param optimization_metric: Metric to optimize. It is mandatory when running a group job.
+    The name of the metric should be the same as one of the keys that the experiment function returns.
+    :param data_loader: Custom data loader class (not instance). It is necessary to specify this argument
+    when using DataLoader to load data across multiples processes.
+    :param log_seeds: If true, it will log the seed of Numpy, Pytorch, or Python random's generators
+    if the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
+    :param log_system_info: Whether or not the system information: CPU, GPU, installed packages..., etc,
+    should be logged
+    :param delete_if_failed: If true, the experiment information will be removed if it fails.
+    :param kwargs:
+    :return: The wrapped function
+    """
     if func is None:
         return partial(job,
                        callbacks=callbacks,
