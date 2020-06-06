@@ -30,7 +30,25 @@ release = '0.1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['recommonmark']
+extensions = [
+    'recommonmark',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autodoc',
+    'autoapi.extension',
+    'sphinx-pydantic',
+]
+
+autosummary_generate = True
+
+autoapi_type = 'python'
+autoapi_dirs = ['../../ml_experiment']
+autoapi_options = [
+    'members',
+    'undoc-members',
+    'show-inheritance',
+    'show-module-summary',
+]
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
