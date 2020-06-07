@@ -46,6 +46,9 @@ ml_experiment.callbacks
    :members:
 
 
+.. automodule:: ml_experiment.callbacks.notifiers
+
+
 .. autoclass:: ml_experiment.callbacks.notifiers.NotifierBase
    :members:
 
@@ -67,6 +70,9 @@ ml_experiment.integrations
 
 ml_experiment.config.models
 ----------------------------
+
+.. automodule:: ml_experiment.config.models
+
 
 .. autoclass:: ml_experiment.config.models.Metric
    :undoc-members:
