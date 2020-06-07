@@ -298,19 +298,29 @@ def job(func: Optional[Callable] = None, *,
         **kwargs):
     """
     Experiment decorator.
+
+    This decorator must be used as a wrapper for the main function of the experiment.
+    It handles the tracking of the following information:
+    - Parameters
+    - Metrics
+    - Artifacts
+    - System information
+    - Randomness (Numpy, Pytorch and TF seeds)
+
+    It also handles the job execution on clusters and the hyperparameter optimization logic.
+
     :param func: Experiment main function
     :param callbacks: List of callbacks to notify when some event occur
     :param autologging_backends: List of frameworks whose autologging functionality will be enabled.
     :param optimization_metric: Metric to optimize. It is mandatory when running a group job.
-    The name of the metric should be the same as one of the keys that the experiment function returns.
+           The name of the metric should be the same as one of the keys that the experiment function returns.
     :param data_loader: Custom data loader class (not instance). It is necessary to specify this argument
-    when using DataLoader to load data across multiples processes.
+           when using DataLoader to load data across multiples processes.
     :param log_seeds: If true, it will log the seed of Numpy, Pytorch, or Python random's generators
-    if the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
+           if the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
     :param log_system_info: Whether or not the system information: CPU, GPU, installed packages..., etc,
-    should be logged
+           should be logged
     :param delete_if_failed: If true, the experiment information will be removed if it fails.
-    :param kwargs:
     :return: The wrapped function
     """
     if func is None:

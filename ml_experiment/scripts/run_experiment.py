@@ -9,11 +9,11 @@ import typer
 from pydantic import ValidationError
 import pystache
 
-from ..config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS
-from ..config.models import DockerConfig, JobConfig, ExperimentConfig, \
+from ml_experiment.config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS
+from ml_experiment.config.models import DockerConfig, JobConfig, ExperimentConfig, \
     GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric, Run
-from ..logging import logger, setup_logging
-from ..utils import recursive_map
+from ml_experiment.logging import logger, setup_logging
+from ml_experiment.utils import recursive_map
 
 
 def extract_string_from_docker_log(log):

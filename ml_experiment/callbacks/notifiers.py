@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from abc import ABCMeta, abstractmethod
 from typing import *
 from ml_experiment.config import JobConfig, GroupConfig
 from optuna import Trial, Study
@@ -18,7 +19,7 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 PRETTY_PRINTER = pprint.PrettyPrinter(indent=2, width=60)
 
 
-def create_job_start_message(config: JobConfig, start_time: datetime, run_id: Optional[str]):
+def create_job_start_message(config: JobConfig, start_time: datetime, run_id: Optional[str]) -> str:
     host_name = socket.gethostname()
     run_id_line = f'\nRun id: {run_id}' if run_id else ''
 
@@ -39,7 +40,7 @@ def create_job_finish_message(config: JobConfig,
                               exception: Optional[Exception],
                               finish_date: datetime,
                               study: Optional[Study],
-                              duration_seconds: float):
+                              duration_seconds: float) -> str:
     host_name = socket.gethostname()
 
     delta = timedelta(seconds=duration_seconds)
@@ -112,13 +113,15 @@ def create_trial_finish_message(config: JobConfig,
     return contents.strip()
 
 
-class NotifierBase(Callback):
+class NotifierBase(Callback, metaclass=ABCMeta):
     """
     Base class for notifiers
 
     To create a new type of notifier, you'll need to inherit from this class, and implement one
     or more methods as required for your purposes. Specifically, the send_message method should be override.
     Arguably the easiest way to get started is to look at the source code for some of the pre-defined ones.
+
+    :param send_message_for_trials: If true, messages will be send for trial-related events.
     """
     send_message_for_trials: bool
 
@@ -170,9 +173,11 @@ class NotifierBase(Callback):
                                               duration_seconds=duration)
         self.send_message(message)
 
+    @abstractmethod
     def send_message(self, msg: str) -> None:
         """
         This method should be override by your custom logic
+
         :param msg: The preprocessed messaged generated from the experiment information
         """
         pass
@@ -180,6 +185,17 @@ class NotifierBase(Callback):
 
 @dataclass
 class TelegramNotifier(NotifierBase):
+    """
+    Callback that sends a message through a Telegram Bot.
+
+    It requires a token and chat_id which can be get following
+    these instructions: https://core.telegram.org/bots
+
+    :param token: Telegram Bot Token.
+    :param chat_id: Telegram group id. More info on how to get
+                    this id `here <https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id>`_.
+    """
+
     token: str
     chat_id: int
 
@@ -193,9 +209,12 @@ class TelegramNotifier(NotifierBase):
 
 @dataclass
 class DesktopNotifier(NotifierBase):
-    def __post_init__(self):
-        super().__post_init__()
+    """
+    Callback that sends a desktop notification when an event happens.
 
+    It works out-of-the-box for Linux and OS X. For Windows it is necessary to install
+    the `win10toast <https://pypi.org/project/win10toast/>`_ package.
+    """
     def send_message(self, msg: str):
         subject = msg.split('\n')[0]
         show_desktop_notification(subject, msg)
@@ -203,12 +222,19 @@ class DesktopNotifier(NotifierBase):
 
 @dataclass
 class SlackNotifier(NotifierBase):
+    """
+    Callback that sends a message to an specific Slack channel when an event happens.
+
+    It requires a webhook URL, in order to generate that URL you should follow
+    these `instructions <https://pypi.org/project/win10toast/>`_
+
+    :param webhook_url: Theb webhook generated from Slack Apps
+    :param channel: Slack channel name
+    :param username: The username that will appear on the slack messages
+    """
     webhook_url: str
     channel: str
     username: str
-
-    def __post_init__(self):
-        super().__post_init__()
 
     def send_message(self, msg: str, **kwargs):
         icon_emoji = ':x:' if 'exception' in kwargs else ':tada:'
@@ -217,14 +243,18 @@ class SlackNotifier(NotifierBase):
 
 @dataclass
 class EmailNotifier(NotifierBase):
+    """
+    Callback that sends a email to a recipient or list of recipients when an event happens.
+
+    This service relies on `Yagmail <https://github.com/kootenpv/yagmail)>`_,
+    so you'll need to setup a Gmail account and follow the library instructions.
+    """
     sender_email: str
     recipient_emails: List[str]
 
     def __post_init__(self):
         super().__post_init__()
         self._yag_sender = create_yag_sender(self.recipient_emails, self.sender_email)
-
-        super().__init__()
 
     def send_message(self, msg: str):
         subject = msg.split('\n')[0]
