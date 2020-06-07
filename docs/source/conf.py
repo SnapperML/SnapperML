@@ -10,9 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import subprocess
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -34,20 +36,12 @@ extensions = [
     'recommonmark',
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
-    'autoapi.extension',
     'sphinx-pydantic',
+    'sphinx.ext.autosummary',
 ]
 
 autosummary_generate = True
-
-autoapi_type = 'python'
-autoapi_dirs = ['../../ml_experiment']
-autoapi_options = [
-    'members',
-    'undoc-members',
-    'show-inheritance',
-    'show-module-summary',
-]
+autodoc_typehints = 'description'
 
 
 # Add any paths that contain templates here, relative to this directory.
