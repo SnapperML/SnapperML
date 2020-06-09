@@ -1,17 +1,6 @@
 Package Reference
 =========================================
 
-Overview
------------------
-
-.. autosummary::
-
-  ml_experiment
-  ml_experiment.callbacks
-  ml_experiment.callbacks.notifiers
-  ml_experiment.integrations
-  ml_experiment.config.models
-
 
 ml_experiment
 --------------
@@ -66,7 +55,7 @@ ml_experiment.integrations
 
 .. automodule:: ml_experiment.integrations
 
-All these classes are imported from Optuna package. For more
+All these classes are imported from the Optuna package. For more
 information of how to use, please take a look at the official
 documentation `here <https://optuna.readthedocs.io/en/latest/reference/integration.html>`_.
 
