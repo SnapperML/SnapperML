@@ -6,11 +6,8 @@ Overview
 
 .. autosummary::
 
-  ml_experiment.job
-  ml_experiment.DataLoader
-  ml_experiment.Trial
-  ml_experiment.AutologgingBackend
-  ml_experiment.callbacks.core.Callback
+  ml_experiment
+  ml_experiment.callbacks
   ml_experiment.callbacks.notifiers
   ml_experiment.integrations
   ml_experiment.config.models
@@ -18,6 +15,8 @@ Overview
 
 ml_experiment
 --------------
+
+.. automodule:: ml_experiment
 
 
 .. autodecorator:: ml_experiment.job
@@ -41,7 +40,10 @@ ml_experiment
 ml_experiment.callbacks
 ------------------------
 
-.. autoclass:: ml_experiment.callbacks.core.Callback
+.. automodule:: ml_experiment.callbacks
+
+
+.. autoclass:: ml_experiment.callbacks.Callback
    :undoc-members:
    :members:
 
@@ -63,9 +65,21 @@ ml_experiment.integrations
 ---------------------------
 
 .. automodule:: ml_experiment.integrations
-   :members:
-   :imported-members:
 
+All these classes are imported from Optuna package. For more
+information of how to use, please take a look at the official
+documentation `here <https://optuna.readthedocs.io/en/latest/reference/integration.html>`_.
+
+.. autoclass:: ml_experiment.integrations.KerasPruningCallback
+.. autoclass:: ml_experiment.integrations.TensorFlowPruningHook
+.. autoclass:: ml_experiment.integrations.TFKerasPruningCallback
+.. autoclass:: ml_experiment.integrations.XGBoostPruningCallback
+.. autoclass:: ml_experiment.integrations.LightGBMPruningCallback
+.. autoclass:: ml_experiment.integrations.PyTorchIgnitePruningHandler
+.. autoclass:: ml_experiment.integrations.PyTorchLightningPruningCallback
+.. autoclass:: ml_experiment.integrations.FastAIPruningCallback
+.. autoclass:: ml_experiment.integrations.MXNetPruningCallback
+.. autoclass:: ml_experiment.integrations.ChainerPruningExtension
 
 
 ml_experiment.config.models
