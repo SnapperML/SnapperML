@@ -312,15 +312,17 @@ def job(func: Optional[Callable] = None, *,
     :param func: Experiment main function
     :param callbacks: List of callbacks to notify when some event occur
     :param autologging_backends: List of frameworks whose autologging functionality will be enabled.
-    :param optimization_metric: Metric to optimize. It is mandatory when running a group job.
-           The name of the metric should be the same as one of the keys that the experiment function returns.
+           To specify a supported framework you need to use the AutologgingBackend enum.
+    :param optimization_metric: Metric to optimize. It is mandatory when running a group job, and it will be
+           ignored when running a single experiment. The name of the metric should be the same as one of the
+           keys that the experiment function returns.
     :param data_loader: Custom data loader class (not instance). It is necessary to specify this argument
-           when using DataLoader to load data across multiples processes.
-    :param log_seeds: If true, it will log the seed of Numpy, Pytorch, or Python random's generators
-           if the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
-    :param log_system_info: Whether or not the system information: CPU, GPU, installed packages..., etc,
+           when using a DataLoader to share data across multiples processes.
+    :param log_seeds: If true, it will log the seed of Numpy, Pytorch, or Python random's generator
+           when the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
+    :param log_system_info: Whether or not the system information, CPU, GPU, installed packages..., etc,
            should be logged
-    :param delete_if_failed: If true, the experiment information will be removed if it fails.
+    :param delete_if_failed: If true, the experiment information will be removed in case of failure.
     :return: The wrapped function
     """
     if func is None:
