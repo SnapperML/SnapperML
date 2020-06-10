@@ -182,73 +182,58 @@ FileOrDict = lambda *args, **kwargs: typer.Option(
 
 tracking_uri = None
 
+CLI_HELP = """
+ml-experiment CLI allows you to execute jobs from a configuration file.
+It can also be used to run a job on-the-fly by specifying the arguments in-place.
+And ultimately, it can be used to execute jobs combining input arguments with
+a configuration file, so config files can used as templates.
+""".replace('\n', ' ')
+
+OVERRIDE_CONFIG = 'Overrides the config file field if specified.'
+ONLY_GROUP = 'Only applies for groups of experiments.'
+DICT_OVERLAP = 'In case of overlap, the values of this dictionary will take precedence over the rest'
+
+NAME_HELP = f'Name of the job. {OVERRIDE_CONFIG}'
+PARAMS_HELP = f'Job parameters. If config file is specified, these parameters {DICT_OVERLAP}'
+KIND_HELP = f'Type of job. {OVERRIDE_CONFIG}'
+PARAM_SPACE_HELP = f'Job parameter space. {ONLY_GROUP} {DICT_OVERLAP}'
+NUM_TRIALS_HELP = f'Number of experiments to execute in parallel. {ONLY_GROUP} {OVERRIDE_CONFIG}'
+TIMEOUT_HELP = 'Timeout per trial. In case of an experiment taking too long, it will be aborted.' \
+               f'{ONLY_GROUP} {OVERRIDE_CONFIG}'
+SAMPLER_HELP = f'Sampler name. {ONLY_GROUP} {OVERRIDE_CONFIG}'
+PRUNER_HELP = f'Pruner name. {ONLY_GROUP} {OVERRIDE_CONFIG}'
+METRIC_KEY_HELP = 'Name of the metric to optimize. It must be one of the keys of the metrics dictionary ' \
+                  f'returned by the main function. {ONLY_GROUP} {OVERRIDE_CONFIG}'
+METRIC_DIRECTION_HELP = 'Whether Hyperparameter Optimization Engine should minimize or maximize the given metric. ' \
+                        f'{ONLY_GROUP} {OVERRIDE_CONFIG}'
+DOCKER_IMAGE_HELP = 'If specified, the job will be run inside a docker contained based on the given image'
+DOCKER_CONTEXT_HELP = 'A directory to use as a docker context.' \
+                      f'Only applies when dockerfile is specified. {OVERRIDE_CONFIG}'
+DOCKER_ARGS_HELP = 'A dictionary of build arguments. Only applies when the Dockerfile is specified.'
+RAY_CONFIG_HELP = 'A dictionary of arguments to pass to Ray.init.' \
+                  f'Here you can specify the cluster address, number of cpu, gpu, etc. {DICT_OVERLAP}'
+
 
 # TODO: Add .py extension restriction when params/params_space is used.
-@app.command()
+@app.command(help=CLI_HELP)
 def run(scripts: List[Path] = ExistentFile('.py', None),
         config_file: Path = ExistentFileOption(SUPPORTED_EXTENSIONS, None, '--config_file'),
-        name: str = typer.Option(None, help='Name of the job. Overrides the config file field if specified.'),
-        kind: JobTypes = typer.Option(None, help='Type of job. Overrides the config file field if specified.'),
-
-        params: str = FileOrDict({},
-                                 help='Job parameters. If config file is specified, these parameters '
-                                      'will be merged with the those specified in the config file. '
-                                      'In case of overlap, the values of this dictionary will '
-                                      'take precedence over the rest'),
-        param_space: str = FileOrDict({},
-                                      '--param_space',
-                                      help='Job parameter space. Only applies for groups of experiments. '
-                                           'In case of overlap, the values of this dictionary will take '
-                                           'precedence over the ones specified in the config file'),
-        num_trials: int = typer.Option(None,
-                                       '--num_trials',
-                                       min=0,
-                                       metavar='POSITIVE_INT',
-                                       help='Overrides the config file field if specified.'),
-        timeout_per_trial: float = typer.Option(None,
-                                                '--timeout_per_trial',
-                                                min=0,
-                                                metavar='POSITIVE_FLOAT',
-                                                help='Overrides the config file field if specified.'),
-        sampler: SamplerEnum = typer.Option(None,
-                                            help='Only applies for groups of experiments. '
-                                                 'Overrides the config file field if specified.'),
-        pruner: PrunerEnum = typer.Option(None,
-                                          help='Only applies for groups of experiments. '
-                                               'Overrides the config file field if specified.'),
-        metric_key: str = typer.Option(None,
-                                       '--metric_key',
-                                       help='Name of the metric to optimize. '
-                                            'It must be one of the keys of the metrics dictionary '
-                                            'returned by the main function. '
-                                            'Only applies for groups of experiments. '
-                                            'Overrides the config file field if specified.'),
-        metric_direction: OptimizationDirection = typer.Option(None,
-                                                               '--metric_direction',
-                                                               help='Whether Hyperparameter Optimization Engine should '
-                                                                    'minimize or maximize the given metric. '
-                                                                    'Only applies for groups of experiments. '
-                                                                    'Overrides the config file field if specified.'
-                                                               ),
-        docker_image: str = typer.Option(None, '--docker_image',
-                                         help='If specified, the job will be run inside a docker '
-                                              'contained based on the given image'),
+        name: str = typer.Option(None, help=NAME_HELP),
+        kind: JobTypes = typer.Option(None, help=KIND_HELP),
+        params: str = FileOrDict({}, help=PARAMS_HELP),
+        param_space: str = FileOrDict({}, '--param_space', help=PARAM_SPACE_HELP),
+        num_trials: int = typer.Option(None, '--num_trials', min=0, metavar='POSITIVE_INT', help=NUM_TRIALS_HELP),
+        timeout_per_trial: float = typer.Option(None, '--timeout_per_trial', min=0,
+                                                metavar='POSITIVE_FLOAT', help=TIMEOUT_HELP),
+        sampler: SamplerEnum = typer.Option(None, help=SAMPLER_HELP),
+        pruner: PrunerEnum = typer.Option(None, help=PRUNER_HELP),
+        metric_key: str = typer.Option(None, '--metric_key', help=METRIC_KEY_HELP),
+        metric_direction: OptimizationDirection = typer.Option(None, '--metric_direction', help=METRIC_DIRECTION_HELP),
+        docker_image: str = typer.Option(None, '--docker_image', help=DOCKER_IMAGE_HELP),
         dockerfile: Path = ExistentFileOption(None, None),
-        docker_context: Path = ExistentDir(None,
-                                           '--docker_context',
-                                           help='A directory to use as a docker context. '
-                                                'Only applies when dockerfile is specified '
-                                                'Overrides the config file field if specified.'),
-        docker_build_args: str = FileOrDict({},
-                                            '--docker_build_args',
-                                            help='A dictionary of build arguments.'
-                                                 'Only applies when the Dockerfile is specified.'),
-        ray_config: str = FileOrDict({},
-                                     '--ray_config',
-                                     help='A dictionary of arguments to pass to Ray.init.'
-                                          'Here you can specify the cluster address, number of cpu, gpu, etc. '
-                                          'If a config file is specified, both dictionaries will be merged, taking '
-                                          'this one preference over the other.')):
+        docker_context: Path = ExistentDir(None, '--docker_context', help=DOCKER_CONTEXT_HELP),
+        docker_build_args: str = FileOrDict({}, '--docker_build_args', help=DOCKER_ARGS_HELP),
+        ray_config: str = FileOrDict({}, '--ray_config', help=RAY_CONFIG_HELP)):
     load_dotenv(find_dotenv())
 
     if config_file:
