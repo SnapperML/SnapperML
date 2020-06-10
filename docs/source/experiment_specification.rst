@@ -33,7 +33,7 @@ Experiment Definition
     # Any other entry of this dictionary will be passed as it is to Ray.init,
     # so you can fully configure the job execution.
     # More information about the parameters you can use here:
-    # https://docs.ray.io/en/master/package-ref.html?highlight=init#ray.init
+    # https://docs.ray.io/en/master/package-ref.html#ray.init
     ray_config:
       address: localhost | master_node_address
 

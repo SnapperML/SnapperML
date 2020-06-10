@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx-pydantic',
     'sphinx.ext.autosummary',
+    'sphinx.ext.autosectionlabel'
 ]
 
 autosummary_generate = True
