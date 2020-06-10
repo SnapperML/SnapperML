@@ -3,7 +3,7 @@ YAML/JSON Specification
 
 Configuration files are validated and parsed into Python objects.
 Therefore, config files have the same structure as the Python models defined
-on :ref:`Models Reference`. Feel free to check them in case of doubt.
+on :ref:`experiment_specification/Models Reference`. Feel free to check them in case of doubt.
 
 
 Experiment Definition

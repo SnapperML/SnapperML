@@ -40,7 +40,7 @@ class DataLoader(object):
     the rest workers. In this way, we can avoid expensive computation being duplicated for each worker.
 
     The shared data will be stored in the Plasma Object Store of ray, so you should take into account
-    its limitations: https://docs.ray.io/en/latest/serialization.htm
+    its limitations: https://docs.ray.io/en/latest/serialization.html
     """
     @classmethod
     def load_data(cls):
