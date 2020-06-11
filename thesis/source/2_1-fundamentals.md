@@ -47,7 +47,7 @@ herramientas para facilitar la reproducibilidad, mientras que otros han propuest
 heurísticas que para evaluar este aspecto.
 
 
-## Tipos de reproducibilidad
+### Tipos de reproducibilidad
 
 Para poder atajar de una manera directa y eficiente el problema de la reproducibilidad es necesario separarla
 en diferentes niveles. Esta separación nos permite desarrollar una serie de buenas prácticas y herramientas
@@ -66,96 +66,148 @@ y cuales son inherentes del estudio científico en cuestión. Entre los niveles 
 Una vez hecha separación del problema en tres capas, podemos ver claramente que la reproducibilidad computacional debe ser nuestro
 objetivo a la hora de desarrollar el framework. Mientras que la reproducibilidad empírica se puede conseguir
 en mayor medida, haciendo los datos accesibles, la reproducibilidad estadística se consigue mediante el desarrollo de un diseño inicial
-del estudio. En este diseño se especifica la hipótesis base, las asunciones del problema, los test estadísticos a realizar, y los p-valores correspondientes.
-El establecer las bases estadísticas sobre las que se va a desarrollar el estudio de antemano, nos puede ayudar además a evitar
-problemas como el p-hacking.
+del estudio. En este diseño se especifica la hipótesis base, las asunciones del problema, los test estadísticos a realizar,
+y los p-valores correspondientes. El establecer las bases estadísticas sobre las que se va a desarrollar el estudio de antemano,
+nos puede ayudar además a evitar problemas como el p-hacking.
+
+Por otro lado, el término reproducibiidad además de poder descomponerse según la información o parte del trabajo que se
+esté tratanto, llamémosla la escala o eje horizontal, también se puede descomponer en otro eje, llamemósle vertical,
+que indica como de replicable y reproducible es un estudio en su conjunto. Los niveles de esta nueva escala son los
+siguientes:
 
 
-The terms “reproducible research” and “reproducibility” are used in many different ways to
-encompass diverse aspects of the desire to make research based on computation more
-credible and extensible. Lively discussion over the course of the workshop has led to some
-suggestions for terminology, listed below. We encourage authors who use such terms in
-their work to clarify what they mean in order to avoid confusion.
-There are several possible levels of reproducibility, and it seems valuable to distinguish
-between the following:
+- **Investigación revisable**. Las descripciones de los métodos de investigación pueden ser
+evaluados de manera independiente y los resultados juzgados. Esto incluye tanto los tradicionales
+peer-review, community-review, y no implica necesariamente reproducibilidad.
 
-- Reviewable Research. The descriptions of the research methods can be independently
-assessed and the results judged credible. (This includes both traditional peer
-review and community review, and does not necessarily imply reproducibility.)
+- **Investigación replicable**. Se ponen a disposición del publico las herramientas que
+necesarias para replicar los resultados, por ejemplo se ofrece el el código de los autores para producir
+las gráficas que se muestran en la publicación. En este caso, las herramientas pueden tener un alcance limitado,
+ofreciendo los datos ya procesados y esenciales, así como ofreciéndolas mediante petición exclusivamente.
 
--  Replicable Research. Tools are made available that would allow one to duplicate
-the results of the research, for example by running the authors’ code to produce
-the plots shown in the publication. (Here tools might be limited in scope, e.g., only
-essential data or executables, and might only be made available to referees or only
-upon request.)
+- **Investigación confirmable**. Las conclusiones del estudio se pueden obtener sin el uso del software proporcionado por el autor.
+Pero se debe ofrecer una completa descripción de los algoritmos y la metodología usados en la publicación y cualquier
+material complementario necesario.
 
-- Confirmable Research. The main conclusions of the research can be attained
-independently without the use of software provided by the author. (But using the complete
-description of algorithms and methodology provided in the publication and any supplementary materials.)
+- **Investigación auditable**. Cuando se registra la suficiente informacion sobre el estudio
+(incluidos datos y programas informáticos) para que la investigación pueda ser defendida posteriormente si es necesario 
+o para llevar a cabo una resolución en caso de existir diferencias entre confirmaciones independientes.
+Esta información puede ser privada, como con los tradicionales cuadernos de laboratorio.
 
-- Auditable Research. Sufficient records (including data and software) have been
-archived so that the research can be defended later if necessary or differences
-between independent confirmations resolved. The archive might be private, as with
-traditional laboratory notebooks.
-
-- Open or Reproducible Research. Auditable research made openly available. This
-comprised well-documented and fully open code and data that are publicly available
-that would allow one to (a) fully audit the computational procedure, (b) replicate and
-also independently reproduce the results of the research, and (c) extend the results
-or apply the method to new problems.
+- **Investigación abierta o reproducible**. Investigación auditable disponible abiertamente. El código y los datos se
+encuentran lo suficientemente bien documentados y accesibles al publico para que la parte computacional
+se pueda auditar, y lo resultados del estudio se puedan replicar y reproducir de manera independiente.
+También debe permitir extender los resultados o aplicar el método desarrollado a nuevos problemas.
 
 
 ### Aspectos críticos
 
+Una vez hemos definido los diferentes niveles de reproducibilidad, vamos a definir los aspectos que consideramos
+críticos para lograr una investigacióin *abierta o reproducible*.
 
-- Conjunto de datos: La información sobre la localización y el proceso de extracción de los datos.
+- **Conjunto de datos**: La información sobre la localización y el proceso de extracción de los datos. Este factor
+es determinante a la hora de hacer un estudio reproducible. El objetivo es el de facilitar los datos y/o
+la forma de extraerlos. En caso de que los datos no sean accesibles públicamente, o que los datos que se ofrezcan
+no sean los extraidos en crudo, estaríamos ante un *estudio replicable*, pero no reproducible.
 
-- Preprocesado de datos: Los diferentes pasos del proceso de transformación de los datos.
+- **Preprocesado de datos**: En este aspecto se recogen los diferentes pasos del proceso de transformación de los datos.
+Un investigador independiente debería ser capaz de repetir los datos de preprocesado fácilmente.
+Sería también interesante incluir datos ya preprocesados con los que comparar y validar que las transformaciones
+se han realizado correctamente. Estos procedimientos no son sencillos de documentar ni de compartir.
+En algunas ocasiones, las transformaciones se realizan en software privativos o utilizando una interfaz gráfica.
+En esos casos, en lugar de ofrecer los scripts de preprocesado, sería más interesante dar una descripción detallada
+de como los datos se han transformado. Además, sugerimos favorecer las herramientas de código libre en caso de que
+existan como alternativa a algunas de las herramientas privadas.
 
-- 
+- **Particion de los datos**: En caso de que los datos se separen, por ejemplo para ajustar un modelo y validarlo,
+es necesario proporcionar los detalles de como se ha realizado esta separación. En el caso de que dicha separación
+sea aleatoria, como mínimo se debe proporcionar la semilla y el tipo de muestreo (estratificado o no, por ejemplo).
+Aunque preferiblemente, todo este procedimiento debe estar recogido en un script.
 
+- **Ajuste del modelo**: Corresponde a toda la información relativa al ajuste de un modelo. En este caso, es necesario
+hacer disponible toda la información posible en relación a este proceso y a las decisiones tomadas. La información
+mínima que se debe proporcionar es:
 
-## Aspectos críticos
+    1. Parametros del experimento
+    2. Métodos propuestos: detalles de implementación, algoritmos, código, etc (si es aplicable).
 
+- **Evaluación del modelo**: Información sobre como se evalua un modelo entrenado. Información similar al punto anterior
+se aplica aquí.
 
-• Dataset: Information about the location and the retrieval process of the dataset is needed to
-ensure access to the dataset as used in the study.
+- **Control de la estocasticidad**: La mayoría de operaciones en Machine Learning tienen un factor de aleatoriedad.
+Por tanto, es esencial establecer los valores de las semillar que controlar dichos procesos.
+La mayoría de herramientas de cálculo científico ofrecen algun método para establecer la semilla del
+generador de números aleatorios.
 
-• Data preprocessing: The process of ridding the input data of noise and encoding it into a
-format acceptable to the learning algorithm. Explicit preprocessing information is the first
-step towards a successful reproduction exercise. An independent researcher should be able
-to follow and repeat how the data was preprocessed in the study. Also, it will be useful to
-find preprocessing output information to compare to e.g. final feature vector dimension.
+- **Entorno software**: Debido al hecho de que los paquetes/módulos de software están en continuo
+desarrollo y sufren posibles alteraciones de los algoritmos internos, es importante
+que los detalles del entorno de software utilizado: módulos, paquetes y números de versión..., estén disponible.
 
-• Dataset Partitions: Details of how the dataset was divided for use as training and test data.
-
-• Model training: The process of fitting the model to the data. Making available, as much
-information as possible regarding every decision made during this process is particularly
-crucial to reproduction. Necessary information include but not limited to:
-1. Study parameters
-2. Proposed technique details – codes, algorithms etc. (if applicable)
-
-• Model assessment: Measuring the performance of the model trained in 2. Similar information as in 2 applies here as well.
-
-• Randomization control: Most operations of machine learning algorithms involves randomization. Therefore, it is essential to set seed values to control the randomization process in
-order to be able to repeat the same process again.
-
-• Software environment: Due to the fact that software packages/modules are in continual
-development with possible alterations to internal implementation algorithms, it is important
-that the details of the software environment used (modules, packages and version numbers)
-be made available.
-
-• Hardware environment (for large data volume): Some data intensive studies are only
-reproducible on the same machine capacity as was used to produce the original result. So,
-the hardware information are sometimes essential.
-
-
-## Proceso de ciencia de datos. ETL
+- **Entorno hardware**: Algunos estudios, sobre todo los que continen grandes cantidades de datos, son
+reproducibles exclusivamente cuando se ejecutan en una cierta máquina, o al menos, cuando se cumplen unos
+requisitos de hardware determinados. Otro problema que surge en algunos casos y que está extrechamente relacionado
+con el punto anterior, es el de las versiones de los drivers. Por este motivo, se requiere una correcta documentación
+de los recursos utilizados, tanto GPU como CPU, así como de las versiones de sus drivers correspondientes.
 
 
-
-## DevOps aplicado a Machine Learning. MLOps 
+## MLOps 
 
 
 
 ## Autoencoders
+
+### Redes neuronales
+
+Las redes neuronales son algoritmos de aprendizaje automático que han adquirido una gran
+popularidad en los últimos años, y que han sido desarrollados y utilizados en una gran variedad
+de problemas, desde aprendizaje supervisado, hasta no supervisado, pasando por aprendizaje por refuerzo
+y reducción de la dimensionalidad.
+
+
+
+Consider a supervised learning problem where we have access to labeled training examples (x
+(i), y(i)). Neural networks give a way of defining a complex,
+non-linear form of hypotheses hW,b(x), with parameters W, b that we can fit
+to our data.
+To describe neural networks, we will begin by describing the simplest
+possible neural network, one which comprises a single “neuron.” We will use
+the following diagram to denote a single neuron:
+
+
+Autoencoders son redes neuronales entrenadas para reconstruir la entrada,
+es decir, para copiar la entrada en la salida. Internamente, estas arquitecturas
+contienen un capa interna llamada **código**. Este código es una representación
+de los datos de entrada en un espacio vectorial de dimensión igual o distinta a los mismo.
+La red puede plantearse como la suma de dos partes bien diferenciadas: un codificador (encoder),
+que representa una funcion $h=f(x)$, y un decodificador (decoder) que produce una reconstrucción
+de la salida $r = g(h)$. Esta arquitectura se puede ver facilmente en la figura INSERTAR FIGURA.
+
+Si diseñamos un autoencoder que únicamente se encargue de copiar la entrada en la salida, es decir,
+si simplemente es capaz de mapear $g(f(x)) = x$ para todos los valores de $x$, no es especialmente
+util. Sin embargo, podemos diseñar autoencoders que no se limiten a copiar la información de entrada,
+sino que aprendan patrones de los datos y los utilicen para la reconstrucción. Este es el objetivo
+de los autoencoders. Cuando restringimos de alguna forma una arquitectura de este tipo, el error
+de reconstrucción $e = error(g(f(x)), x)$, donde $error$ puede ser cualquier métrica de distancia, va
+a ser mayor que 0 en la mayoría de casos. Debido a que solamente podemos reconstruir los datos de entrada
+de manera aproximada. Debido a dichas restricciones, el modelo es forzado a priorizar partes de información
+que deben ser copiadas y encontrando así patrones últiles en los datos.
+
+Tradicionalmente, este tipo de arquitecturas se han utilizado para reducción de dimensionalidad o aprendizaje
+de características. La reducción de la dimensionalidad es posible debido que la capa interna (*código*)
+contienen información relevante que permite reconstruir los datos originales a partir de ella.
+Por ese motivo, si utilizamos una capa de código con un número de neuronas menor que la dimensión de los
+datos de entrada, podemos conseguir una representación aproximada de dichos datos
+en un espacio de dimension inferior. Para el aprendizaje de características, un uso interesante que se le ha
+dado a esta arquitectura es el de preentrenar arquitecturas o partes de ellas a partir de datos sin etiquetas.
+Esto se consigue entrenando un autoencoder, y transfiriendo los pesos de dicha arquitectura, normalmente de 
+la parte del codificador, hay otra arquitectura diseñada para un problema supervisado. De esta forma,
+si disponemos de datos no etiquetados, podemos aprovecharlos también para un problema supervisado.
+
+
+### Autoencoders según la dimensión del código
+
+### Autoencoders regularizados
+
+### Autoencoders variacionales
+
+### Autoencoders apilados
