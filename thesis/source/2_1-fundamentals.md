@@ -154,25 +154,137 @@ de los recursos utilizados, tanto GPU como CPU, así como de las versiones de su
 
 
 
-## Autoencoders
-
-### Redes neuronales
+## Redes neuronales
 
 Las redes neuronales son algoritmos de aprendizaje automático que han adquirido una gran
 popularidad en los últimos años, y que han sido desarrollados y utilizados en una gran variedad
 de problemas, desde aprendizaje supervisado, hasta no supervisado, pasando por aprendizaje por refuerzo
 y reducción de la dimensionalidad.
 
+Para describir una red neuronal vamos a empezar por la arquitectura más básica, una sola neurona.
+Una forma de representar dicha neurona en una diagrama es la siguiente:
+
+![](https://cdn.mathpix.com/snip/images/i9Ls1o_dULHhOoNqiKOukfVpPWEokabL2a5FvYo21nA.original.fullsize.png)
+
+Una neurona no es más que una unidad computacional que toma como entrada un vector $x$ (más un elemento a 1 para el sesgo),
+y cuya salida es $h_{W, b}(x)=f\left(W^{T} x\right)=f\left(\sum_{i=1}^{3} W_{i} x_{i}+b\right)$, donde
+$f: \mathbb{R} \mapsto \mathbb{R}$ es la llamada **función de activación**. Entre las función de activación
+más comunes se encuentran: sigmoide, tanh, RELU, LeakyRELU y Swish.
+
+Una red neuronal se construye juntando varias neuronas, de forma que las salidas de unas neuronas son las
+entradas de otra, como se muestra en la figura X. En la figura, los circulos representan una neurona, y aquellos
+con etiqueta +1 son las **unidades de sesgo**. Por otro lado, las unidades o neuronas se agrupan en capas, una
+capa está representada como una columna de círculos. Dentro de estas capas, podemos diferenciar tres tipos:
+la capa de entrada (más a la izquierda), la capa interna, y la capa de salida que solamente contiene una neurona (a la derecha).
+
+Vamos a denotar, $n_l$ como el numero de capas de nuestra red, $n_l=3$ en nuestro ejemplo.
+A la capa de entrada la denotamos como $L_1$, y la capa de salida por tanto sería $L_{n_l}$.
+Nuestra red neuronal tiene como parametros $(W, b)= \left(W^{(1)}, b^{(1)}, W^{(2)}, b^{(2)}\right)$,
+donde cada elemento $W_{i j}^{(l)}$ corresponde con el parametro asociado a la conexión entre la neurona
+$j$ de la capa $l$ y la neurona $i$ de la capa $l + 1$. Por otro lado, $b_{i}^{(l)}$ es el sesgo asociado
+a la unidad $i$ de la capa $l + 1$.
+
+Podemos denotar a la activación (valor de salida) de una neurona $i$ de la capa $l$ como $a_{i}^{(l)}$. En el
+caso de la capa de entrada ($l = 1$), es obvio que $a_{i}^{(1)}=x_{i}$. Gracias a la notación vectorial,
+podemos definir el vector de activaciones de una capa como:
+
+$$
+\begin{aligned}
+z^{(l+1)} &=W^{(l)} a^{(l)}+b^{(l)} \\
+a^{(l+1)} &=f\left(z^{(l+1)}\right)
+\end{aligned}
+$$
+
+Finalmente, la función hipótesis, o salida de la red, se puede definir como:
+
+$$h_{W, b}(x)=a^{(n_l)}=f\left(z^{(n_l)}\right)$$
+
+Teniendo en cuenta esta nomenclatura, la función de salida de la red mostrada en la figura X, corresponde
+con la siguiente ecuación:
+
+$$
+\begin{aligned}
+z^{(2)} &=W^{(1)} x+b^{(1)} \\
+a^{(2)} &=f\left(z^{(2)}\right) \\
+z^{(3)} &=W^{(2)} a^{(2)}+b^{(2)} \\
+h_{W, b}(x) &=a^{(3)}=f\left(z^{(3)}\right)
+\end{aligned}
+$$
+
+Una de las ventajas principales de usar la notación vectorial es que a la hora de implementarlo,
+podemos aprovechar bibliotecas y rutinas de algebra lineal con implementaciones eficientes como
+BLAS o LAPACK.
 
 
-Consider a supervised learning problem where we have access to labeled training examples (x
-(i), y(i)). Neural networks give a way of defining a complex,
-non-linear form of hypotheses hW,b(x), with parameters W, b that we can fit
-to our data.
-To describe neural networks, we will begin by describing the simplest
-possible neural network, one which comprises a single “neuron.” We will use
-the following diagram to denote a single neuron:
 
+### Algoritmo de propagación hacia atrás
+
+Suponiendo que tenemos un conjunto de datos
+$\left\{\left(x^{(1)}, y^{(1)}\right), \ldots,\left(x^{(m)}, y^{(m)}\right)\right\}$ con $m$ ejemplos.
+Podemos entrenar una red neuronal usando gradiente descendiente. La función de coste a optimizar para un
+ejemplo es la siguiente:
+
+$$J(W, b ; x, y)=\frac{1}{2}\left\|h_{W, b}(x)-y\right\|^{2}$$
+
+Dado un conjunto de entrenamiento de $m$ ejemplos, el coste total se define como:
+
+$$
+\begin{aligned}
+J(W, b) &=\left[\frac{1}{m} \sum_{i=1}^{m} J\left(W, b ; x^{(i)}, y^{(i)}\right)\right]+\frac{\lambda}{2} \sum_{l=1}^{n_{l}-1} \sum_{i=1}^{s_{l}} \sum_{j=1}^{s_{l+1}}\left(W_{j i}^{(l)}\right)^{2} \\
+&=\left[\frac{1}{m} \sum_{i=1}^{m}\left(\frac{1}{2}\left\|h_{W, b}\left(x^{(i)}\right)-y^{(i)}\right\|^{2}\right)\right]+\frac{\lambda}{2} \sum_{l=1}^{n_{l}-1} \sum_{i=1}^{s_{l}} \sum_{j=1}^{s_{l+1}}\left(W_{j i}^{(l)}\right)^{2}
+\end{aligned}
+$$
+
+El primer termino de $J(W, b)$ es la media de los cuadrados de los residuos (errores).
+El segundo termino corresponde con la regularización. El término $\lambda$ controla la
+importancia relativa de la regularización. Esta función de coste se utiliza tanto para
+regresión como para clasificación. En el caso de la clasificación, $y$ toma los valores
+0 o 1 según la clase que corresponda. Si usamos $tanh$ como función de activación en la
+salida en lugar de la sigmoide, usaríamos los valores -1 y 1 en su lugar.
+
+El objetivo es minimizar $J(W, b)$ como función de $W$ y $b$. Para llevar a cabo esta optimización,
+debemos inicializar $W$ y $b$ con valores aleatorios próximos a cero, por ejemplo, con valores muestrados
+de $\mathcal{N}\left(0, \epsilon^{2}\right)$. El motivo por el que es importante inicializar aleatoriamente los
+pesos, es para **romper la simetría**. Posteriormente, aplicamos un algoritmo de optimización, como
+puede ser *gradiente descendiente*. Una iteración de gradiente descendiente actualizaría los pesos de
+la siguiente forma:
+
+$$
+\begin{aligned}
+W_{i j}^{(l)} &:=W_{i j}^{(l)}-\alpha \frac{\partial}{\partial W_{i j}^{(l)}} J(W, b) \\
+b_{i}^{(l)} &:=b_{i}^{(l)}-\alpha \frac{\partial}{\partial b_{i}^{(l)}} J(W, b)
+\end{aligned}
+$$
+
+El parámetro $\alpha$ corresponde al ratio de aprendizaje.
+El algoritmo de propagación hacia atrás nos ofrece una forma eficiente de calcular las derivadas
+parciales necesarias para actualizar los pesos mediante gradiente descendiente. Para calcular
+las derivadas parciales, es necesario formular dichas derivadas. 
+
+$$
+\begin{aligned}
+\frac{\partial}{\partial W_{i j}^{(l)}} J(W, b) &=\left[\frac{1}{m} \sum_{i=1}^{m} \frac{\partial}{\partial W_{i j}^{(l)}} J\left(W, b ; x^{(i)}, y^{(i)}\right)\right]+\lambda W_{i j}^{(l)} \\
+\frac{\partial}{\partial b_{i}^{(l)}} J(W, b) &=\frac{1}{m} \sum_{i=1}^{m} \frac{\partial}{\partial b_{i}^{(l)}} J\left(W, b ; x^{(i)}, y^{(i)}\right)
+\end{aligned}
+$$
+
+El motivo por el que ambas ecuaciones difieren, es que la regularización no se aplica al sesgo.
+El algoritmo que nos permite calcular dichas derivadas de manera eficiente es el siguiente:
+
+1. Una pasada hacia adelante computando los valores de todas las neuronas a partir de la segunda capa.
+2. Para cada neurona $i$ de la capa $n_l$ de salida, calculamos:
+$$\delta_{i}^{\left(n_{l}\right)}=\frac{\partial}{\partial z_{i}^{\left(n_{l}\right)}} \frac{1}{2}\left\|y-h_{W, b}(x)\right\|^{2}=-\left(y_{i}-a_{i}^{\left(n_{l}\right)}\right) \cdot f^{\prime}\left(z_{i}^{\left(n_{l}\right)}\right)$$
+3. Para cada capa $l=n_{l}-1, n_{l}-2, n_{l}-3, \dots, 2$ y para cada neurona $i$ en $l$, calcular:
+    $$\delta_{i}^{(l)}=\left(\sum_{j=1}^{s_{l+1}} W_{j i}^{(l)} \delta_{j}^{(l+1)}\right) f^{\prime}\left(z_{i}^{(l)}\right)$$
+4. Finalmente, las derivadas parciales vienen dadas por:
+    $$
+    \begin{aligned}
+    \frac{\partial}{\partial W_{i j}^{(l)}} J(W, b ; x, y) &=a_{j}^{(l)} \delta_{i}^{(l+1)} \\
+    \frac{\partial}{\partial b_{i}^{(l)}} J(W, b ; x, y) &=\delta_{i}^{(l+1)}
+    \end{aligned}
+    $$
+
+## Autoencoders
 
 Autoencoders son redes neuronales entrenadas para reconstruir la entrada,
 es decir, para copiar la entrada en la salida. Internamente, estas arquitecturas
@@ -187,7 +299,7 @@ si simplemente es capaz de mapear $g(f(x)) = x$ para todos los valores de $x$, n
 util. Sin embargo, podemos diseñar autoencoders que no se limiten a copiar la información de entrada,
 sino que aprendan patrones de los datos y los utilicen para la reconstrucción. Este es el objetivo
 de los autoencoders. Cuando restringimos de alguna forma una arquitectura de este tipo, el error
-de reconstrucción $e = error(g(f(x)), x)$, donde $error$ puede ser cualquier métrica de distancia, va
+de reconstrucción $e = L(g(f(x)), x)$, donde $L$ puede ser cualquier métrica de distancia, va
 a ser mayor que 0 en la mayoría de casos. Debido a que solamente podemos reconstruir los datos de entrada
 de manera aproximada. Debido a dichas restricciones, el modelo es forzado a priorizar partes de información
 que deben ser copiadas y encontrando así patrones últiles en los datos.
@@ -206,8 +318,54 @@ si disponemos de datos no etiquetados, podemos aprovecharlos también para un pr
 
 ### Autoencoders según la dimensión del código
 
+Según el tamaño del código existen dos categorías de autoencoders.
+Cuando el código tiene un tamaño menor que los datos de entrada, ase le conocen como autoencoders
+**undercomplete**. Si por el contrario, el código es mayor que los datos de entrada, esos autoencoders
+reciben el nombre de **overcomplete**.
+
+Una de las formas más importantes para hacer que el encoder extraiga características relevantes de los datos,
+en lugar de meramente copiarlos, es restringir $h$ para que tenga una dimensión menor que $x$. Es decir,
+tener un autoencoder *undercomplete*. De esta forma, el encoder es forzado a aprender las caracteristicas más
+importantes que van a permitir restaurar la mayoría de información.
+
+El proceso de aprendizaje de los autoencoders se puede resumir en la optimización de la siguiente función de coste:
+
+$$L(\boldsymbol{x}, g(f(\boldsymbol{x})))$$
+
+Para todos los ejemplos $x$ del conjunto de entrenamiento. $L$ corresponde, como se ha mencionado anteriormente,
+a la métrica de similaridad. La métrica más común es el error cuadrático medio. Un aspecto interesante de esta métrica,
+es que cuando se usa con un autoencoder *undercomplete* cuyo decoder sea lineal
+(aquel cuya función de activación para todas sus neuronas sea $f(x) = x$), este aprende a generar un subespacio
+equivalente al de PCA.
+
+Por otro lado, los autoencoders *overcomplete* no suelen ser muy útiles en la práctica. Debido principalmente a
+que si el código es mayor o igual que el tamaño de los datos de entrada, no hay nada que impida al autoencoder
+aprender a copiar la información, ya que si $x \in \mathbb{R}^N$, cualquier espacio vectorial $\mathbb{R}^{N'}$ donde
+$N'$ sea mayor que $N$ puede generar todos los datos de entrada. Para poder utilizar este tipo de autoencoders
+es necesario el uso de **regularización**.
+
 ### Autoencoders regularizados
+
+Como se ha descrito anteriorente, los autoencoders *undercomplete*, cuya dimensión del código es menor que la de la entrada, pueden
+aprender las características o patrones mas relevantes de la distribución de los datos. El problema principal de este
+tipo de arquitecturas, tanto *undercomplete* como *overcomplete*, es que el autoencoder sea demasiado potente como
+para no tener aprender nada útil y simplemente se encarguen de copiar la información. Este problema se hace obvio
+cuando en el caso de los autoencoders *overcomplete*, (incluso en aquellos con una dimensión del código igual que la
+entrada). En esos casos, hasta un autoencoder lineal puede aprender a copiar la entrada en la salida.
+
+El objetivo de la regularización es permitir entrenar cualquier arquitectura de
+autoencoder de manera que esta aprenda correctamente, donde el tamaño del código
+y la profundidad de la red no esté limitada por el aprendizaje, sino por la complejidad
+de la distribución de datos. En lugar de restringir la arquitectura, los autoencoders
+regularizados utilizan una función de coste que penaliza la copia de datos, o al menos, favorece
+características intrínsicas del modelo. Entre estas características se encuentra, la dispersión,
+robustez frente a ruido, etc. Al hacer uso de ese tipo de funciones de coste con regularización,
+incluso autoencoders no lineales y *overcomplete* pueden aprender patrones útiles sobre los datos.
+Incluso si la capacidad del modelo es suficiente como para aprender la función identidad.
+
 
 ### Autoencoders variacionales
 
 ### Autoencoders apilados
+
+### Aplicaciones de los autoencoders
