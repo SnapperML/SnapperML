@@ -22,7 +22,7 @@ en un area. La investigación relativa al Machine Learning o a otras areas donde
 está exenta de este requisito de la investigación científica. Por tanto, adoptando un flujo de trabajo reproducible, estamos
 ofreciendo a la audiencia las herramientas necesarias que demuestran las decisiones tomadas y que permiten validar nuestros resultados.
 Por otro lado, para que un estudio computacional pueda  ser reproducido correctamente por un investigador independiente
- es necesario el acceso completo a los datos, código, parametros de los experimentos, información sobre el entorno de ejecución, etc.
+ es necesario el acceso completo a los datos, código, parámetros de los experimentos, información sobre el entorno de ejecución, etc.
  
  
 Otro motivo de interés para la búsqueda de la reproducibilidad es el de facilitar el uso de nuestros métodos por el resto
@@ -70,8 +70,8 @@ del estudio. En este diseño se especifica la hipótesis base, las asunciones de
 y los p-valores correspondientes. El establecer las bases estadísticas sobre las que se va a desarrollar el estudio de antemano,
 nos puede ayudar además a evitar problemas como el p-hacking.
 
-Por otro lado, el término reproducibiidad además de poder descomponerse según la información o parte del trabajo que se
-esté tratanto, llamémosla la escala o eje horizontal, también se puede descomponer en otro eje, llamemósle vertical,
+Por otro lado, el término reproducibilidad además de poder descomponerse según la información o parte del trabajo que se
+esté tratando, llamémosla la escala o eje horizontal, también se puede descomponer en otro eje, llamémosle vertical,
 que indica como de replicable y reproducible es un estudio en su conjunto. Los niveles de esta nueva escala son los
 siguientes:
 
@@ -89,7 +89,7 @@ ofreciendo los datos ya procesados y esenciales, así como ofreciéndolas median
 Pero se debe ofrecer una completa descripción de los algoritmos y la metodología usados en la publicación y cualquier
 material complementario necesario.
 
-- **Investigación auditable**. Cuando se registra la suficiente informacion sobre el estudio
+- **Investigación auditable**. Cuando se registra la suficiente información sobre el estudio
 (incluidos datos y programas informáticos) para que la investigación pueda ser defendida posteriormente si es necesario 
 o para llevar a cabo una resolución en caso de existir diferencias entre confirmaciones independientes.
 Esta información puede ser privada, como con los tradicionales cuadernos de laboratorio.
@@ -103,12 +103,12 @@ También debe permitir extender los resultados o aplicar el método desarrollado
 ### Aspectos críticos
 
 Una vez hemos definido los diferentes niveles de reproducibilidad, vamos a definir los aspectos que consideramos
-críticos para lograr una investigacióin *abierta o reproducible*.
+críticos para lograr una investigación *abierta o reproducible*.
 
 - **Conjunto de datos**: La información sobre la localización y el proceso de extracción de los datos. Este factor
 es determinante a la hora de hacer un estudio reproducible. El objetivo es el de facilitar los datos y/o
 la forma de extraerlos. En caso de que los datos no sean accesibles públicamente, o que los datos que se ofrezcan
-no sean los extraidos en crudo, estaríamos ante un *estudio replicable*, pero no reproducible.
+no sean los extraídos en crudo, estaríamos ante un *estudio replicable*, pero no reproducible.
 
 - **Preprocesado de datos**: En este aspecto se recogen los diferentes pasos del proceso de transformación de los datos.
 Un investigador independiente debería ser capaz de repetir los datos de preprocesado fácilmente.
@@ -119,7 +119,7 @@ En esos casos, en lugar de ofrecer los scripts de preprocesado, sería más inte
 de como los datos se han transformado. Además, sugerimos favorecer las herramientas de código libre en caso de que
 existan como alternativa a algunas de las herramientas privadas.
 
-- **Particion de los datos**: En caso de que los datos se separen, por ejemplo para ajustar un modelo y validarlo,
+- **Partición de los datos**: En caso de que los datos se separen, por ejemplo para ajustar un modelo y validarlo,
 es necesario proporcionar los detalles de como se ha realizado esta separación. En el caso de que dicha separación
 sea aleatoria, como mínimo se debe proporcionar la semilla y el tipo de muestreo (estratificado o no, por ejemplo).
 Aunque preferiblemente, todo este procedimiento debe estar recogido en un script.
@@ -128,24 +128,24 @@ Aunque preferiblemente, todo este procedimiento debe estar recogido en un script
 hacer disponible toda la información posible en relación a este proceso y a las decisiones tomadas. La información
 mínima que se debe proporcionar es:
 
-    1. Parametros del experimento
+    1. Parámetros del experimento
     2. Métodos propuestos: detalles de implementación, algoritmos, código, etc (si es aplicable).
 
-- **Evaluación del modelo**: Información sobre como se evalua un modelo entrenado. Información similar al punto anterior
+- **Evaluación del modelo**: Información sobre como se evalúa un modelo entrenado. Información similar al punto anterior
 se aplica aquí.
 
-- **Control de la estocasticidad**: La mayoría de operaciones en Machine Learning tienen un factor de aleatoriedad.
-Por tanto, es esencial establecer los valores de las semillar que controlar dichos procesos.
-La mayoría de herramientas de cálculo científico ofrecen algun método para establecer la semilla del
+- **Control de la estocásticidad**: La mayoría de operaciones en Machine Learning tienen un factor de aleatoriedad.
+Por tanto, es esencial establecer los valores de las semilla que controlar dichos procesos.
+La mayoría de herramientas de cálculo científico ofrecen algún método para establecer la semilla del
 generador de números aleatorios.
 
 - **Entorno software**: Debido al hecho de que los paquetes/módulos de software están en continuo
 desarrollo y sufren posibles alteraciones de los algoritmos internos, es importante
 que los detalles del entorno de software utilizado: módulos, paquetes y números de versión..., estén disponible.
 
-- **Entorno hardware**: Algunos estudios, sobre todo los que continen grandes cantidades de datos, son
+- **Entorno hardware**: Algunos estudios, sobre todo los que contienen grandes cantidades de datos, son
 reproducibles exclusivamente cuando se ejecutan en una cierta máquina, o al menos, cuando se cumplen unos
-requisitos de hardware determinados. Otro problema que surge en algunos casos y que está extrechamente relacionado
+requisitos de hardware determinados. Otro problema que surge en algunos casos y que está estrechamente relacionado
 con el punto anterior, es el de las versiones de los drivers. Por este motivo, se requiere una correcta documentación
 de los recursos utilizados, tanto GPU como CPU, así como de las versiones de sus drivers correspondientes.
 
@@ -158,29 +158,29 @@ son los siguientes:
 
 - **Extracción de datos**: Se seleccionan e integran datos de diferentes fuentes que sean relevantes para el problema.
 
-- **Análisis de datos**: En este paso se realiza un analisis exploratorio (EDA) con el fin de comprender el módelo de
+- **Análisis de datos**: En este paso se realiza un análisis exploratorio (EDA) con el fin de comprender el modelo de
 datos, realizar asunciones, identificar posibles características relevantes, y preparar un plan para la ingeniería de
 características y el preprocesado de datos.
 
 - **Preparación de los datos**: Se preparan los datos para la tarea en cuestión. Se realizan las particiones de datos,
-se limipian y transforman los mismos para adaptarlos al problema, y se lleva a cabo la ingeniería de características.
+se limpian y transforman los mismos para adaptarlos al problema, y se lleva a cabo la ingeniería de características.
 El resultado de este proceso es una seria de conjuntos de datos listos para entrenar, evaluar y validar modelos.
 
 - **Ajuste de modelos**: Aquí se lleva a cabo el entrenamiento de modelos. Se implementan diferentes algoritmos y se
 realiza un ajuste de hiperparámetros con el fin de obtener el mejor modelo posible.
 
-- **Evaluación de modelos**: Se evalua el modelo utilizando los conjuntos de validación y/o test.
+- **Evaluación de modelos**: Se evalúa el modelo utilizando los conjuntos de validación y/o test.
 
 - **Validación de modelos**: Se realiza una confirmación del rendimiento del modelo para comprobar que es adecuado
 para la implementación. Para ello se compara su rendimiento predictivo con un modelo de referencia determinado,
 denominado **baseline**.
 
-- **Entrega o despligue del modelo**: Se implementa el modelo final en un entorno de destino para hacer las predicciones
+- **Entrega o despliegue del modelo**: Se implementa el modelo final en un entorno de destino para hacer las predicciones
 disponibles a los usuarios. Esta implementación puede ser una de las que se describen a continuación:
 
     - Servicio dentro de un backend propio, o como microservicio. Se implementa a partir de una API REST, GRPC o cualquier
     otro protocolo web.
-    - El modelo se empotra en los dispotivos finales. Útil para dispositivos con conectividad limitada, IoT, etc.
+    - El modelo se empotra en los dispositivos finales. Útil para dispositivos con conectividad limitada, IoT, etc.
     - Como parte de un sistema de predicción por lotes.
 
 - **Monitorización del modelo**: Se supervisa el rendimiento del modelo con el fin de planificar las siguientes iteraciones.
@@ -189,16 +189,16 @@ disponibles a los usuarios. Esta implementación puede ser una de las que se des
 
 Como se puede observar, los pasos de este proceso siguen un orden estricto, lo cual lo hace resonar a un modelo de
 desarrollo en cascada. Al igual que el resto de aplicaciones del desarrollo software, la deuda técnica es un factor
-vital a tener en cuenta. Un factor que puede relentizar enormemente las iteraciones, y que se va acumulando
+vital a tener en cuenta. Un factor que puede ralentizar enormemente las iteraciones, y que se va acumulando
 en cada paso del proceso. Además, la alta dependencia que hay en el orden de los pasos del proceso de ciencia de datos,
-hace muy dificil la refactorización.
+hace muy difícil la refactorización.
 
 INTRODUCIR DEFINICIÓN DE DEUDA TÉCNICA
 
 Además de la deuda técnica originada por el propio desarrollo software, existe
 unos elementos particulares al proceso de ciencia de datos que pueden aumentar drásticamente la deuda técnica:
 
-- **Bucles de retroalimentacion**: Este problema ocurre cuando, de manera indirecta, la salida del modelo influencia 
+- **Bucles de retroalimentación**: Este problema ocurre cuando, de manera indirecta, la salida del modelo influencia 
 la entrada al mismo. De esta forma, los sistemas de ML modifican su propio comportamiento conforme pasa el tiempo.
 Este tipo de errores parecen sencillos de resolver, pero en la práctica, conforme se integran
 diferentes sistemas la probabilidad de que estos se retroalimenten entre si es muy alta. Incluso si dos
@@ -206,17 +206,17 @@ sistemas de ML parecen no estar relacionados, este problema puede surgir. Imagí
 acciones de un mismo mercado de dos compañías distintas. Mejoras o peor aún bugs, de un sistema, pueden influir en el
 comportamiento del otro sistema.  
 
-- **Cascadas de corrección**: Este problema ocurre cuando el modelo de ML no aprende lo que se esperaba, y se terminam
+- **Cascadas de corrección**: Este problema ocurre cuando el modelo de ML no aprende lo que se esperaba, y se terminan
 aplicando una serie de parches (heurísticas, filtros, calibraciones, etc) sobre la salida del modelo. Añadir un parche
 de este tipo puede sen tentador incluso cuando no hay restricciones de tiempo. El problema principal es que la métrica
 que el modelo intenta optimizar se descorrelaciona con la métrica general del sistema. Conforme esta capa de
-heurísticas se vuelve más grande, es díficil reconocer cambios sobre el modelo de ML que mejoraren la métrica final,
+heurísticas se vuelve más grande, es difícil reconocer cambios sobre el modelo de ML que mejoraren la métrica final,
 dificultando de esta forma la iteración y mejora continua.
 
 - **Características basura**: Características que no aportan nada al sistema, incluso pueden perjudicar el rendimiento.
 Algunas de las características basura que podemos encontrar son:
 
-    - Características agrupadas: Cuando se agrupan varias características y se evaluan en conjunto, es dificl saber
+    - Características agrupadas: Cuando se agrupan varias características y se evalúan en conjunto, es difícil saber
     si todas las características aportan, o si simplemente hay algunas que son beneficiosas y otras no.
     - ε-Características: Algunas características que se añaden mejoran muy poco el rendimiento del modelo. Aunque
     es tentador añadir este tipo de características, el problema emerge cuando dichas características dejan de mejorar
@@ -267,15 +267,15 @@ $f: \mathbb{R} \mapsto \mathbb{R}$ es la llamada **función de activación**. En
 más comunes se encuentran: sigmoide, tanh, RELU, LeakyRELU y Swish.
 
 Una red neuronal se construye juntando varias neuronas, de forma que las salidas de unas neuronas son las
-entradas de otra, como se muestra en la figura X. En la figura, los circulos representan una neurona, y aquellos
+entradas de otra, como se muestra en la figura X. En la figura, los círculos representan una neurona, y aquellos
 con etiqueta +1 son las **unidades de sesgo**. Por otro lado, las unidades o neuronas se agrupan en capas, una
 capa está representada como una columna de círculos. Dentro de estas capas, podemos diferenciar tres tipos:
 la capa de entrada (más a la izquierda), la capa interna, y la capa de salida que solamente contiene una neurona (a la derecha).
 
 Vamos a denotar, $n_l$ como el numero de capas de nuestra red, $n_l=3$ en nuestro ejemplo.
 A la capa de entrada la denotamos como $L_1$, y la capa de salida por tanto sería $L_{n_l}$.
-Nuestra red neuronal tiene como parametros $(W, b)= \left(W^{(1)}, b^{(1)}, W^{(2)}, b^{(2)}\right)$,
-donde cada elemento $W_{i j}^{(l)}$ corresponde con el parametro asociado a la conexión entre la neurona
+Nuestra red neuronal tiene como parámetros $(W, b)= \left(W^{(1)}, b^{(1)}, W^{(2)}, b^{(2)}\right)$,
+donde cada elemento $W_{i j}^{(l)}$ corresponde con el parámetro asociado a la conexión entre la neurona
 $j$ de la capa $l$ y la neurona $i$ de la capa $l + 1$. Por otro lado, $b_{i}^{(l)}$ es el sesgo asociado
 a la unidad $i$ de la capa $l + 1$.
 
@@ -338,7 +338,7 @@ regresión como para clasificación. En el caso de la clasificación, $y$ toma l
 salida en lugar de la sigmoide, usaríamos los valores -1 y 1 en su lugar.
 
 El objetivo es minimizar $J(W, b)$ como función de $W$ y $b$. Para llevar a cabo esta optimización,
-debemos inicializar $W$ y $b$ con valores aleatorios próximos a cero, por ejemplo, con valores muestrados
+debemos inicializar $W$ y $b$ con valores aleatorios próximos a cero, por ejemplo, con valores muestreados
 de $\mathcal{N}\left(0, \epsilon^{2}\right)$. El motivo por el que es importante inicializar aleatoriamente los
 pesos, es para **romper la simetría**. Posteriormente, aplicamos un algoritmo de optimización, como
 puede ser *gradiente descendiente*. Una iteración de gradiente descendiente actualizaría los pesos de
@@ -386,18 +386,18 @@ es decir, para copiar la entrada en la salida. Internamente, estas arquitecturas
 contienen un capa interna llamada **código**. Este código es una representación
 de los datos de entrada en un espacio vectorial de dimensión igual o distinta a los mismo.
 La red puede plantearse como la suma de dos partes bien diferenciadas: un codificador (encoder),
-que representa una funcion $h=f(x)$, y un decodificador (decoder) que produce una reconstrucción
-de la salida $r = g(h)$. Esta arquitectura se puede ver facilmente en la figura INSERTAR FIGURA.
+que representa una función $h=f(x)$, y un decodificador (decoder) que produce una reconstrucción
+de la salida $r = g(h)$. Esta arquitectura se puede ver fácilmente en la figura INSERTAR FIGURA.
 
 Si diseñamos un autoencoder que únicamente se encargue de copiar la entrada en la salida, es decir,
 si simplemente es capaz de mapear $g(f(x)) = x$ para todos los valores de $x$, no es especialmente
-util. Sin embargo, podemos diseñar autoencoders que no se limiten a copiar la información de entrada,
+útil. Sin embargo, podemos diseñar autoencoders que no se limiten a copiar la información de entrada,
 sino que aprendan patrones de los datos y los utilicen para la reconstrucción. Este es el objetivo
 de los autoencoders. Cuando restringimos de alguna forma una arquitectura de este tipo, el error
 de reconstrucción $e = L(g(f(x)), x)$, donde $L$ puede ser cualquier métrica de distancia, va
 a ser mayor que 0 en la mayoría de casos. Debido a que solamente podemos reconstruir los datos de entrada
 de manera aproximada. Debido a dichas restricciones, el modelo es forzado a priorizar partes de información
-que deben ser copiadas y encontrando así patrones últiles en los datos.
+que deben ser copiadas y encontrando así patrones útiles en los datos.
 
 Tradicionalmente, este tipo de arquitecturas se han utilizado para reducción de dimensionalidad o aprendizaje
 de características. La reducción de la dimensionalidad es posible debido que la capa interna (*código*)
@@ -420,7 +420,7 @@ reciben el nombre de **overcomplete**.
 
 Una de las formas más importantes para hacer que el encoder extraiga características relevantes de los datos,
 en lugar de meramente copiarlos, es restringir $h$ para que tenga una dimensión menor que $x$. Es decir,
-tener un autoencoder *undercomplete*. De esta forma, el encoder es forzado a aprender las caracteristicas más
+tener un autoencoder *undercomplete*. De esta forma, el encoder es forzado a aprender las características más
 importantes que van a permitir restaurar la mayoría de información.
 
 El proceso de aprendizaje de los autoencoders se puede resumir en la optimización de la siguiente función de coste:
@@ -441,7 +441,7 @@ es necesario el uso de **regularización**.
 
 ### Autoencoders regularizados
 
-Como se ha descrito anteriorente, los autoencoders *undercomplete*, cuya dimensión del código es menor que la de la entrada, pueden
+Como se ha descrito anteriormente, los autoencoders *undercomplete*, cuya dimensión del código es menor que la de la entrada, pueden
 aprender las características o patrones mas relevantes de la distribución de los datos. El problema principal de este
 tipo de arquitecturas, tanto *undercomplete* como *overcomplete*, es que el autoencoder sea demasiado potente como
 para no tener aprender nada útil y simplemente se encarguen de copiar la información. Este problema se hace obvio
@@ -453,7 +453,7 @@ autoencoder de manera que esta aprenda correctamente, donde el tamaño del códi
 y la profundidad de la red no esté limitada por el aprendizaje, sino por la complejidad
 de la distribución de datos. En lugar de restringir la arquitectura, los autoencoders
 regularizados utilizan una función de coste que penaliza la copia de datos, o al menos, favorece
-características intrínsicas del modelo. Entre estas características se encuentra, la dispersión,
+características intrínsecas del modelo. Entre estas características se encuentra, la dispersión,
 robustez frente a ruido, etc. Al hacer uso de ese tipo de funciones de coste con regularización,
 incluso autoencoders no lineales y *overcomplete* pueden aprender patrones útiles sobre los datos.
 Incluso si la capacidad del modelo es suficiente como para aprender la función identidad.
@@ -472,17 +472,17 @@ que se propone es la siguiente:
 
 $$\Omega(\boldsymbol{h}) = \beta \sum_{j=1}^{s_{2}} \mathrm{KL}\left(\rho \| \hat{\rho}_{j}\right)$$
 
-Donde $\beta$ es el parámetro que controla el peso de la penalización, $\rho$ es el **parametro de dispersión**
+Donde $\beta$ es el parámetro que controla el peso de la penalización, $\rho$ es el **parámetro de dispersión**
 y $\hat{\rho}_{j}$ es la activación media de la neurona $j$ de la capa interna, cuya
 expresión viene dada por:
 
 $$\hat{\rho}_{j}=\frac{1}{m} \sum_{i=1}^{m}\left[a_{j}^{(2)}\left(x^{(i)}\right)\right]$$
 
-Básicamente, se calcula la salida o activacion de una misma neurona para todos
+Básicamente, se calcula la salida o activación de una misma neurona para todos
 los ejemplos de entrenamiento, y se hace la media. Por otro lado, la función Kullback-Leibler
 $\mathrm{KL}\left(\rho \| \hat{\rho}_{j}\right)=\rho \log \frac{\rho}{\hat{\rho}_{j}}+(1-\rho) \log \frac{1-\rho}{1-\hat{\rho}_{j}}$
 mide la divergencia entre una variable aleatoria de Bernoulli con media $p$ y una variable aleatoria de Bernoulli
-con media $\hat{\rho}_{j}$. Esta función es un estandar a la hora de medir la similitud de dos distribuciones.
+con media $\hat{\rho}_{j}$. Esta función es un estándar a la hora de medir la similitud de dos distribuciones.
 
 Los autoencoders dispersos se suelen usar para aprender características útiles para otra tarea,
 como puede ser clasificación. Un autoencoder disperso debe encontrar patrones inherentes a la
@@ -498,7 +498,7 @@ tenemos la siguiente función a optimizar:
 $$L(\boldsymbol{x}, g(f(\tilde{\boldsymbol{x}})))$$
 
 Donde $\tilde{\boldsymbol{x}}$ es una copia de los datos de entrada a la que se le ha añadido ruido
-o algun otro tipo de corrupción. De esta forma, no basta con aprender la función identidad, es necesario
+o algún otro tipo de corrupción. De esta forma, no basta con aprender la función identidad, es necesario
 además aprender patrones interesantes que permitan eliminar el ruido. Una forma sencilla de implementar
 este arquitecturas, es añadiendo una capa de **Dropout** como capa de entrada.
 
@@ -510,14 +510,14 @@ este arquitecturas, es añadiendo una capa de **Dropout** como capa de entrada.
 
 Las aplicaciones principales de los autoencoders han sido la **reducción de la dimensionalidad** y
 **recuperación de información**. Autoencoders no lineales pueden ofrecer un error de reconstrucción
-menor que PCA, y al no estár limitados a una proyección lineal, pueden aprender una representación
+menor que PCA, y al no estar limitados a una proyección lineal, pueden aprender una representación
 más fácil de interpretar. En el caso de clasificación, los autoencoders pueden encontrar una
-representación donde los datos esten agrupados en clusters y las categorías esten bien diferenciadas.
+representación donde los datos estén agrupados en clusters y las categorías estén bien diferenciadas.
 Además, encontrar una proyección a un espacio de dimensión inferior que mantenga la mayoría de
 la información, permite mejorar el rendimiento de modelos, ya que estos en espacios inferiores tiene un menor
 coste de cómputo y memoria.
 
-Otra aplicación que se ha ido desarrollando en los ultimos años es la de **detección de anomalías**.
+Otra aplicación que se ha ido desarrollando en los últimos años es la de **detección de anomalías**.
 Los autoencoders pueden utilizarse para modelar la distribución de datos, y el error de reconstrucción
 se puede utilizar como indicador para detectar anomalías. Cuando un autoencoder se ha entrenado correctamente,
 el error de reconstrucción sobre datos de de entrenamiento es bajo. Así como el error otros datos de la misma
@@ -531,9 +531,9 @@ el ejemplo que se ha pasado por la red es una anomalía.
 Una última aplicación que cabe destacar es la de **clasificación**. Los autoencoders, pese a modelos
 de aprendizaje no supervisado, pueden usarse para problemas de clasificación. Si se entrena un autoencoder
 para cada clase (con ejemplos exclusivos de esa clase), el error de reconstrucción de cada autoencoder se puede
-puede utilizar para decidir la clase. Presuntamente, aquellos ejemplos cercanos a una determinada clase, tendran
+puede utilizar para decidir la clase. Presuntamente, aquellos ejemplos cercanos a una determinada clase, tendrán
 un error de reconstrucción menor en su autoencoder correspondiente. De esta forma, podemos aplicar este tipo de
 arquitecturas a problemas de clasificación. No obstante, los autoencoders se entrenan de manera independiente minimizando
 el error de reconstrucción y la regularización (si aplica), esto implica que no hay una optimización directa del
 error de clasificación. Al perder esa relación directa con la métrica objetiva, este aplicación puede dar lugar
-a resultados suboptimos.
+a resultados subóptimos.
