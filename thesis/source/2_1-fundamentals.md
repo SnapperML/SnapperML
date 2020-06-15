@@ -193,10 +193,15 @@ vital a tener en cuenta. Un factor que puede ralentizar enormemente las iteracio
 en cada paso del proceso. Además, la alta dependencia que hay en el orden de los pasos del proceso de ciencia de datos,
 hace muy difícil la refactorización.
 
-INTRODUCIR DEFINICIÓN DE DEUDA TÉCNICA
+La deuda técnica es un concepto acuñado en el desarrollo software para describir aquellas decisiones, que se
+toman por falta de tiempo o conocimiento, que provocan un coste adicional sobre los nuevos cambios conforme pasan
+el tiempo. Este término está basado en el concepto de *deuda monetaria*, y al igual que este tipo de deuda, si no
+se paga temprano, el coste adicional aumenta de manera exponencial (*intereses compuestos*). Algunas de las causas de
+deuda técnica son: falta de tests, falta de documentación, falta de conocimiento, presión comercial (deadlines
+irreales), refactorización tardía, etc.
 
 Además de la deuda técnica originada por el propio desarrollo software, existe
-unos elementos particulares al proceso de ciencia de datos que pueden aumentar drásticamente la deuda técnica:
+unos elementos particulares al proceso de ciencia de datos que pueden aumentar drásticamente esta deuda:
 
 - **Bucles de retroalimentación**: Este problema ocurre cuando, de manera indirecta, la salida del modelo influencia 
 la entrada al mismo. De esta forma, los sistemas de ML modifican su propio comportamiento conforme pasa el tiempo.
@@ -223,26 +228,55 @@ Algunas de las características basura que podemos encontrar son:
     el modelo o incluso lo empeoran cuando los datos cambian mínimamente.
     - Características obsoletas: Conforme pasa el tiempo, algunas características se vuelven obsoletas, porque o bien
     no aportan la información correcta, o bien la información que aportan ya se recoge en otras variables. Para
-    evitar este problema, reevaluar la importancia de las características con el paso del tiempo.
+    evitar este problema, revaluar la importancia de las características con el paso del tiempo.
 
-- **Deuda de configuración**:
+- **Deuda de configuración**: Sistemas de ML están compuestos por diferentes partes, cada una con un configuración
+específica. Los modelos y pipelines en general, deben de ser fácilmente configurables. Además, la organización
+de ficheros y el sistema de configuración debe facilitar lo siguiente:
+  - Modificar configuraciones existentes fácilmente
+  - Comparar y ver claramente la diferencias entre configuraciones de modelos
+  - Detectar configuraciones redundantes
+  - Revisión de código sobre las configuración y su inclusión en un control de versiones.
 
-- **Deuda de reproducibilidad**:
+- **Deuda de reproducibilidad**: Como se verá en la sección siguiente, es importante que como investigadores,
+podemos reproducir experimentos y obtener los mismos resultados fácilmente. Aunque en los sistemas ML
+reales es realmente difícil conseguirlo; debido principalmente a la naturaleza no determinística de los
+algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo exterior.
 
 ### Anti-patrones
  
- - **Código pegamento**:
+ - **Código pegamento**: A pesar de que en la comunidad existen numerosos paquetes y soluciones para ML.
+ El utilizar herramientas genéricas puede hacer que el sistema dependa mayoritariamente de ellas.
+ Eso provoca que en algunos casos haya una gran cantidad de código solamente para introducir y extraer
+ datos de estas soluciones *open source*. Si nuestro sistema tienen una gran proporción del código dedicado
+ a adaptar los datos, algoritmos, etc, a un paquete de propósito general, deberíamos plantearnos crear
+ una solución propia.
+
  
- - **Junglas de pipelines**:
+ - **Junglas de pipelines**: La mayoría de sistema integran multiples fuentes de información.
+ Estas fuentes de información, así como las transformaciones pertinentes sobre los datos,
+ suelen evolucionar a lo largo del desarrollo. Esto induce a un caso particular de *código pegamento*
+ donde se hace muy complicado poder testear, recuperarse de errores, etc. Una forma de subsanar este problema,
+ es diseñado el sistema holísticamente (teniendo en cuenta todo el pipeline), en lugar de enfocarse en los
+ pasos intermedios. Además, también sería beneficioso, en la medida de lo posible, aplicar los conceptos
+ de *programación funcional*.
  
- - **Código muerto**:
+ - **Código muerto**: Los proyectos de ML se basan en la experimentación. Al cabo del tiempo, estos sistemas
+ pueden acabar con una gran cantidad de código dedicados experimentos que nunca han visto la luz.
  
- - **Deuda de abstracción**:
+ - **Deuda de abstracción**: Los problemas anteriores reflejan una falta de abstracción para los sistemas de ML,
+ como puede ser un lenguaje común de alto nivel para definir las fuentes de datos, modelo y predicciones.
  
- - **Code-smells más comunes**:
-    - *Tipos de datos planos*:
-    - *Multiples lenguajes*:
-    - *Prototipos*:
+ - **Code-smells más comunes**: Algunos de los indicadores de *peligro* para los sistemas de ML son los siguientes:
+    - *Tipos de datos planos*: En un sistema robusto, la información producida en el mismo se almacena enriquecida.
+    Se debe saber si un parámetro de un modelo es un threshold o no, si una variable esta en escala logarítmica, etc.
+    Así como debe haber claras indicaciones de como se ha producido la información y como se debe ser consumida. 
+    - *Multiples lenguajes*: Es tentador utilizar diferentes lenguajes para un mismo sistema de ML cuando hay
+    soluciones o sintaxis conveniente para cada componente. Sin embargo, esto limita la movilidad del capital humano,
+    así como complica el testing.
+    - *Prototipos*: Todo sistema de ML parte de un prototipo. Sin embargo, es necesario un código bien testeado y listo
+    para producción en cualquier parte de estos sistemas. Aunque es complicado llevarlo a la práctica cuando existen
+    unas restricciones de tiempo fuertes.
 
  
 ## MLOps 
