@@ -150,6 +150,101 @@ con el punto anterior, es el de las versiones de los drivers. Por este motivo, s
 de los recursos utilizados, tanto GPU como CPU, así como de las versiones de sus drivers correspondientes.
 
 
+## Proceso de ciencia de datos y deuda técnica
+
+La mayoría de proyectos de ciencia de datos recogen una serie de pasos distinguidos. Una vez definido el caso
+comercial (el producto), y la métrica que mide el éxito, los pasos para llevar a cabo un proyecto de Machine Learning
+son los siguientes:
+
+- **Extracción de datos**: Se seleccionan e integran datos de diferentes fuentes que sean relevantes para el problema.
+
+- **Análisis de datos**: En este paso se realiza un analisis exploratorio (EDA) con el fin de comprender el módelo de
+datos, realizar asunciones, identificar posibles características relevantes, y preparar un plan para la ingeniería de
+características y el preprocesado de datos.
+
+- **Preparación de los datos**: Se preparan los datos para la tarea en cuestión. Se realizan las particiones de datos,
+se limipian y transforman los mismos para adaptarlos al problema, y se lleva a cabo la ingeniería de características.
+El resultado de este proceso es una seria de conjuntos de datos listos para entrenar, evaluar y validar modelos.
+
+- **Ajuste de modelos**: Aquí se lleva a cabo el entrenamiento de modelos. Se implementan diferentes algoritmos y se
+realiza un ajuste de hiperparámetros con el fin de obtener el mejor modelo posible.
+
+- **Evaluación de modelos**: Se evalua el modelo utilizando los conjuntos de validación y/o test.
+
+- **Validación de modelos**: Se realiza una confirmación del rendimiento del modelo para comprobar que es adecuado
+para la implementación. Para ello se compara su rendimiento predictivo con un modelo de referencia determinado,
+denominado **baseline**.
+
+- **Entrega o despligue del modelo**: Se implementa el modelo final en un entorno de destino para hacer las predicciones
+disponibles a los usuarios. Esta implementación puede ser una de las que se describen a continuación:
+
+    - Servicio dentro de un backend propio, o como microservicio. Se implementa a partir de una API REST, GRPC o cualquier
+    otro protocolo web.
+    - El modelo se empotra en los dispotivos finales. Útil para dispositivos con conectividad limitada, IoT, etc.
+    - Como parte de un sistema de predicción por lotes.
+
+- **Monitorización del modelo**: Se supervisa el rendimiento del modelo con el fin de planificar las siguientes iteraciones.
+
+### Deuda técnica
+
+Como se puede observar, los pasos de este proceso siguen un orden estricto, lo cual lo hace resonar a un modelo de
+desarrollo en cascada. Al igual que el resto de aplicaciones del desarrollo software, la deuda técnica es un factor
+vital a tener en cuenta. Un factor que puede relentizar enormemente las iteraciones, y que se va acumulando
+en cada paso del proceso. Además, la alta dependencia que hay en el orden de los pasos del proceso de ciencia de datos,
+hace muy dificil la refactorización.
+
+INTRODUCIR DEFINICIÓN DE DEUDA TÉCNICA
+
+Además de la deuda técnica originada por el propio desarrollo software, existe
+unos elementos particulares al proceso de ciencia de datos que pueden aumentar drásticamente la deuda técnica:
+
+- **Bucles de retroalimentacion**: Este problema ocurre cuando, de manera indirecta, la salida del modelo influencia 
+la entrada al mismo. De esta forma, los sistemas de ML modifican su propio comportamiento conforme pasa el tiempo.
+Este tipo de errores parecen sencillos de resolver, pero en la práctica, conforme se integran
+diferentes sistemas la probabilidad de que estos se retroalimenten entre si es muy alta. Incluso si dos
+sistemas de ML parecen no estar relacionados, este problema puede surgir. Imagínese dos predictores del valor de
+acciones de un mismo mercado de dos compañías distintas. Mejoras o peor aún bugs, de un sistema, pueden influir en el
+comportamiento del otro sistema.  
+
+- **Cascadas de corrección**: Este problema ocurre cuando el modelo de ML no aprende lo que se esperaba, y se terminam
+aplicando una serie de parches (heurísticas, filtros, calibraciones, etc) sobre la salida del modelo. Añadir un parche
+de este tipo puede sen tentador incluso cuando no hay restricciones de tiempo. El problema principal es que la métrica
+que el modelo intenta optimizar se descorrelaciona con la métrica general del sistema. Conforme esta capa de
+heurísticas se vuelve más grande, es díficil reconocer cambios sobre el modelo de ML que mejoraren la métrica final,
+dificultando de esta forma la iteración y mejora continua.
+
+- **Características basura**: Características que no aportan nada al sistema, incluso pueden perjudicar el rendimiento.
+Algunas de las características basura que podemos encontrar son:
+
+    - Características agrupadas: Cuando se agrupan varias características y se evaluan en conjunto, es dificl saber
+    si todas las características aportan, o si simplemente hay algunas que son beneficiosas y otras no.
+    - ε-Características: Algunas características que se añaden mejoran muy poco el rendimiento del modelo. Aunque
+    es tentador añadir este tipo de características, el problema emerge cuando dichas características dejan de mejorar
+    el modelo o incluso lo empeoran cuando los datos cambian mínimamente.
+    - Características obsoletas: Conforme pasa el tiempo, algunas características se vuelven obsoletas, porque o bien
+    no aportan la información correcta, o bien la información que aportan ya se recoge en otras variables. Para
+    evitar este problema, reevaluar la importancia de las características con el paso del tiempo.
+
+- **Deuda de configuración**:
+
+- **Deuda de reproducibilidad**:
+
+### Anti-patrones
+ 
+ - **Código pegamento**:
+ 
+ - **Junglas de pipelines**:
+ 
+ - **Código muerto**:
+ 
+ - **Deuda de abstracción**:
+ 
+ - **Code-smells más comunes**:
+    - *Tipos de datos planos*:
+    - *Multiples lenguajes*:
+    - *Prototipos*:
+
+ 
 ## MLOps 
 
 
@@ -364,8 +459,81 @@ incluso autoencoders no lineales y *overcomplete* pueden aprender patrones útil
 Incluso si la capacidad del modelo es suficiente como para aprender la función identidad.
 
 
+#### Autoencoders dispersos
+
+Un autoencoder disperso es simplemente un autoencoder cuya función de coste contiene una penalización
+por dispersión. La nueva función de coste es la siguiente:
+
+$$L(\boldsymbol{x}, g(f(\boldsymbol{x})))+\Omega(\boldsymbol{h})$$
+
+Donde $\Omega(\boldsymbol{h})$ es la penalización por dispersión. El objetivo es el de maximizar la
+dispersión del vector de activaciones en la *capa oculta o interna* (código). Para ello, la penalización
+que se propone es la siguiente:
+
+$$\Omega(\boldsymbol{h}) = \beta \sum_{j=1}^{s_{2}} \mathrm{KL}\left(\rho \| \hat{\rho}_{j}\right)$$
+
+Donde $\beta$ es el parámetro que controla el peso de la penalización, $\rho$ es el **parametro de dispersión**
+y $\hat{\rho}_{j}$ es la activación media de la neurona $j$ de la capa interna, cuya
+expresión viene dada por:
+
+$$\hat{\rho}_{j}=\frac{1}{m} \sum_{i=1}^{m}\left[a_{j}^{(2)}\left(x^{(i)}\right)\right]$$
+
+Básicamente, se calcula la salida o activacion de una misma neurona para todos
+los ejemplos de entrenamiento, y se hace la media. Por otro lado, la función Kullback-Leibler
+$\mathrm{KL}\left(\rho \| \hat{\rho}_{j}\right)=\rho \log \frac{\rho}{\hat{\rho}_{j}}+(1-\rho) \log \frac{1-\rho}{1-\hat{\rho}_{j}}$
+mide la divergencia entre una variable aleatoria de Bernoulli con media $p$ y una variable aleatoria de Bernoulli
+con media $\hat{\rho}_{j}$. Esta función es un estandar a la hora de medir la similitud de dos distribuciones.
+
+Los autoencoders dispersos se suelen usar para aprender características útiles para otra tarea,
+como puede ser clasificación. Un autoencoder disperso debe encontrar patrones inherentes a la
+distribución de datos, en lugar de actuar como una simple función identidad.
+
+
+#### Denoising Autoencoders
+
+Para este tipo de autoencoders, en lugar de añadir una penalización a la función de coste,
+se modifican los datos de entrada. Siguiendo la formulación del problema de apartados anteriores,
+tenemos la siguiente función a optimizar:
+
+$$L(\boldsymbol{x}, g(f(\tilde{\boldsymbol{x}})))$$
+
+Donde $\tilde{\boldsymbol{x}}$ es una copia de los datos de entrada a la que se le ha añadido ruido
+o algun otro tipo de corrupción. De esta forma, no basta con aprender la función identidad, es necesario
+además aprender patrones interesantes que permitan eliminar el ruido. Una forma sencilla de implementar
+este arquitecturas, es añadiendo una capa de **Dropout** como capa de entrada.
+
 ### Autoencoders variacionales
 
 ### Autoencoders apilados
 
 ### Aplicaciones de los autoencoders
+
+Las aplicaciones principales de los autoencoders han sido la **reducción de la dimensionalidad** y
+**recuperación de información**. Autoencoders no lineales pueden ofrecer un error de reconstrucción
+menor que PCA, y al no estár limitados a una proyección lineal, pueden aprender una representación
+más fácil de interpretar. En el caso de clasificación, los autoencoders pueden encontrar una
+representación donde los datos esten agrupados en clusters y las categorías esten bien diferenciadas.
+Además, encontrar una proyección a un espacio de dimensión inferior que mantenga la mayoría de
+la información, permite mejorar el rendimiento de modelos, ya que estos en espacios inferiores tiene un menor
+coste de cómputo y memoria.
+
+Otra aplicación que se ha ido desarrollando en los ultimos años es la de **detección de anomalías**.
+Los autoencoders pueden utilizarse para modelar la distribución de datos, y el error de reconstrucción
+se puede utilizar como indicador para detectar anomalías. Cuando un autoencoder se ha entrenado correctamente,
+el error de reconstrucción sobre datos de de entrenamiento es bajo. Así como el error otros datos de la misma
+distribución que no hayan usado para entrenar (conjunto de validación y test por ejemplo). Pero en el caso
+de utilizar datos de una distribución distinta, al no poder extraer las características más importantes
+eficazmente, el error de reconstrucción es mayor. Por este motivo, se puede entrenar un autoencoder
+sobre los datos "no anómalos", y establecer un umbral sobre el error de reconstrucción que indique si
+el ejemplo que se ha pasado por la red es una anomalía.
+
+
+Una última aplicación que cabe destacar es la de **clasificación**. Los autoencoders, pese a modelos
+de aprendizaje no supervisado, pueden usarse para problemas de clasificación. Si se entrena un autoencoder
+para cada clase (con ejemplos exclusivos de esa clase), el error de reconstrucción de cada autoencoder se puede
+puede utilizar para decidir la clase. Presuntamente, aquellos ejemplos cercanos a una determinada clase, tendran
+un error de reconstrucción menor en su autoencoder correspondiente. De esta forma, podemos aplicar este tipo de
+arquitecturas a problemas de clasificación. No obstante, los autoencoders se entrenan de manera independiente minimizando
+el error de reconstrucción y la regularización (si aplica), esto implica que no hay una optimización directa del
+error de clasificación. Al perder esa relación directa con la métrica objetiva, este aplicación puede dar lugar
+a resultados suboptimos.
