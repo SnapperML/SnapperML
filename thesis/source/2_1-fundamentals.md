@@ -1,6 +1,53 @@
 # Fundamentos
 
 
+## Nomenclatura
+
+El area de la ciencia de datos, Machine Learning y MLOps, se hace uso de una terminología concreta,
+basada principalmente en la terminología de *Aprendizaje estadístico*, *Desarrollo Software*, y 
+*DevOps* en el caso de *MLOps*. En esta sección se desarrollan algunos de los términos más utilizados:
+
+- **Canalización o Pipeline**: Consiste en una definición e implementación exhaustiva de los diferentes
+pasos de un proceso. Un pipeline se puede definir como un script, conjunto de scripts, ficheros de
+configuración, etc. Además, permite la ejecución del proceso de manera automatizada.
+
+- **Conjuntos de datos** – Colección de datos estructurada que se utiliza para entrenar modelos de ML,
+para análisis, o para inferencia. Aunque los conjuntos de datos pueden contener información de
+diferentes fuentes, el conjunto en sí tiene un solo cuerpo de trabajo.
+
+- **Repositorio**: Fuente de código común para la organización. Se entiende por repositorio
+aquel directorio gestionado por un control de versiones (como Git). Este repositorio puede
+contener implementaciones de pipelines, modelos, datos, ficheros de configuración, decisiones
+de dependencias, entre otras cosas.
+
+- **Registro de modelos** – A logical picture of all elements required to support a given ML
+model, across its development and operational pipeline.
+
+- **Espacio de trabajo**: Los científicos de datos desarrollan sus actividades de manera colaborativa o
+individual. Un entorno de trabajo comprime aquellas herramientas e información necesarias para el desempeño
+de un rol específico. Un entorno típico de ciencia de datos consiste en un IDE donde escribir código, y
+un conjunto de herramientas locales u online que permiten acceder a los datos, modelos, etc.
+
+- **Entorno objetivo**: El entorno de despliegue de los sistemas de ML, es decir, el entorno
+donde el modelo va a generar información (en forma de predicciones) para el consumo por el usuario.
+Alguno de los entornos objetivos más comunes son:
+    - Servicio web, como parte de un backend propio, o como microservicio. Se implementa a partir de una API REST, GRPC o cualquier
+    otro protocolo web.
+    - Dispositivos finales. El modelo se integra dentro del dispositivo y se hacen las predicciones localmente.
+    Útil para dispositivos con conectividad limitada, IoT, etc.
+    - Parte de un sistema de predicción por lotes.
+
+- **Experimento** – Un proceso o actividad que permite testear una hipóstasis y validarla iterativamente.
+Los resultados de una cierta iteración deben ser almacenados para poder ser evaluados, comparados,
+y monitorizados para propósitos de auditoría.
+
+- **Artefacto**: Pieza de información generada en un experimento. Incluye modelos entrenados,
+datos generados, imágenes, documentación autogenerada, etc.
+
+- **Modelo** – Es un caso concreto de artefacto que permite predecir valores en un sistema ML o bien,
+permite ser usado como pieza de otro modelo (mediante *ensamblado* o *transferencia de conocimiento*).
+
+
 ## Reproducibilidad
 
 
@@ -175,13 +222,8 @@ realiza un ajuste de hiperparámetros con el fin de obtener el mejor modelo posi
 para la implementación. Para ello se compara su rendimiento predictivo con un modelo de referencia determinado,
 denominado **baseline**.
 
-- **Entrega o despliegue del modelo**: Se implementa el modelo final en un entorno de destino para hacer las predicciones
-disponibles a los usuarios. Esta implementación puede ser una de las que se describen a continuación:
-
-    - Servicio dentro de un backend propio, o como microservicio. Se implementa a partir de una API REST, GRPC o cualquier
-    otro protocolo web.
-    - El modelo se empotra en los dispositivos finales. Útil para dispositivos con conectividad limitada, IoT, etc.
-    - Como parte de un sistema de predicción por lotes.
+- **Entrega o despliegue del modelo**: Se implementa el modelo final en el *entorno de destino* para hacer las predicciones
+disponibles a los usuarios.
 
 - **Monitorización del modelo**: Se supervisa el rendimiento del modelo con el fin de planificar las siguientes iteraciones.
 
@@ -267,9 +309,9 @@ algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo e
  - **Deuda de abstracción**: Los problemas anteriores reflejan una falta de abstracción para los sistemas de ML,
  como puede ser un lenguaje común de alto nivel para definir las fuentes de datos, modelo y predicciones.
  
- - **Code-smells más comunes**: Algunos de los indicadores de *peligro* para los sistemas de ML son los siguientes:
+ - **Code-smells más comunes**: Algunos de los indicadores de *peligro* en la implementación de sistemas de ML son los siguientes:
     - *Tipos de datos planos*: En un sistema robusto, la información producida en el mismo se almacena enriquecida.
-    Se debe saber si un parámetro de un modelo es un threshold o no, si una variable esta en escala logarítmica, etc.
+    Se debe saber si un parámetro de un modelo es un threshold o no, si uen variable esta en escala logarítmica, etc.
     Así como debe haber claras indicaciones de como se ha producido la información y como se debe ser consumida. 
     - *Multiples lenguajes*: Es tentador utilizar diferentes lenguajes para un mismo sistema de ML cuando hay
     soluciones o sintaxis conveniente para cada componente. Sin embargo, esto limita la movilidad del capital humano,
@@ -279,8 +321,128 @@ algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo e
     unas restricciones de tiempo fuertes.
 
  
-## MLOps 
+## Machine Learning Operations (MLOps)
 
+![](source/figures/mlops_overview.png)
+
+
+Durante los últimos años, el papel de la ciencia de datos y del Machine Learning ha tomado gran relevancia en la
+industria. En la actualidad,  la ciencia de datos se utiliza para resolver problemas complejos, y ofrecer una
+gran variedad de productos de datos: traductores automáticos, sistemas de recomendación, sistemas de trading de alta frecuencia, etc.  
+La ciencia de datos ha podido ser aplicada a una variedad muy amplia de campos, ha aportado valor en cada uno de ellos,
+incluso haya revolucionado algunas industrias. Para que esto haya sido posible, y para que siga siendo posible, es necesario
+una gran cantidad de datos, recursos de computación (CPU y GPU) accesibles, hardware optimizado para cálculo científico, así
+como una activa comunidad de investigadores.
+
+El hecho de que cada vez más industrias estén implementado sistemas de ML como productos o parte de productos comerciales,
+hace indispensable unos flujos de desarrollo orientados a la industria. La ciencia de datos parte originalmente de la experimentación,
+no obstante, conforme los sistemas de ML se integran con el resto de componentes de una organización, es necesario aplicar
+las técnicas y buenas prácticas conocidas en el desarrollo software, con el fin de ofrecer a los usuarios sistemas
+predictivos con valor comercial y mínimo coste. Los científicos de datos pueden implementar y entrenar modelos localmente,
+sin conexión a internet incluso, pero el verdadero desafío consiste en implementar un sistema ML integrado, y operarlo
+en producción de manera continua.
+
+Como se ha detallado en la sección anterior, y como se muestra en la figura X, el ciclo de desarrollo de un producto de
+un sistema ML implica diferentes fases. El código relacionado con la propia implementación y entrenamiento de modelos
+es mínimo comparado con el resto de código necesario para el desarrollo de estos sistemas. Además, debido a la necesidad
+de grandes cantidades de datos y de recursos computaciones amplios, estos sistemas deben incluir otros módulos relativos
+a la infraestructura: manejos de recursos, monitorización, automatización, etc.
+
+
+### DevOps. Definición
+
+Para poder desarrollar sistemas software complejos, la tendencia actual es utilizar las técnicas de *DevOps*.
+*DevOps* es un conjunto de prácticas en el desarrollo y operacionalización. Estas prácticas aumentan la velocidad
+de implementación, reducen los ciclos de desarrollo, y facilitan la entrega de actualizaciones. Entre las prácticas
+recogidas en este concepto se incluyen:
+
+- **Integración continua (CI)**: Esta práctica de desarrollo software permite a los desarrolladores ejecutar versiones y pruebas automáticas
+cuando se combinan cambios de código en el repositorio del proyecto. Esto permite validar y corregir errores con mayor rapidez,
+mejorando así la calidad del software.
+
+- **Entrega continua (CD)**: Esta práctica de desarrollo software se basa en la compilación, prueba y preparación automática
+de artefactos. Estos artefactos se generan automáticamente cuando se producen cambios en el código y se entregan a la
+fase de producción. De esta forma, las actualizaciones a los usuarios finales se entregar con mínimo esfuerzo.
+Travis o CircleCI son algunos de los servicios que ofrecen tanto *Integración Continua* como *Entrega Continua*.
+
+- **Microservicios**: La arquitectura de microservicios es un enfoque de diseño que permite crear una aplicación
+a partir de un conjunto de servicios pequeños. Cada servicio se ejecuta de manera independiente y se comunica con los otros
+servicios a través una interfaz ligera, normalmente HTTP. Recientemente, algunos otros protocolos de nivel superior como
+GRPC o GraphQL se están utilizando para la interconexión de estos servicios.
+
+- **Infraestructura como código**: Aprovisionar y administrar infraestructura con técnicas de desarrollo de programación
+y desarrollo software, como el control de versiones. Algunos servicios como AWS CloudFormation o Terraform permiten
+aprovisionar y gestionar infraestructuras utilizando lenguajes de programación o ficheros de configuración.
+
+- **Monitorización y registro**: Monitorizar métricas y registros para analizar el desempeño de las
+aplicaciones y la infraestructura sobre la experiencia usuario.
+
+- **Comunicación y colaboración**: Uno de los aspectos claves en la filosofía *DevOps* es el 
+incremento de la comunicación y la colaboración en las organizaciones.
+
+
+### DevOps aplicado al Machine Learning
+
+*MLOps* se fundamenta en los principios y prácticas de *DevOps*. Nociones, como se
+ha comentado previamente, orientadas a la eficiencia del desarrollo: integración y entrega
+continuos, monitorización, etc. *MLOps* aplica estos principios para la entrega de sistemas
+de ML a escala, resultando en:
+
+- Tiempo de comercialización de soluciones basadas en ML menor.
+- Ratio de experimentación mayor que fomenta la innovación.
+- Garantía de calidad, confidencialidad y *IA ética*.
+
+
+![](source/figures/mlops_overview.png.jpg)
+
+
+Para poder analizar la interacción entre DevOps y el desarrollo de sistemas de ML, es necesario
+destacar las tareas claves en este proceso. Teniendo en cuenta el proceso de ciencia de datos
+descrito anteriormente, podemos destacar las siguientes tareas:
+
+- **Recolectar y preparar datos**: Generar y preparar los conjuntos de datos para el entrenamiento.
+
+- **Aprovisionar y gestionar la arquitectura**: Establecer los entornos de computación donde
+se se entrenan los modelos y despliegan los modelos.
+
+- **Entrenar modelos**: Desarrollar el código de entrenamiento y evaluación, y ejecutarlos
+en la infraestructura aprovisionada.
+
+- **Registrar de modelos**: Después de la ejecución de un experimento, el modelo resultado
+se almacena en el *registro de modelos*.
+
+- **Liberar el modelo**: Validar los resultados del modelo, desplegarlo en el *entorno objetivo*. 
+
+- **Operar el modelo**: Operar el modelo en producción monitorizándolo para conocer
+su rendimiento, detectar *desfases de datos*, alerta de fallas, etc.
+
+
+TODO: Párrafo introductorio a las consignas de MLOps.
+
+
+- **Reproducibilidad**: as with software configuration management and continuous
+integration, ML pipelines and steps, together with their data sources, code, models,
+libraries, and SDKs, need to be versioned and maintained such that they can be
+reproduced exactly as previously.
+
+- **Reusabilidad** – to fit with principles of continuous delivery, the pipeline needs to be able to
+package and deliver models and code consistently into training and target environments,
+such that the same configuration can be repeated with the same results.
+
+- **Manejabilidad** – the ability to apply governance, tracking changes to models and code
+throughout the development lifecycle, project tracking (for example through sprints), and
+enabling managers to measure and oversee both progress and valuedelivery.
+
+- **Automatización** – as with DevOps, continuous integration and delivery require automation to
+assure rapid and repeatable pipelines, particularly when these are augmented by
+governance and testing (which can otherwise create a bottleneck).
+Through a shared approach, developers and data scientists can employ MLOps to
+collaborate and ensure ML initiatives are aligned with broader software delivery and more
+broadly still, IT-business alignment. Participants can adopt a test and learn mindset,
+improving outcomes while retaining control and assuring continued delivery of value over
+time.
+
+![](source/figures/mlops_levels.jpg)
 
 
 ## Redes neuronales
