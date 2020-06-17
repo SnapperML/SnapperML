@@ -1,5 +1,7 @@
 # Fundamentos
 
+INTRODUCCIÓN
+
 
 ## Nomenclatura
 
@@ -51,7 +53,7 @@ permite ser usado como pieza de otro modelo (mediante *ensamblado* o *transferen
 ## Reproducibilidad
 
 
-Según una encuesta realizada por Nature, una de las más prestigiosas revistas científicas a nivel mundial,
+Según una encuesta realizada por Nature, una de las revistas científicas más prestigiosas a nivel mundial,
 más del 70 por ciento de los 1,576 investigadores encuestados no han podido reproducir alguno de sus propios
 experimentos. Además, los datos son claros, la mayoría piensa que existe una *crisis de reproducibilidad*.
 
@@ -286,6 +288,12 @@ reales es realmente difícil conseguirlo; debido principalmente a la naturaleza 
 algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo exterior.
 
 ### Anti-patrones
+
+![](source/figures/technical_debt.png)
+
+Sorprendentemente, en la mayoría de sistemas de ML, solamente una pequeña fracción del código está dedicado
+al entrenamiento y predicción. El resto de código, conocido como *plumbing*, es susceptible a una serie
+de anti-patrones que se describen a continuación:
  
  - **Código pegamento**: A pesar de que en la comunidad existen numerosos paquetes y soluciones para ML.
  El utilizar herramientas genéricas puede hacer que el sistema dependa mayoritariamente de ellas.
@@ -293,7 +301,6 @@ algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo e
  datos de estas soluciones *open source*. Si nuestro sistema tienen una gran proporción del código dedicado
  a adaptar los datos, algoritmos, etc, a un paquete de propósito general, deberíamos plantearnos crear
  una solución propia.
-
  
  - **Junglas de pipelines**: La mayoría de sistema integran multiples fuentes de información.
  Estas fuentes de información, así como las transformaciones pertinentes sobre los datos,
@@ -416,16 +423,20 @@ se almacena en el *registro de modelos*.
 - **Operar el modelo**: Operar el modelo en producción monitorizándolo para conocer
 su rendimiento, detectar *desfases de datos*, alerta de fallas, etc.
 
+Esta secuencia de actividades se corresponde con un *pipeline*. La dificultad principal
+en el diseño de este pipeline es que cada paso es altamente iteratable. Es decir,
+los modelos necesitar ser modificados, los resultados testeados, se añaden nuevas fuentes
+de información, etc. El poder iterar de una manera eficiente es fundamental para este tipo
+de sistemas. Además, existen ciertos requisitos que solamente se conocen una vez que el modelo
+se monitoriza. Como pueden ser el *desfase de datos*, sesgo inherente o fallas del sistema.
 
-TODO: Párrafo introductorio a las consignas de MLOps.
+Para responder a estos desafíos de manera exitosa, los equipos de ML deben implementar las
+siguientes prácticas.
 
+- **Reproducibilidad**: Como se ha explicado en al principio del capítulo, este aspecto
+es fundamental para 
 
-- **Reproducibilidad**: as with software configuration management and continuous
-integration, ML pipelines and steps, together with their data sources, code, models,
-libraries, and SDKs, need to be versioned and maintained such that they can be
-reproduced exactly as previously.
-
-- **Reusabilidad** – to fit with principles of continuous delivery, the pipeline needs to be able to
+- **Reusabilidad**: to fit with principles of continuous delivery, the pipeline needs to be able to
 package and deliver models and code consistently into training and target environments,
 such that the same configuration can be repeated with the same results.
 
@@ -700,7 +711,85 @@ este arquitecturas, es añadiendo una capa de **Dropout** como capa de entrada.
 
 ### Autoencoders variacionales
 
+Este tipo de autoencoders tienen dos enfoques, el enfoque de Deep Learning o el enfoque probabilístico.
+En nuestro caso, este tipo de arquitecturas se describen desde el enfoque del Deep Learning.
+
+El principal uso de este tipo de arquitecturas es como *modelos generacionales*. Se utilizan para producir
+nuevos datos (especialmente imágenes) a partir de unos datos de entrenamiento. Desde el punto de vista de
+los modelos generativos, un autoencoder regular es ineficiente para este tipo de problemas. El motivo es
+que el espacio de representación intermedias (código), también conocido como **espacio latente**, tiene
+discontinuidades. Una forma de generar un nuevo ejemplo es aplicar el codificador y obtener la representación
+en el espacio latente. Posteriormente, ese vector se modifica ligeramente en una dirección deseada y se aplica
+el decodificador sobre el nuevo vector, generando así un nuevo ejemplo similar al anterior. El nuevo dato resultante
+es una combinación de aquellos ejemplos cercanos al nuevo vector. Si el espacio latente tiene discontinuidades,
+y el vector a reconstruir resulta estar en alguna de esas discontinuidades, el resultado va a ser muy poco realista.
+El objetivo de los autoencoders variacionales (*VAE*) es el de generar un espacio latente continuo para suavizar 
+las interpolaciones.
+
+Para entrenar este tipo de autoencoders necesitamos modificar la función de coste original. La nueva
+función de coste es la siguiente:
+
+$$l_{i}(\theta, \phi)=-\mathbb{E}_{z \sim q_{\theta}\left(z | x_{i}\right)}\left[\log p_{\phi}\left(x_{i} | z\right)\right]+\mathbb{K} \mathbb{L}\left(q_{\theta}\left(z | x_{i}\right) \| p(z)\right)$$
+
+
+Donde los parámetros $\theta$ y $\phi$ representan la matriz de pesos y el vector de sesgos,
+$q_{\theta}(z | x)$ denota el codificador, $p_{\phi}(x | z)$ denota el decodificador, y $p_{\phi}(x | z)$
+representa el error de reconstrucción.
+
+#### Truco de la reparametrización
+
+El termino de la esperanza en la función de coste implica la generación de ejemplos de la distribución
+$\mathbf{z} \sim q_{\phi}(\mathbf{z} | \mathbf{x})$.
+Muestrear es un proceso estocástico, por tanto, no podemos aplicar la propagación hacia atrás.
+Para poder optimizar dicha función de coste, se aplica el truco de la reparametrización (**reparameterization trick**).
+
+Una variable aleatorio $\mathbf{z}$ se puede expresar como una variable determinística 
+$\mathbf{z}=\mathcal{T}_{\phi}(\mathbf{x}, \boldsymbol{\epsilon})$, donde $\epsilon$ es una variable aleatoria 
+independiente, y la función de transformación $\mathcal{T}_{\phi}$ parametrizada por
+$\phi$ convierte $\epsilon$ a $\mathbf{z}$.
+
+![](https://lilianweng.github.io/lil-log/assets/images/reparameterization-trick.png)
+
+Como ejemplo, una forma común para esto $q_{\phi}(\mathbf{z} | \mathbf{x})$ es una Gaussinana multivariable con
+estructura de covarianza diagonal.
+
+$$
+\begin{array}{l}
+\mathbf{z} \sim q_{\phi}\left(\mathbf{z} | \mathbf{x}^{(i)}\right)=\mathcal{N}\left(\mathbf{z} ; \boldsymbol{\mu}^{(i)}, \boldsymbol{\sigma}^{2(i)} \boldsymbol{I}\right) \\
+\mathbf{z}=\boldsymbol{\mu}+\boldsymbol{\sigma} \odot \boldsymbol{\epsilon}, \text { where } \boldsymbol{\epsilon} \sim \mathcal{N}(0, \boldsymbol{I})
+\end{array}
+$$
+
+Donde $\odot$ corresponde al producto elemento a elemento.
+
+El truco de la reparametrización funciona también para otro tipo de distribuciones, no solo la Gaussiana.
+En el caso de la Gaussiana multivariable, se hace posible entrenar el modelo aprendiendo la media y la varianza
+de la distribución. $\mu$ y $\sigma$, usando explícitamente este truco, mientras que la estocásticidad permanece
+en la variable aleatoria $\boldsymbol{\epsilon} \sim \mathcal{N}(0, \boldsymbol{I})$.
+
 ### Autoencoders apilados
+
+Aunque en las secciones anteriores tanto el codificador como el decodificador se han tratado como dos capas
+dentro de una red de 3 capas. La realidad es que en muchos casos se necesita más capas tanto a un lado como
+a otro. Aquellos autoencoders donde o bien el codificador o bien el decodificador tienen más de una capa,
+se les conoce con el nombre de Autoencoders apilados (**Stacked Autoencoders**). Al igual que para
+el resto de arquitecturas de Deep Learning, añadir más capas permite reducir la linealidad y aprender
+patrones más complejos.
+
+El principal factor a tener en cuenta en estos casos, es que los autoencoders son muy potentes de por si,
+en relación con la función que tienen que modelar (identidad). Es por esto, por lo que la regularización
+se vuelve esencial a la hora de apilar diferentes capas a un lado u a otro.
+
+En cuanto a diseño, la forma más común de diseñarlos es de manera simétrica - el mismo número de capas
+y unidades para el encoder y el decoder. Además, las capas suelen tener un número de neuronas decrecientes
+para el encoder y crecientes para el decoder. Esto permite aplicar un técnica conocida como **Tied weights**.
+Esta técnica consiste en compartir los pesos entre el codificar y el decodificador, haciendo que los
+pesos de este último corresponda con la transpuesta del primero:
+
+$$\theta_{d} = \theta_{e}^T$$
+
+Esta técnica mejor el rendimiento en el entrenamiento, ya que se entrenan menos parámetros, pero además,
+sirve como método de regulación.
 
 ### Aplicaciones de los autoencoders
 
@@ -733,3 +822,6 @@ arquitecturas a problemas de clasificación. No obstante, los autoencoders se en
 el error de reconstrucción y la regularización (si aplica), esto implica que no hay una optimización directa del
 error de clasificación. Al perder esa relación directa con la métrica objetiva, este aplicación puede dar lugar
 a resultados subóptimos.
+
+
+## Estado del Arte
