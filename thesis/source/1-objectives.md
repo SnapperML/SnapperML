@@ -2,7 +2,7 @@
 
 
 El objetivo de este proyecto es el de desarrollar un marco de trabajo para machine learning enfocado
-en la reproducibilidad y buenas prácticas que explicaremos más adelante. Por otro lado, como objetivo
+en la reproducibilidad y buenas prácticas. Por otro lado, como objetivo
 secundario tenemos la aplicación de dicho framework para resolver un problema real.
 
 
@@ -26,13 +26,11 @@ para este caso concreto.
 
 ## Alcance de los objetivos
 
-
 Para el primer objetivo, el alcance incluye el desarrollo integral de una herramienta en Python
 que permita cumplir con la mayoría de requisitos que consideramos necesarios para que un proyecto
 sea reproducible fácilmente por la comunidad científica. Esta herramienta debe ser flexible y permitir
 integrarse con frameworks de Machine Learning o Deep learning existentes, así como con proyectos orientados
 al análisis de datos exclusivamente en lugar de al modelado.
-
 
 En relación con el primer objetivo, se debe desarrollar una especificación de buenas prácticas basadas en
 problemas existentes, con el objetivo de reducir aquella deuda técnica que concierne a este tipo de proyectos,

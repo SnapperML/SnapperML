@@ -1,6 +1,17 @@
-# Fundamentos
+# Fundamentos y estado del arte
 
-INTRODUCCIÓN
+A lo largo de este capitulo, describiremos principalmente los fundamentos del trabajo y el estado
+del arte. Para los fundamentos, destacaremos la nomenclatura utilizada, añadiendo un pequeño
+glosario de términos. Posteriormente, se define el concepto de *reproducibilidad* en los proyectos de investigación
+basados de Machine Learning (ML), y los aspectos críticos de dictaminan cuando un proyecto es reproducible o no.
+Por otro lado, se define el proceso de ciencia de datos, con una descripción de cada uno de los pasos, y la
+deuda técnica asociada a dicho proceso. 
+
+En las sección de MLOps se describe un concepto novedoso sobre un conjunto de buenas prácticas para el desarrollo
+de proyectos de ciencia de datos que la industria está implementando progresivamente. En las posteriores secciones, 
+se describen varios de los algoritmos de Machine Learning y Deep Learning utilizados en la experimentación, con especial
+atención a los *autoencoders*. Finalmente, se hace un repaso del estado del arte para las herramientas para reproducibilidad,
+MLOps y para los algoritmos implementados.
 
 
 ## Nomenclatura
@@ -251,8 +262,8 @@ unos elementos particulares al proceso de ciencia de datos que pueden aumentar d
 la entrada al mismo. De esta forma, los sistemas de ML modifican su propio comportamiento conforme pasa el tiempo.
 Este tipo de errores parecen sencillos de resolver, pero en la práctica, conforme se integran
 diferentes sistemas la probabilidad de que estos se retroalimenten entre si es muy alta. Incluso si dos
-sistemas de ML parecen no estar relacionados, este problema puede surgir. Imagínese dos predictores del valor de
-acciones de un mismo mercado de dos compañías distintas. Mejoras o peor aún bugs, de un sistema, pueden influir en el
+sistemas de ML parecen no estar relacionados, este problema puede surgir. Imagínese dos sistemas que predicen del valor de
+acciones de un mismo mercado para dos compañías distintas. Mejoras o peor aún bugs, de un sistema, pueden influir en el
 comportamiento del otro sistema.  
 
 - **Cascadas de corrección**: Este problema ocurre cuando el modelo de ML no aprende lo que se esperaba, y se terminan
@@ -330,8 +341,6 @@ de anti-patrones que se describen a continuación:
  
 ## Machine Learning Operations (MLOps)
 
-![](source/figures/mlops_overview.png)
-
 
 Durante los últimos años, el papel de la ciencia de datos y del Machine Learning ha tomado gran relevancia en la
 industria. En la actualidad,  la ciencia de datos se utiliza para resolver problemas complejos, y ofrecer una
@@ -378,7 +387,7 @@ servicios a través una interfaz ligera, normalmente HTTP. Recientemente, alguno
 GRPC o GraphQL se están utilizando para la interconexión de estos servicios.
 
 - **Infraestructura como código**: Aprovisionar y administrar infraestructura con técnicas de desarrollo de programación
-y desarrollo software, como el control de versiones. Algunos servicios como AWS CloudFormation o Terraform permiten
+y desarrollo software, como el control de versiones. Algunos servicios como AWS, CloudFormation o Terraform permiten
 aprovisionar y gestionar infraestructuras utilizando lenguajes de programación o ficheros de configuración.
 
 - **Monitorización y registro**: Monitorizar métricas y registros para analizar el desempeño de las
@@ -391,7 +400,7 @@ incremento de la comunicación y la colaboración en las organizaciones.
 ### DevOps aplicado al Machine Learning
 
 *MLOps* se fundamenta en los principios y prácticas de *DevOps*. Nociones, como se
-ha comentado previamente, orientadas a la eficiencia del desarrollo: integración y entrega
+ha comentado previamente, orientadas a la eficiencia en el desarrollo: integración y entrega
 continuos, monitorización, etc. *MLOps* aplica estos principios para la entrega de sistemas
 de ML a escala, resultando en:
 
@@ -400,12 +409,12 @@ de ML a escala, resultando en:
 - Garantía de calidad, confidencialidad y *IA ética*.
 
 
-![](source/figures/mlops_overview.png.jpg)
+![](source/figures/mlops_overview.png)
 
 
 Para poder analizar la interacción entre DevOps y el desarrollo de sistemas de ML, es necesario
-destacar las tareas claves en este proceso. Teniendo en cuenta el proceso de ciencia de datos
-descrito anteriormente, podemos destacar las siguientes tareas:
+destacar las tareas claves de este proceso. Teniendo en cuenta el proceso de ciencia de datos
+descrito en la sección anterior, (también representado en la Figura X) podemos destacar las siguientes tareas:
 
 - **Recolectar y preparar datos**: Generar y preparar los conjuntos de datos para el entrenamiento.
 
@@ -418,7 +427,7 @@ en la infraestructura aprovisionada.
 - **Registrar de modelos**: Después de la ejecución de un experimento, el modelo resultado
 se almacena en el *registro de modelos*.
 
-- **Liberar el modelo**: Validar los resultados del modelo, desplegarlo en el *entorno objetivo*. 
+- **Desplegar el modelo**: Validar los resultados del modelo, desplegarlo en el *entorno objetivo*. 
 
 - **Operar el modelo**: Operar el modelo en producción monitorizándolo para conocer
 su rendimiento, detectar *desfases de datos*, alerta de fallas, etc.
@@ -434,26 +443,38 @@ Para responder a estos desafíos de manera exitosa, los equipos de ML deben impl
 siguientes prácticas.
 
 - **Reproducibilidad**: Como se ha explicado en al principio del capítulo, este aspecto
-es fundamental para 
+es fundamental y es uno de los objetivos de MLOps. Cuando se automatizan los diferentes
+pasos del proceso de ciencia de datos, es necesario que cada paso sea determinista, para
+evitar resultados indeseables. 
 
-- **Reusabilidad**: to fit with principles of continuous delivery, the pipeline needs to be able to
-package and deliver models and code consistently into training and target environments,
-such that the same configuration can be repeated with the same results.
+- **Reusabilidad**: Para poder ajustarse a los principios de *entrega continua*, la *pipeline* necesita
+empaquetar y entregar modelos y código de una manera consistente, tanto a los entornos locales de
+entrenamiento como a los *entornos objetivos*, de forma que una misma configuración pueda
+arrojar los mismos resultados.
 
-- **Manejabilidad** – the ability to apply governance, tracking changes to models and code
-throughout the development lifecycle, project tracking (for example through sprints), and
-enabling managers to measure and oversee both progress and valuedelivery.
+- **Manejabilidad** – La habilidad de aplicar regulación, rastrear los cambios en los modelos y código a lo largo
+del ciclo de vida, y permitir a los managers y gestores de equipo medir el progreso
+del proyecto y el valor comercial.
 
-- **Automatización** – as with DevOps, continuous integration and delivery require automation to
-assure rapid and repeatable pipelines, particularly when these are augmented by
-governance and testing (which can otherwise create a bottleneck).
-Through a shared approach, developers and data scientists can employ MLOps to
-collaborate and ensure ML initiatives are aligned with broader software delivery and more
-broadly still, IT-business alignment. Participants can adopt a test and learn mindset,
-improving outcomes while retaining control and assuring continued delivery of value over
-time.
+- **Automatización** – Al igual que en DevOps, para aplicar integración y entrega continua se require
+automatización. Los *pipelines* deben ser fácilmente repetibles, especialmente cuando se aplica gobernanza, o
+testing. Desarrolladores y científicos de datos pueden adoptar MLOps para
+colaborar y asegurar que las iniciativas de ML están alineadas con el resto de entrega del software,
+así como con el negocio en general.
 
 ![](source/figures/mlops_levels.jpg)
+
+Las prácticas anteriores son un indicador de la madurez del equipo de ciencia de datos, así como de las relaciones
+con el resto de equipos de desarrollo, y la compañía. Cada compañía puede implementar estas prácticas a diferentes
+niveles. El modelo de madurez de MLOps *MLOps Maturity Model*. En la figura X se muestra un resumen de cada nivel según
+este modelo. Las categorías recogidas en él son las siguientes:
+
+- **Estrategia**: Como la compañía puede alinear las actividades de MLOps con las prioridades ejecutivas, de organización y culturales.
+- **Arquitectura** – La habilidad para manejar datos, modelos, entornos de despliegue y otros artefactos de manera unificada.
+- **Modelado** – Habilidades de ciencia de datos y experiencia, que sumados al conocimiento de dominio, permitan el desarrollo y entrega
+de sistema de ML para dicho dominio.
+- **Procesos** – Entrega y despliegue de actividades de manera eficiente, efectiva y mensurable, que impliquen científicos, ingenieros y administradores.
+- **Gobernanza** – En general, la habilidad para construir soluciones de inteligencia artificial seguras, responsables y justas.
 
 
 ## Redes neuronales
@@ -466,7 +487,7 @@ y reducción de la dimensionalidad.
 Para describir una red neuronal vamos a empezar por la arquitectura más básica, una sola neurona.
 Una forma de representar dicha neurona en una diagrama es la siguiente:
 
-![](https://cdn.mathpix.com/snip/images/i9Ls1o_dULHhOoNqiKOukfVpPWEokabL2a5FvYo21nA.original.fullsize.png)
+![](source/figures/single_neuron.png)
 
 Una neurona no es más que una unidad computacional que toma como entrada un vector $x$ (más un elemento a 1 para el sesgo),
 y cuya salida es $h_{W, b}(x)=f\left(W^{T} x\right)=f\left(\sum_{i=1}^{3} W_{i} x_{i}+b\right)$, donde
@@ -748,9 +769,9 @@ $\mathbf{z}=\mathcal{T}_{\phi}(\mathbf{x}, \boldsymbol{\epsilon})$, donde $\epsi
 independiente, y la función de transformación $\mathcal{T}_{\phi}$ parametrizada por
 $\phi$ convierte $\epsilon$ a $\mathbf{z}$.
 
-![](https://lilianweng.github.io/lil-log/assets/images/reparameterization-trick.png)
+![](source/figures/reparameterization-trick.png)
 
-Como ejemplo, una forma común para esto $q_{\phi}(\mathbf{z} | \mathbf{x})$ es una Gaussinana multivariable con
+Como ejemplo, una forma común para esto $q_{\phi}(\mathbf{z} | \mathbf{x})$ es una Gaussiana multivariable con
 estructura de covarianza diagonal.
 
 $$
@@ -782,14 +803,14 @@ se vuelve esencial a la hora de apilar diferentes capas a un lado u a otro.
 
 En cuanto a diseño, la forma más común de diseñarlos es de manera simétrica - el mismo número de capas
 y unidades para el encoder y el decoder. Además, las capas suelen tener un número de neuronas decrecientes
-para el encoder y crecientes para el decoder. Esto permite aplicar un técnica conocida como **Tied weights**.
+para el encoder y crecientes para el decoder. Esto permite aplicar un técnica conocida como **Tied Weights**.
 Esta técnica consiste en compartir los pesos entre el codificar y el decodificador, haciendo que los
 pesos de este último corresponda con la transpuesta del primero:
 
 $$\theta_{d} = \theta_{e}^T$$
 
 Esta técnica mejor el rendimiento en el entrenamiento, ya que se entrenan menos parámetros, pero además,
-sirve como método de regulación.
+sirve como método de regularización.
 
 ### Aplicaciones de los autoencoders
 
@@ -812,6 +833,8 @@ eficazmente, el error de reconstrucción es mayor. Por este motivo, se puede ent
 sobre los datos "no anómalos", y establecer un umbral sobre el error de reconstrucción que indique si
 el ejemplo que se ha pasado por la red es una anomalía.
 
+Por otro lado, cabe destacar el uso de los autoencoders variacionales como modelos generativos,
+aunque se ven opacados en su mayoría por GAN y similares.
 
 Una última aplicación que cabe destacar es la de **clasificación**. Los autoencoders, pese a modelos
 de aprendizaje no supervisado, pueden usarse para problemas de clasificación. Si se entrena un autoencoder
