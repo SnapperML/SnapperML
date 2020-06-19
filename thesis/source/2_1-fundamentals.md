@@ -66,10 +66,10 @@ permite ser usado como pieza de otro modelo (mediante *ensamblado* o *transferen
 
 Según una encuesta realizada por Nature, una de las revistas científicas más prestigiosas a nivel mundial,
 más del 70 por ciento de los 1,576 investigadores encuestados no han podido reproducir alguno de sus propios
-experimentos. Además, los datos son claros, la mayoría piensa que existe una *crisis de reproducibilidad*.
+experimentos. Además, los datos son claros, la mayoría piensa que existe una *crisis de reproducibilidad*
+(ver Figura \ref{fig:nature}).
 
-![](https://www.nature.com/news/polopoly_fs/7.36716.1469695923!/image/reproducibility-graphic-online1.jpeg_gen/derivatives/landscape_630/reproducibility-graphic-online1.jpeg)
-
+![Resultados de una encuesta sobre reproducibilidad. @baker500ScientistsLift2016](source/figures/nature_survey.jpeg){#fig:nature}
 
 A día de hoy, los estudios suelen ofrecer los resultados en forma de gráficas y tablas, pero en muchos casos
 carecen de la información necesaria para poder contrastar los resultados. Está información suele
@@ -89,6 +89,7 @@ Otro motivo de interés para la búsqueda de la reproducibilidad es el de facili
 de la comunidad científica o incluso en aplicaciones comerciales. Ofreciendo acceso a los datos y al código, como se ha comentado antes,
 permitimos que nuestros métodos se puedan aplicar a otros problemas, tanto en investigación como para fines comerciales, así como
 facilita la extensión de nuestro trabajo.
+
 
 
 En los últimos años nos hemos encontrado con muchos casos de publicaciones científicas que
@@ -300,7 +301,8 @@ algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo e
 
 ### Anti-patrones
 
-![](source/figures/technical_debt.png)
+![Solamente una fracción pequeña es dedicada al código de ML. El reston de código de arquitectura es necesario,
+y complejo. @sculleyHiddenTechnicalDebt2015](source/figures/technical_debt.png)
 
 Sorprendentemente, en la mayoría de sistemas de ML, solamente una pequeña fracción del código está dedicado
 al entrenamiento y predicción. El resto de código, conocido como *plumbing*, es susceptible a una serie
@@ -409,7 +411,9 @@ de ML a escala, resultando en:
 - Garantía de calidad, confidencialidad y *IA ética*.
 
 
-![](source/figures/mlops_overview.png)
+![El desarrollo de sistemas de ML es complejo e implica varios pasos bien diferenciados. MLOps tiene
+como objetivo mejorar cada uno de los pasos, pero especial aquellos que corresponden a la etapa de
+Operaciones. @arnoldAutomatingAIOperations2020](source/figures/mlops_overview.png)
 
 
 Para poder analizar la interacción entre DevOps y el desarrollo de sistemas de ML, es necesario
@@ -462,7 +466,8 @@ testing. Desarrolladores y científicos de datos pueden adoptar MLOps para
 colaborar y asegurar que las iniciativas de ML están alineadas con el resto de entrega del software,
 así como con el negocio en general.
 
-![](source/figures/mlops_levels.jpg)
+![Tabla que resume los aspectos claves de la adopción de MLOps en la industria a diferentes niveles según el
+modelo de madurez descrito en esta sección. @collinsDeliveringVisionMLOps](source/figures/mlops_levels.jpg)
 
 Las prácticas anteriores son un indicador de la madurez del equipo de ciencia de datos, así como de las relaciones
 con el resto de equipos de desarrollo, y la compañía. Cada compañía puede implementar estas prácticas a diferentes
@@ -487,7 +492,7 @@ y reducción de la dimensionalidad.
 Para describir una red neuronal vamos a empezar por la arquitectura más básica, una sola neurona.
 Una forma de representar dicha neurona en una diagrama es la siguiente:
 
-![](source/figures/single_neuron.png)
+![Diagrama de una neurona, también llamada unidad. Apuntes de CS294A por Andrew Ng](source/figures/single_neuron.png)
 
 Una neurona no es más que una unidad computacional que toma como entrada un vector $x$ (más un elemento a 1 para el sesgo),
 y cuya salida es $h_{W, b}(x)=f\left(W^{T} x\right)=f\left(\sum_{i=1}^{3} W_{i} x_{i}+b\right)$, donde
@@ -769,7 +774,8 @@ $\mathbf{z}=\mathcal{T}_{\phi}(\mathbf{x}, \boldsymbol{\epsilon})$, donde $\epsi
 independiente, y la función de transformación $\mathcal{T}_{\phi}$ parametrizada por
 $\phi$ convierte $\epsilon$ a $\mathbf{z}$.
 
-![](source/figures/reparameterization-trick.png)
+![Ilustración de como el truco de la reparametrización hace el proceso de muestreo de $\mathbf{z}$ entrenable.
+Dispositiva 12 en el workshop de Kingma para NIPS 2015](source/figures/reparameterization-trick.png)
 
 Como ejemplo, una forma común para esto $q_{\phi}(\mathbf{z} | \mathbf{x})$ es una Gaussiana multivariable con
 estructura de covarianza diagonal.

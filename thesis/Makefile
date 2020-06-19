@@ -7,7 +7,7 @@ OUTPUTDIR=$(BASEDIR)/output
 TEMPLATEDIR=$(INPUTDIR)/templates
 STYLEDIR=$(BASEDIR)/style
 
-BIBFILE=$(INPUTDIR)/references.bib
+BIBFILE=$(INPUTDIR)/references.yaml
 
 help:
 	@echo ' 																	  '
@@ -49,11 +49,12 @@ tex:
 	-V documentclass=report \
 	-N \
 	--csl="$(STYLEDIR)/ref_format.csl" \
-	--latex-engine=xelatex
+	--pdf-engine=xelatex
 
 docx:
 	pandoc "$(INPUTDIR)"/*.md \
 	-o "$(OUTPUTDIR)/thesis.docx" \
+	--filter pandoc-fignos \
 	--bibliography="$(BIBFILE)" \
 	--csl="$(STYLEDIR)/ref_format.csl" \
 	--toc
