@@ -1,0 +1,1829 @@
+---
+references:
+- id: agarapDeepLearningUsing2019
+  abstract: >-
+    We introduce the use of rectified linear units (ReLU) as the classification
+    function in a deep neural network (DNN). Conventionally, ReLU is used as an
+    activation function in DNNs, with Softmax function as their classification
+    function. However, there have been several studies on using a classification
+    function other than Softmax, and this study is an addition to those. We
+    accomplish this by taking the activation of the penultimate layer $h_{n -
+    1}$ in a neural network, then multiply it by weight parameters $\theta$ to
+    get the raw scores $o_{i}$. Afterwards, we threshold the raw scores $o_{i}$
+    by $0$, i.e. $f(o) = \max(0, o_{i})$, where $f(o)$ is the ReLU function. We
+    provide class predictions $\hat{y}$ through argmax function, i.e. argmax
+    $f(x)$.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Agarap
+      given: Abien Fred
+  container-title: 'arXiv:1803.08375 [cs, stat]'
+  issued:
+    - year: 2019
+      month: 2
+      day: 7
+  source: arXiv.org
+  title: Deep Learning using Rectified Linear Units (ReLU)
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1803.08375'
+
+- id: albertScienceCaseWide2019
+  abstract: >-
+    We outline the science motivation for SGSO, the Southern Gamma-Ray Survey
+    Observatory. SGSO will be a next-generation wide field-of-view gamma-ray
+    survey instrument, sensitive to gamma-rays in the energy range from 100 GeV
+    to hundreds of TeV. Its science topics include unveiling galactic and
+    extragalactic particle accelerators, monitoring the transient sky at very
+    high energies, probing particle physics beyond the Standard Model, and the
+    characterization of the cosmic ray flux. SGSO will consist of an air shower
+    detector array, located in South America. Due to its location and large
+    field of view, SGSO will be complementary to other current and planned
+    gamma-ray observatories such as HAWC, LHAASO, and CTA.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Albert
+      given: A.
+    - family: Alfaro
+      given: R.
+    - family: Ashkar
+      given: H.
+    - family: Alvarez
+      given: C.
+    - family: Álvarez
+      given: J.
+    - family: Arteaga-Velázquez
+      given: J. C.
+    - family: Solares
+      given: H. A. Ayala
+    - family: Arceo
+      given: R.
+    - family: Bellido
+      given: J. A.
+    - family: BenZvi
+      given: S.
+    - family: Bretz
+      given: T.
+    - family: Brisbois
+      given: C. A.
+    - family: Brown
+      given: A. M.
+    - family: Brun
+      given: F.
+    - family: Caballero-Mora
+      given: K. S.
+    - family: Carosi
+      given: A.
+    - family: Carramiñana
+      given: A.
+    - family: Casanova
+      given: S.
+    - family: Chadwick
+      given: P. M.
+    - family: Cotter
+      given: G.
+    - family: De León
+      given: S. Coutiño
+    - family: Cristofari
+      given: P.
+    - family: Dasso
+      given: S.
+    - family: Fuente
+      given: E.
+      non-dropping-particle: de la
+    - family: Dingus
+      given: B. L.
+    - family: Desiati
+      given: P.
+    - family: Salles
+      given: F. de O.
+    - family: Souza
+      given: V.
+      non-dropping-particle: de
+    - family: Dorner
+      given: D.
+    - family: Díaz-Vélez
+      given: J. C.
+    - family: García-González
+      given: J. A.
+    - family: DuVernois
+      given: M. A.
+    - family: Di Sciascio
+      given: G.
+    - family: Engel
+      given: K.
+    - family: Fleischhack
+      given: H.
+    - family: Fraija
+      given: N.
+    - family: Funk
+      given: S.
+    - family: Glicenstein
+      given: J.-F.
+    - family: Gonzalez
+      given: J.
+    - family: González
+      given: M. M.
+    - family: Goodman
+      given: J. A.
+    - family: Harding
+      given: J. P.
+    - family: Haungs
+      given: A.
+    - family: Hinton
+      given: J.
+    - family: Hona
+      given: B.
+    - family: Hoyos
+      given: D.
+    - family: Huentemeyer
+      given: P.
+    - family: Iriarte
+      given: A.
+    - family: Jardin-Blicq
+      given: A.
+    - family: Joshi
+      given: V.
+    - family: Kaufmann
+      given: S.
+    - family: Kawata
+      given: K.
+    - family: Kunwar
+      given: S.
+    - family: Lefaucheur
+      given: J.
+    - family: Lenain
+      given: J.-P.
+    - family: Link
+      given: K.
+    - family: López-Coto
+      given: R.
+    - family: Marandon
+      given: V.
+    - family: Mariotti
+      given: M.
+    - family: Martínez-Castro
+      given: J.
+    - family: Martínez-Huerta
+      given: H.
+    - family: Mostafá
+      given: M.
+    - family: Nayerhoda
+      given: A.
+    - family: Nellen
+      given: L.
+    - family: Wilhelmi
+      given: E. de Oña
+    - family: Parsons
+      given: R. D.
+    - family: Patricelli
+      given: B.
+    - family: Pichel
+      given: A.
+    - family: Piel
+      given: Q.
+    - family: Prandini
+      given: E.
+    - family: Pueschel
+      given: E.
+    - family: Procureur
+      given: S.
+    - family: Reisenegger
+      given: A.
+    - family: Rivière
+      given: C.
+    - family: Rodriguez
+      given: J.
+    - family: Rovero
+      given: A. C.
+    - family: Rowell
+      given: G.
+    - family: Ruiz-Velasco
+      given: E. L.
+    - family: Sandoval
+      given: A.
+    - family: Santander
+      given: M.
+    - family: Sako
+      given: T.
+    - family: Sako
+      given: T. K.
+    - family: Satalecka
+      given: K.
+    - family: Schoorlemmer
+      given: H.
+    - family: Schüssler
+      given: F.
+    - family: Seglar-Arroyo
+      given: M.
+    - family: Smith
+      given: A. J.
+    - family: Spencer
+      given: S.
+    - family: Surajbali
+      given: P.
+    - family: Tabachnick
+      given: E.
+    - family: Taylor
+      given: A. M.
+    - family: Tibolla
+      given: O.
+    - family: Torres
+      given: I.
+    - family: Vallage
+      given: B.
+    - family: Viana
+      given: A.
+    - family: Watson
+      given: J. J.
+    - family: Weisgarber
+      given: T.
+    - family: Werner
+      given: F.
+    - family: White
+      given: R.
+    - family: Wischnewski
+      given: R.
+    - family: Yang
+      given: R.
+    - family: Zepeda
+      given: A.
+    - family: Zhou
+      given: H.
+  container-title: 'arXiv:1902.08429 [astro-ph]'
+  issued:
+    - year: 2019
+      month: 2
+      day: 22
+  source: arXiv.org
+  title: >-
+    Science Case for a Wide Field-of-View Very-High-Energy Gamma-Ray Observatory
+    in the Southern Hemisphere
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1902.08429'
+
+- id: arnoldAutomatingAIOperations2020
+  abstract: >-
+    Today's AI deployments often require significant human involvement and skill
+    in the operational stages of the model lifecycle, including pre-release
+    testing, monitoring, problem diagnosis and model improvements. We present a
+    set of enabling technologies that can be used to increase the level of
+    automation in AI operations, thus lowering the human effort required. Since
+    a common source of human involvement is the need to assess the performance
+    of deployed models, we focus on technologies for performance prediction and
+    KPI analysis and show how they can be used to improve automation in the key
+    stages of a typical AI operations pipeline.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Arnold
+      given: Matthew
+    - family: Boston
+      given: Jeffrey
+    - family: Desmond
+      given: Michael
+    - family: Duesterwald
+      given: Evelyn
+    - family: Elder
+      given: Benjamin
+    - family: Murthi
+      given: Anupama
+    - family: Navratil
+      given: Jiri
+    - family: Reimer
+      given: Darrell
+  container-title: 'arXiv:2003.12808 [cs]'
+  issued:
+    - year: 2020
+      month: 3
+      day: 28
+  source: arXiv.org
+  title: Towards Automating the AI Operations Lifecycle
+  type: article-journal
+  URL: 'http://arxiv.org/abs/2003.12808'
+
+- id: assisLATTESNovelDetector2018
+  abstract: >-
+    The Large Array Telescope for Tracking Energetic Sources (LATTES), is a
+    novel concept for an array of hybrid EAS array detectors, composed of a
+    Resistive Plate Counter array coupled to a Water Cherenkov Detector, planned
+    to cover gamma rays from less than 100 GeV up to 100 TeVs. This experiment,
+    to be installed at high altitude in South America, could cover the existing
+    gap in sensitivity between satellite and ground arrays. The low energy
+    threshold, large duty cycle and wide field of view of LATTES makes it a
+    powerful tool to detect transient phenomena and perform long term
+    observations of variable sources. Moreover, given its characteristics, it
+    would be fully complementary to the planned Cherenkov Telescope Array (CTA)
+    as it would be able to issue alerts. In this talk, a description of its main
+    features and capabilities, as well as results on its expected performance,
+    and sensitivity, will be presented.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Assis
+      given: P.
+    - family: Almeida
+      given: U. Barres
+      non-dropping-particle: de
+    - family: Blanco
+      given: A.
+    - family: Conceição
+      given: R.
+    - family: Piazzoli
+      given: B. D'Ettore
+    - family: De Angelis
+      given: A.
+    - family: Doro
+      given: M.
+    - family: Fonte
+      given: P.
+    - family: Lopes
+      given: L.
+    - family: Matthiae
+      given: G.
+    - family: Pimenta
+      given: M.
+    - family: Shellard
+      given: R.
+    - family: Tomé
+      given: B.
+  container-title: 'arXiv:1709.09624 [astro-ph, physics:hep-ex, physics:physics]'
+  issued:
+    - year: 2018
+      month: 4
+      day: 30
+  source: arXiv.org
+  title: >-
+    LATTES: a novel detector concept for a gamma-ray experiment in the Southern
+    hemisphere
+  title-short: LATTES
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1709.09624'
+
+- id: assuncaoAutomaticDesignArtificial2019
+  abstract: >-
+    The goal of this work is to investigate the possibility of improving current
+    gamma/hadron discrimination based on their shower patterns recorded on the
+    ground. To this end we propose the use of Convolutional Neural Networks
+    (CNNs) for their ability to distinguish patterns based on automatically
+    designed features. In order to promote the creation of CNNs that properly
+    uncover the hidden patterns in the data, and at same time avoid the burden
+    of hand-crafting the topology and learning hyper-parameters we resort to
+    NeuroEvolution; in particular we use Fast-DENSER++, a variant of Deep
+    Evolutionary Network Structured Representation. The results show that the
+    best CNN generated by Fast-DENSER++ improves by a factor of 2 when compared
+    with the results reported by classic statistical approaches. Additionally,
+    we experiment ensembling the 10 best generated CNNs, one from each of the
+    evolutionary runs; the ensemble leads to an improvement by a factor of 2.3.
+    These results show that it is possible to improve the gamma/hadron
+    discrimination based on CNNs that are automatically generated and are
+    trained with instances of the ground impact patterns.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Assunção
+      given: Filipe
+    - family: Correia
+      given: João
+    - family: Conceição
+      given: Rúben
+    - family: Pimenta
+      given: Mário
+    - family: Tomé
+      given: Bernardo
+    - family: Lourenço
+      given: Nuno
+    - family: Machado
+      given: Penousal
+  container-title: IEEE Access
+  container-title-short: IEEE Access
+  DOI: 10.1109/ACCESS.2019.2933947
+  ISSN: 2169-3536
+  issued:
+    - year: 2019
+  page: 110531-110540
+  source: arXiv.org
+  title: Automatic Design of Artificial Neural Networks for Gamma-Ray Detection
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1905.03532'
+  volume: '7'
+
+- id: AutoencoderBetaVAE2018
+  abstract: >-
+    Autocoders are a family of neural network models aiming to learn compressed
+    latent variables of high-dimensional data. Starting from the basic autocoder
+    model, this post reviews several variations, including denoising, sparse,
+    and contractive autoencoders, and then Variational Autoencoder (VAE) and its
+    modification beta-VAE.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  container-title: Lil'Log
+  issued:
+    - year: 2018
+      month: 8
+      day: 12
+  language: en
+  source: lilianweng.github.io
+  title: From Autoencoder to Beta-VAE
+  type: webpage
+  URL: 'https://lilianweng.github.io/2018/08/12/from-autoencoder-to-beta-vae.html'
+
+- id: AutoencodersClassifiers
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  title: Autoencoders as Classifiers
+  type: webpage
+  URL: 'https://radicalrafi.github.io/posts/autoencoders-as-classifiers/'
+
+- id: baker500ScientistsLift2016
+  abstract: Survey sheds light on the ‘crisis’ rocking research.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 19
+  author:
+    - family: Baker
+      given: Monya
+  container-title: Nature News
+  DOI: 10.1038/533452a
+  issue: '7604'
+  issued:
+    - year: 2016
+      month: 5
+      day: 26
+  language: en
+  page: '452'
+  section: News Feature
+  source: www.nature.com
+  title: '1,500 scientists lift the lid on reproducibility'
+  type: article-journal
+  URL: >-
+    http://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970
+  volume: '533'
+
+- id: bengioDeepLearning2017
+  abstract: >-
+    An introduction to a broad range of topics in deep learning, covering
+    mathematical and conceptual background, deep learning techniques used in
+    industry, and research perspectives. "Written by three experts in the field,
+    Deep Learning is the only comprehensive book on the subject." -Elon Musk,
+    cochair of OpenAI; cofounder and CEO of Tesla and SpaceX Deep learning is a
+    form of machine learning that enables computers to learn from experience and
+    understand the world in terms of a hierarchy of concepts. Because the
+    computer gathers knowledge from experience, there is no need for a human
+    computer operator to formally specify all the knowledge that the computer
+    needs. The hierarchy of concepts allows the computer to learn complicated
+    concepts by building them out of simpler ones; a graph of these hierarchies
+    would be many layers deep. This book introduces a broad range of topics in
+    deep learning. The text offers mathematical and conceptual background,
+    covering relevant concepts in linear algebra, probability theory and
+    information theory, numerical computation, and machine learning. It
+    describes deep learning techniques used by practitioners in industry,
+    including deep feedforward networks, regularization, optimization
+    algorithms, convolutional networks, sequence modeling, and practical
+    methodology; and it surveys such applications as natural language
+    processing, speech recognition, computer vision, online recommendation
+    systems, bioinformatics, and videogames. Finally, the book offers research
+    perspectives, covering such theoretical topics as linear factor models,
+    autoencoders, representation learning, structured probabilistic models,
+    Monte Carlo methods, the partition function, approximate inference, and deep
+    generative models. Deep Learning can be used by undergraduate or graduate
+    students planning careers in either industry or research, and by software
+    engineers who want to begin using deep learning in their products or
+    platforms. A website offers supplementary material for both readers and
+    instructors.
+  author:
+    - family: Bengio
+      given: Yoshua
+  event-place: 'Cambridge, Massachusetts'
+  ISBN: 978-0-262-03561-3
+  issued:
+    - year: 2017
+      month: 1
+      day: 3
+  language: Inglés
+  number-of-pages: '800'
+  publisher: MIT Press
+  publisher-place: 'Cambridge, Massachusetts'
+  source: Amazon
+  title: Deep Learning
+  type: book
+
+- id: boehmSystemDSDeclarativeMachine2020
+  abstract: >-
+    Machine learning (ML) applications become increasingly common in many
+    domains. ML systems to execute these workloads include numerical computing
+    frameworks and libraries, ML algorithm libraries, and specialized systems
+    for deep neural networks and distributed ML. These systems focus primarily
+    on efficient model training and scoring. However, the data science process
+    is exploratory, and deals with underspecified objectives and a wide variety
+    of heterogeneous data sources. Therefore, additional tools are employed for
+    data engineering and debugging, which requires boundary crossing,
+    unnecessary manual effort, and lacks optimization across the lifecycle. In
+    this paper, we introduce SystemDS, an open source ML system for the
+    end-to-end data science lifecycle from data integration, cleaning, and
+    preparation, over local, distributed, and federated ML model training, to
+    debugging and serving. To this end, we aim to provide a stack of declarative
+    languages with R-like syntax for the different lifecycle tasks, and users
+    with different expertise. We describe the overall system architecture,
+    explain major design decisions (motivated by lessons learned from Apache
+    SystemML), and discuss key features and research directions. Finally, we
+    provide preliminary results that show the potential of end-to-end lifecycle
+    optimization.
+  author:
+    - family: Boehm
+      given: Matthias
+    - family: Antonov
+      given: Iulian
+    - family: Dokter
+      given: Mark
+    - family: Ginthoer
+      given: Robert
+    - family: Innerebner
+      given: Kevin
+    - family: Klezin
+      given: Florijan
+    - family: Lindstädt
+      given: Stefanie N.
+    - family: Phani
+      given: Arnab
+    - family: Rath
+      given: Benjamin
+  container-title: CIDR
+  issued:
+    - year: 2020
+  source: Semantic Scholar
+  title: >-
+    SystemDS: A Declarative Machine Learning System for the End-to-End Data
+    Science Lifecycle
+  title-short: SystemDS
+  type: article-journal
+
+- id: boettigerIntroductionDockerReproducible2015
+  abstract: >-
+    As computational work becomes more and more integral to many aspects of
+    scientific research, computational reproducibility has become an issue of
+    increasing importance to computer systems researchers and domain scientists
+    alike. Though computational reproducibility seems more straight forward than
+    replicating physical experiments, the complex and rapidly changing nature of
+    computer environments makes being able to reproduce and extend such work a
+    serious challenge. In this paper, I explore common reasons that code
+    developed for one research project cannot be successfully executed or
+    extended by subsequent researchers. I review current approaches to these
+    issues, including virtual machines and workflow systems, and their
+    limitations. I then examine how the popular emerging technology Docker
+    combines several areas from systems research - such as operating system
+    virtualization, cross-platform portability, modular re-usable elements,
+    versioning, and a `DevOps' philosophy, to address these challenges. I
+    illustrate this with several examples of Docker use with a focus on the R
+    statistical environment.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Boettiger
+      given: Carl
+  container-title: ACM SIGOPS Operating Systems Review
+  container-title-short: SIGOPS Oper. Syst. Rev.
+  DOI: 10.1145/2723872.2723882
+  ISSN: 0163-5980
+  issue: '1'
+  issued:
+    - year: 2015
+      month: 1
+      day: 20
+  page: 71-79
+  source: arXiv.org
+  title: >-
+    An introduction to Docker for reproducible research, with examples from the
+    R environment
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1410.0846'
+  volume: '49'
+
+- id: brunROOTObjectOriented1997
+  abstract: >-
+    The ROOT system in an Object Oriented framework for large scale data
+    analysis. ROOT written in C++, contains, among others, an efficient
+    hierarchical OO database, a C++ interpreter, advanced statistical analysis
+    (multi-dimensional histogramming, fitting, minimization, cluster finding
+    algorithms) and visualization tools. The user interacts with ROOT via a
+    graphical user interface, the command line or batch scripts. The command and
+    scripting language is C++ (using the interpreter) and large scripts can be
+    compiled and dynamically linked in. The OO database design has been
+    optimized for parallel access (reading as well as writing) by multiple
+    processes.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Brun
+      given: Rene
+    - family: Rademakers
+      given: Fons
+  collection-title: New Computing Techniques in Physics Research V
+  container-title: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  container-title-short: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  DOI: 10.1016/S0168-9002(97)00048-X
+  ISSN: 0168-9002
+  issue: '1'
+  issued:
+    - year: 1997
+      month: 4
+      day: 11
+  language: en
+  page: 81-86
+  source: ScienceDirect
+  title: ROOT — An object oriented data analysis framework
+  type: article-journal
+  URL: 'http://www.sciencedirect.com/science/article/pii/S016890029700048X'
+  volume: '389'
+
+- id: chalapathyDeepLearningAnomaly2019
+  abstract: >-
+    Anomaly detection is an important problem that has been well-studied within
+    diverse research areas and application domains. The aim of this survey is
+    two-fold, firstly we present a structured and comprehensive overview of
+    research methods in deep learning-based anomaly detection. Furthermore, we
+    review the adoption of these methods for anomaly across various application
+    domains and assess their effectiveness. We have grouped state-of-the-art
+    research techniques into different categories based on the underlying
+    assumptions and approach adopted. Within each category we outline the basic
+    anomaly detection technique, along with its variants and present key
+    assumptions, to differentiate between normal and anomalous behavior. For
+    each category, we present we also present the advantages and limitations and
+    discuss the computational complexity of the techniques in real application
+    domains. Finally, we outline open issues in research and challenges faced
+    while adopting these techniques.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Chalapathy
+      given: Raghavendra
+    - family: Chawla
+      given: Sanjay
+  container-title: 'arXiv:1901.03407 [cs, stat]'
+  issued:
+    - year: 2019
+      month: 1
+      day: 23
+  source: arXiv.org
+  title: 'Deep Learning for Anomaly Detection: A Survey'
+  title-short: Deep Learning for Anomaly Detection
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1901.03407'
+
+- id: chenSequentialVAELSTMAnomaly2019
+  abstract: >-
+    In order to support stable web-based applications and services, anomalies on
+    the IT performance status have to be detected timely. Moreover, the
+    performance trend across the time series should be predicted. In this paper,
+    we propose SeqVL (Sequential VAE-LSTM), a neural network model based on both
+    VAE (Variational Auto-Encoder) and LSTM (Long Short-Term Memory). This work
+    is the first attempt to integrate unsupervised anomaly detection and trend
+    prediction under one framework. Moreover, this model performs considerably
+    better on detection and prediction than VAE and LSTM work alone. On
+    unsupervised anomaly detection, SeqVL achieves competitive experimental
+    results compared with other state-of-the-art methods on public datasets. On
+    trend prediction, SeqVL outperforms several classic time series prediction
+    models in the experiments of the public dataset.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Chen
+      given: Run-Qing
+    - family: Shi
+      given: Guang-Hui
+    - family: Zhao
+      given: Wan-Lei
+    - family: Liang
+      given: Chang-Hui
+  container-title: 'arXiv:1910.03818 [cs, stat]'
+  issued:
+    - year: 2019
+      month: 10
+      day: 10
+  source: arXiv.org
+  title: Sequential VAE-LSTM for Anomaly Detection on Time Series
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1910.03818'
+
+- id: chirigatiCollaborativeApproachComputational2016
+  abstract: >-
+    Although a standard in natural science, reproducibility has been only
+    episodically applied in experimental computer science. Scientific papers
+    often present a large number of tables, plots and pictures that summarize
+    the obtained results, but then loosely describe the steps taken to derive
+    them. Not only can the methods and the implementation be complex, but also
+    their configuration may require setting many parameters and/or depend on
+    particular system configurations. While many researchers recognize the
+    importance of reproducibility, the challenge of making it happen often
+    outweigh the benefits. Fortunately, a plethora of reproducibility solutions
+    have been recently designed and implemented by the community. In particular,
+    packaging tools (e.g., ReproZip) and virtualization tools (e.g., Docker) are
+    promising solutions towards facilitating reproducibility for both authors
+    and reviewers. To address the incentive problem, we have implemented a new
+    publication model for the Reproducibility Section of Information Systems
+    Journal. In this section, authors submit a reproducibility paper that
+    explains in detail the computational assets from a previous published
+    manuscript in Information Systems.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Chirigati
+      given: Fernando
+    - family: Capone
+      given: Rebecca
+    - family: Shasha
+      given: Dennis
+    - family: Rampin
+      given: Remi
+    - family: Freire
+      given: Juliana
+  container-title: Information Systems
+  container-title-short: Information Systems
+  DOI: 10.1016/j.is.2016.03.002
+  ISSN: 03064379
+  issued:
+    - year: 2016
+      month: 7
+  page: 95-97
+  source: arXiv.org
+  title: A Collaborative Approach to Computational Reproducibility
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1709.01154'
+  volume: '59'
+
+- id: clevertFastAccurateDeep2016
+  abstract: >-
+    We introduce the "exponential linear unit" (ELU) which speeds up learning in
+    deep neural networks and leads to higher classification accuracies. Like
+    rectified linear units (ReLUs), leaky ReLUs (LReLUs) and parametrized ReLUs
+    (PReLUs), ELUs alleviate the vanishing gradient problem via the identity for
+    positive values. However, ELUs have improved learning characteristics
+    compared to the units with other activation functions. In contrast to ReLUs,
+    ELUs have negative values which allows them to push mean unit activations
+    closer to zero like batch normalization but with lower computational
+    complexity. Mean shifts toward zero speed up learning by bringing the normal
+    gradient closer to the unit natural gradient because of a reduced bias shift
+    effect. While LReLUs and PReLUs have negative values, too, they do not
+    ensure a noise-robust deactivation state. ELUs saturate to a negative value
+    with smaller inputs and thereby decrease the forward propagated variation
+    and information. Therefore, ELUs code the degree of presence of particular
+    phenomena in the input, while they do not quantitatively model the degree of
+    their absence. In experiments, ELUs lead not only to faster learning, but
+    also to significantly better generalization performance than ReLUs and
+    LReLUs on networks with more than 5 layers. On CIFAR-100 ELUs networks
+    significantly outperform ReLU networks with batch normalization while batch
+    normalization does not improve ELU networks. ELU networks are among the top
+    10 reported CIFAR-10 results and yield the best published result on
+    CIFAR-100, without resorting to multi-view evaluation or model averaging. On
+    ImageNet, ELU networks considerably speed up learning compared to a ReLU
+    network with the same architecture, obtaining less than 10% classification
+    error for a single crop, single model network.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Clevert
+      given: Djork-Arné
+    - family: Unterthiner
+      given: Thomas
+    - family: Hochreiter
+      given: Sepp
+  container-title: 'arXiv:1511.07289 [cs]'
+  issued:
+    - year: 2016
+      month: 2
+      day: 22
+  source: arXiv.org
+  title: Fast and Accurate Deep Network Learning by Exponential Linear Units (ELUs)
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1511.07289'
+
+- id: collinsDeliveringVisionMLOps
+  author:
+    - family: Collins
+      given: Jon
+  language: en
+  page: '33'
+  source: Zotero
+  title: Delivering on the Vision of MLOps
+  type: article-journal
+
+- id: degrangeIntroductionHighenergyGammaray2015
+  abstract: >-
+    The present issue is the first of of a two-volume review devoted to
+    gamma-ray astronomy above 100 MeV which has witnessed considerable progress
+    over the last 20 years. The motivations for research in this area are
+    explained, the follow-on articles of these two thematic issues are
+    introduced and a brief history of the field is given.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Degrange
+      given: Bernard
+    - family: Fontaine
+      given: Gérard
+  container-title: Comptes Rendus Physique
+  container-title-short: Comptes Rendus Physique
+  DOI: 10.1016/j.crhy.2015.07.003
+  ISSN: '16310705'
+  issue: 6-7
+  issued:
+    - year: 2015
+      month: 8
+  page: 587-599
+  source: arXiv.org
+  title: Introduction to high-energy gamma-ray astronomy
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1604.05488'
+  volume: '16'
+
+- id: DessaossAtlas2020
+  abstract: 'An Open Source, Self-Hosted Platform For Applied Deep Learning Development'
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  genre: Python
+  issued:
+    - year: 2020
+      month: 6
+      day: 18
+  original-date:
+    - year: 2020
+      month: 2
+      day: 24
+  publisher: Dessa - Open Source
+  source: GitHub
+  title: dessa-oss/atlas
+  type: book
+  URL: 'https://github.com/dessa-oss/atlas'
+
+- id: geronHandsOnMachineLearning2019
+  abstract: >-
+    Through a series of recent breakthroughs, deep learning has boosted the
+    entire field of machine learning. Now, even programmers who know close to
+    nothing about this technology can use simple, efficient tools to implement
+    programs capable of learning from data. This practical book shows you how.By
+    using concrete examples, minimal theory, and two production-ready Python
+    frameworks—Scikit-Learn and TensorFlow—author Aurélien Géron helps you gain
+    an intuitive understanding of the concepts and tools for building
+    intelligent systems. You’ll learn a range of techniques, starting with
+    simple linear regression and progressing to deep neural networks. With
+    exercises in each chapter to help you apply what you’ve learned, all you
+    need is programming experience to get started.Explore the machine learning
+    landscape, particularly neural netsUse Scikit-Learn to track an example
+    machine-learning project end-to-endExplore several training models,
+    including support vector machines, decision trees, random forests, and
+    ensemble methodsUse the TensorFlow library to build and train neural
+    netsDive into neural net architectures, including convolutional nets,
+    recurrent nets, and deep reinforcement learningLearn techniques for training
+    and scaling deep neural nets
+  author:
+    - family: Géron
+      given: Aurélien
+  edition: 'Edición: 2'
+  issued:
+    - year: 2019
+      month: 9
+      day: 5
+  language: Inglés
+  number-of-pages: '849'
+  publisher: O'Reilly Media
+  source: Amazon
+  title: >-
+    Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow:
+    Concepts, Tools, and Techniques to Build Intelligent Systems
+  title-short: 'Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow'
+  type: book
+
+- id: guillenDeepLearningTechniques2019
+  abstract: >-
+    Deep neural networks are a powerful technique that have found ample
+    applications in several branches of Physics. In this work, we apply machine
+    learning algorithms to a specific problem of Cosmic Ray Physics: the
+    estimation of the muon content of extensive air showers when measured at the
+    ground. As a working case, we explore the performance of a deep neural
+    network applied to the signals recorded by the water-Cherenkov detectors of
+    the Surface Detector Array of the Pierre Auger Observatory. We apply deep
+    learning architectures to large sets of simulated data. The inner structure
+    of the neural network is optimized through the use of genetic algorithms. To
+    obtain a prediction of the recorded muon signal in each individual detector,
+    we train neural networks with a mixed sample of light, intermediate and
+    heavy nuclei. When true and predicted signals are compared at detector
+    level, the primary values of the Pearson correlation coefficients are above
+    95\%. The relative errors of the predicted muon signals are below 10\% and
+    do not depend on the event energy, zenith angle, total signal size, distance
+    range or the hadronic model used to generate the events.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Guillen
+      given: A.
+    - family: Bueno
+      given: A.
+    - family: Carceller
+      given: J. M.
+    - family: Martinez-Velazquez
+      given: J. C.
+    - family: Rubio
+      given: G.
+    - family: Peixoto
+      given: C. J. Todero
+    - family: Sanchez-Lucas
+      given: P.
+  container-title: Astroparticle Physics
+  container-title-short: Astroparticle Physics
+  DOI: 10.1016/j.astropartphys.2019.03.001
+  ISSN: 09276505
+  issued:
+    - year: 2019
+      month: 9
+  page: 12-22
+  source: arXiv.org
+  title: Deep learning techniques applied to the physics of extensive air showers
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1807.09024'
+  volume: '111'
+
+- id: heckCORSIKAMonteCarlo1998
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Heck
+      given: D.
+    - family: Knapp
+      given: J.
+    - family: Capdevielle
+      given: J. N.
+    - family: Schatz
+      given: G.
+    - family: Thouw
+      given: T.
+  issued:
+    - year: 1998
+      month: 2
+  language: en
+  source: inspirehep.net
+  title: 'CORSIKA: A Monte Carlo code to simulate extensive air showers'
+  title-short: CORSIKA
+  type: article-journal
+  URL: 'https://inspirehep.net/literature/469835'
+
+- id: IDSIASacred2020
+  abstract: >-
+    Sacred is a tool to help you configure, organize, log and reproduce
+    experiments developed at IDSIA.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  genre: Python
+  issued:
+    - year: 2020
+      month: 6
+      day: 18
+  original-date:
+    - year: 2014
+      month: 3
+      day: 31
+  publisher: IDSIA
+  source: GitHub
+  title: IDSIA/sacred
+  type: book
+  URL: 'https://github.com/IDSIA/sacred'
+
+- id: IterativeDvc2020
+  abstract: "\U0001F989Data Version Control | Git for Data & Models. Contribute to iterative/dvc development by creating an account on GitHub."
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  genre: Python
+  issued:
+    - year: 2020
+      month: 6
+      day: 18
+  original-date:
+    - year: 2017
+      month: 3
+      day: 4
+  publisher: Iterative
+  source: GitHub
+  title: iterative/dvc
+  type: book
+  URL: 'https://github.com/iterative/dvc'
+
+- id: MachinableorgMachinable2020
+  abstract: A modular configuration system for machine learning research
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  genre: Python
+  issued:
+    - year: 2020
+      month: 6
+      day: 17
+  original-date:
+    - year: 2019
+      month: 11
+      day: 19
+  publisher: machinable
+  source: GitHub
+  title: machinable-org/machinable
+  type: book
+  URL: 'https://github.com/machinable-org/machinable'
+
+- id: MachineLearningTrick2015
+  abstract: "Our ability to rewrite statistical problems in an equivalent but different form, to reparameterise them, is one of the most general-purpose\_tools we have\_in mathematical statistics.\_We used reparam…"
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  container-title: The Spectator
+  issued:
+    - year: 2015
+      month: 10
+      day: 29
+  language: en-GB
+  source: blog.shakirm.com
+  title: 'Machine Learning Trick of the Day (4): Reparameterisation Tricks'
+  title-short: Machine Learning Trick of the Day (4)
+  type: post-weblog
+  URL: >-
+    http://blog.shakirm.com/2015/10/machine-learning-trick-of-the-day-4-reparameterisation-tricks/
+
+- id: mesnardReproducibleWorkflowPublic2020
+  abstract: >-
+    In a new effort to make our research transparent and reproducible by others,
+    we developed a workflow to run and share computational studies on the public
+    cloud Microsoft Azure. It uses Docker containers to create an image of the
+    application software stack. We also adopt several tools that facilitate
+    creating and managing virtual machines on compute nodes and submitting jobs
+    to these nodes. The configuration files for these tools are part of an
+    expanded "reproducibility package" that includes workflow definitions for
+    cloud computing, in addition to input files and instructions. This
+    facilitates re-creating the cloud environment to re-run the computations
+    under the same conditions. Although cloud providers have improved their
+    offerings, many researchers using high-performance computing (HPC) are still
+    skeptical about cloud computing. Thus, we ran benchmarks for tightly coupled
+    applications to confirm that the latest HPC nodes of Microsoft Azure are
+    indeed a viable alternative to traditional on-site HPC clusters. We also
+    show that cloud offerings are now adequate to complete computational fluid
+    dynamics studies with in-house research software that uses parallel
+    computing with GPUs. Finally, we share with the community what we have
+    learned from nearly two years of using Azure cloud to enhance transparency
+    and reproducibility in our computational simulations.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Mesnard
+      given: Olivier
+    - family: Barba
+      given: Lorena A.
+  container-title: Computing in Science & Engineering
+  container-title-short: Comput. Sci. Eng.
+  DOI: 10.1109/MCSE.2019.2941702
+  ISSN: '1521-9615, 1558-366X'
+  issue: '1'
+  issued:
+    - year: 2020
+      month: 1
+      day: 1
+  page: 102-116
+  source: arXiv.org
+  title: Reproducible Workflow on a Public Cloud for Computational Fluid Dynamics
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1904.07981'
+  volume: '22'
+
+- id: nagarajanDeterministicImplementationsReproducibility2019
+  abstract: >-
+    While deep reinforcement learning (DRL) has led to numerous successes in
+    recent years, reproducing these successes can be extremely challenging. One
+    reproducibility challenge particularly relevant to DRL is nondeterminism in
+    the training process, which can substantially affect the results. Motivated
+    by this challenge, we study the positive impacts of deterministic
+    implementations in eliminating nondeterminism in training. To do so, we
+    consider the particular case of the deep Q-learning algorithm, for which we
+    produce a deterministic implementation by identifying and controlling all
+    sources of nondeterminism in the training process. One by one, we then allow
+    individual sources of nondeterminism to affect our otherwise deterministic
+    implementation, and measure the impact of each source on the variance in
+    performance. We find that individual sources of nondeterminism can
+    substantially impact the performance of agent, illustrating the benefits of
+    deterministic implementations. In addition, we also discuss the important
+    role of deterministic implementations in achieving exact replicability of
+    results.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Nagarajan
+      given: Prabhat
+    - family: Warnell
+      given: Garrett
+    - family: Stone
+      given: Peter
+  container-title: 'arXiv:1809.05676 [cs]'
+  issued:
+    - year: 2019
+      month: 6
+      day: 9
+  source: arXiv.org
+  title: >-
+    Deterministic Implementations for Reproducibility in Deep Reinforcement
+    Learning
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1809.05676'
+
+- id: naglerSustainabilityReproducibilityContainerized2015
+  abstract: >-
+    Recent developments in the commercial open source community have catalysed
+    the use of Linux containers for scalable deployment of web-based
+    applications to the cloud. Scientific software can be containerized with
+    dependencies, configuration files, post-processing tools and even simulation
+    results, referred to as containerized computing. This new approach promises
+    to significantly improve sustainability, productivity and reproducibility.
+    We present our experiences, technology, and future plans for open source
+    containerization of software used to model particle and radiation beams.
+    Vagrant is central to our approach, using Docker for cloud deployment and
+    VirtualBox virtual machines for deployment to Mac OS and Windows computers.
+    Our technology enables seamless switching between the desktop and the cloud
+    to simplify simulation development and execution.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Nagler
+      given: Robert
+    - family: Bruhwiler
+      given: David
+    - family: Moeller
+      given: Paul
+    - family: Webb
+      given: Stephen
+  container-title: 'arXiv:1509.08789 [cs]'
+  issued:
+    - year: 2015
+      month: 9
+      day: 28
+  source: arXiv.org
+  title: Sustainability and Reproducibility via Containerized Computing
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1509.08789'
+
+- id: nakandalaTamingModelServing
+  abstract: >-
+    Machine Learning (ML) adoption in the enterprise requires simpler and more
+    efﬁcient software infrastructure—the bespoke solutions typical in large web
+    companies are simply untenable. Model scoring, the process of obtaining
+    prediction from a trained model over new data, is a primary contributor to
+    infrastructure complexity and cost, as models are trained once but used many
+    times.
+  author:
+    - family: Nakandala
+      given: Supun
+    - family: Saur
+      given: Karla
+    - family: Yu
+      given: Gyeong-In
+    - family: Karanasos
+      given: Konstantinos
+    - family: Curino
+      given: Carlo
+    - family: Weimer
+      given: Markus
+    - family: Interlandi
+      given: Matteo
+  language: en
+  page: '16'
+  source: Zotero
+  title: >-
+    Taming Model Serving Complexity, Performance and Cost: A Compilation to
+    Tensor Computations Approach
+  type: article-journal
+
+- id: nwankpaActivationFunctionsComparison2018
+  abstract: >-
+    Deep neural networks have been successfully used in diverse emerging domains
+    to solve real world complex problems with may more deep learning(DL)
+    architectures, being developed to date. To achieve these state-of-the-art
+    performances, the DL architectures use activation functions (AFs), to
+    perform diverse computations between the hidden layers and the output layers
+    of any given DL architecture. This paper presents a survey on the existing
+    AFs used in deep learning applications and highlights the recent trends in
+    the use of the activation functions for deep learning applications. The
+    novelty of this paper is that it compiles majority of the AFs used in DL and
+    outlines the current trends in the applications and usage of these functions
+    in practical deep learning deployments against the state-of-the-art research
+    results. This compilation will aid in making effective decisions in the
+    choice of the most suitable and appropriate activation function for any
+    given application, ready for deployment. This paper is timely because most
+    research papers on AF highlights similar works and results while this paper
+    will be the first, to compile the trends in AF applications in practice
+    against the research results from literature, found in deep learning
+    research to date.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Nwankpa
+      given: Chigozie
+    - family: Ijomah
+      given: Winifred
+    - family: Gachagan
+      given: Anthony
+    - family: Marshall
+      given: Stephen
+  container-title: 'arXiv:1811.03378 [cs]'
+  issued:
+    - year: 2018
+      month: 11
+      day: 8
+  source: arXiv.org
+  title: >-
+    Activation Functions: Comparison of trends in Practice and Research for Deep
+    Learning
+  title-short: Activation Functions
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1811.03378'
+
+- id: olorisadeReproducibilityMachineLearningBased2017
+  abstract: >-
+    Reproducibility is an essential requirement for computational studies
+    including those based on machine learning techniques. However, many machine
+    learning studies are either not reproducible or are difficult to reproduce.
+    In this paper, we consider what information about text mining studies is
+    crucial to successful reproduction of such studies. We identify a set of
+    factors that affect reproducibility based on our experience of attempting to
+    reproduce six studies proposing text mining techniques for the automation of
+    the citation screening stage in the systematic review process. Subsequently,
+    the reproducibility of 30 studies was evaluated based on the presence or
+    otherwise of information relating to the factors. While the studies provide
+    useful reports of their results, they lack information on access to the
+    dataset in the form and order as used in the original study (as against raw
+    data), the software environment used, randomization control and the
+    implementation of proposed techniques. In order to increase the chances of
+    being reproduced, researchers should ensure that details about and/or access
+    to information about these factors are provided in their reports.
+  author:
+    - family: Olorisade
+      given: Babatunde Kazeem
+    - family: Brereton
+      given: Pearl
+    - family: Andras
+      given: Peter
+  issued:
+    - year: 2017
+  source: Semantic Scholar
+  title: 'Reproducibility in Machine Learning-Based Studies: An Example of Text Mining'
+  title-short: Reproducibility in Machine Learning-Based Studies
+  type: paper-conference
+
+- id: pengReproducibleResearchComputational2011
+  abstract: >-
+    Computational science has led to exciting new developments, but the nature
+    of the work has exposed limitations in our ability to evaluate published
+    findings. Reproducibility has the potential to serve as a minimum standard
+    for judging scientific claims when full independent replication of a study
+    is not possible.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Peng
+      given: Roger D.
+  container-title: Science
+  DOI: 10.1126/science.1213847
+  ISSN: '0036-8075, 1095-9203'
+  issue: '6060'
+  issued:
+    - year: 2011
+      month: 12
+      day: 2
+  language: en
+  page: 1226-1227
+  PMID: '22144613'
+  publisher: American Association for the Advancement of Science
+  section: Perspective
+  source: science.sciencemag.org
+  title: Reproducible Research in Computational Science
+  type: article-journal
+  URL: 'https://science.sciencemag.org/content/334/6060/1226'
+  volume: '334'
+
+- id: PolyaxonPolyaxon2020
+  abstract: >-
+    Cloud native machine learning automation platform. Contribute to
+    polyaxon/polyaxon development by creating an account on GitHub.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  genre: Python
+  issued:
+    - year: 2020
+      month: 6
+      day: 18
+  original-date:
+    - year: 2016
+      month: 12
+      day: 26
+  publisher: polyaxon
+  source: GitHub
+  title: polyaxon/polyaxon
+  type: book
+  URL: 'https://github.com/polyaxon/polyaxon'
+
+- id: poppComprehensiveSupportLifecycle
+  author:
+    - family: Popp
+      given: Matthias
+  language: en
+  page: '71'
+  source: Zotero
+  title: >-
+    Comprehensive Support of the Lifecycle of Machine Learning Models in Model
+    Management Systems
+  type: article-journal
+
+- id: raffStepQuantifyingIndependently2019
+  abstract: >-
+    What makes a paper independently reproducible? Debates on reproducibility
+    center around intuition or assumptions but lack empirical results. Our field
+    focuses on releasing code, which is important, but is not sufficient for
+    determining reproducibility. We take the first step toward a quantifiable
+    answer by manually attempting to implement 255 papers published from 1984
+    until 2017, recording features of each paper, and performing statistical
+    analysis of the results. For each paper, we did not look at the authors
+    code, if released, in order to prevent bias toward discrepancies between
+    code and paper.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Raff
+      given: Edward
+  container-title: 'arXiv:1909.06674 [cs, stat]'
+  issued:
+    - year: 2019
+      month: 9
+      day: 14
+  source: arXiv.org
+  title: >-
+    A Step Toward Quantifying Independently Reproducible Machine Learning
+    Research
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1909.06674'
+
+- id: reOvertonDataSystem2019
+  abstract: >-
+    We describe a system called Overton, whose main design goal is to support
+    engineers in building, monitoring, and improving production machine learning
+    systems. Key challenges engineers face are monitoring fine-grained quality,
+    diagnosing errors in sophisticated applications, and handling contradictory
+    or incomplete supervision data. Overton automates the life cycle of model
+    construction, deployment, and monitoring by providing a set of novel
+    high-level, declarative abstractions. Overton's vision is to shift
+    developers to these higher-level tasks instead of lower-level machine
+    learning tasks. In fact, using Overton, engineers can build
+    deep-learning-based applications without writing any code in frameworks like
+    TensorFlow. For over a year, Overton has been used in production to support
+    multiple applications in both near-real-time applications and back-of-house
+    processing. In that time, Overton-based applications have answered billions
+    of queries in multiple languages and processed trillions of records reducing
+    errors 1.7-2.9 times versus production systems.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Ré
+      given: Christopher
+    - family: Niu
+      given: Feng
+    - family: Gudipati
+      given: Pallavi
+    - family: Srisuwananukorn
+      given: Charles
+  container-title: 'arXiv:1909.05372 [cs]'
+  issued:
+    - year: 2019
+      month: 9
+      day: 6
+  source: arXiv.org
+  title: 'Overton: A Data System for Monitoring and Improving Machine-Learned Products'
+  title-short: Overton
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1909.05372'
+
+- id: sandveTenSimpleRules2013
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Sandve
+      given: Geir Kjetil
+    - family: Nekrutenko
+      given: Anton
+    - family: Taylor
+      given: James
+    - family: Hovig
+      given: Eivind
+  container-title: PLOS Computational Biology
+  container-title-short: PLOS Computational Biology
+  DOI: 10.1371/journal.pcbi.1003285
+  ISSN: 1553-7358
+  issue: '10'
+  issued:
+    - year: 2013
+      month: 10
+      day: 24
+  language: en
+  page: e1003285
+  publisher: Public Library of Science
+  source: PLoS Journals
+  title: Ten Simple Rules for Reproducible Computational Research
+  type: article-journal
+  URL: >-
+    https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285
+  volume: '9'
+
+- id: sculleyHiddenTechnicalDebt2015
+  abstract: >-
+    Machine learning offers a fantastically powerful toolkit for building useful
+    complex prediction systems quickly. This paper argues it is dangerous to
+    think of these quick wins as coming for free. Using the software engineering
+    framework of technical debt, we find it is common to incur massive ongoing
+    maintenance costs in real-world ML systems. We explore several ML-specific
+    risk factors to account for in system design. These include boundary
+    erosion, entanglement, hidden feedback loops, undeclared consumers, data
+    dependencies, configuration issues, changes in the external world, and a
+    variety of system-level anti-patterns.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Sculley
+      given: D.
+    - family: Holt
+      given: Gary
+    - family: Golovin
+      given: Daniel
+    - family: Davydov
+      given: Eugene
+    - family: Phillips
+      given: Todd
+    - family: Ebner
+      given: Dietmar
+    - family: Chaudhary
+      given: Vinay
+    - family: Young
+      given: Michael
+    - family: Crespo
+      given: Jean-Francois
+    - family: Dennison
+      given: Dan
+  collection-title: NIPS'15
+  container-title: >-
+    Proceedings of the 28th International Conference on Neural Information
+    Processing Systems - Volume 2
+  event-place: 'Montreal, Canada'
+  issued:
+    - year: 2015
+      month: 12
+      day: 7
+  page: 2503–2511
+  publisher: MIT Press
+  publisher-place: 'Montreal, Canada'
+  source: ACM Digital Library
+  title: Hidden technical debt in Machine learning systems
+  type: paper-conference
+
+- id: sculleyMachineLearningHigh2014
+  author:
+    - family: Sculley
+      given: D.
+    - family: Holt
+      given: Gary
+    - family: Golovin
+      given: Daniel
+    - family: Davydov
+      given: Eugene
+    - family: Phillips
+      given: Todd
+    - family: Ebner
+      given: Dietmar
+    - family: Chaudhary
+      given: Vinay
+    - family: Young
+      given: Michael
+  container-title: 'SE4ML: Software Engineering for Machine Learning (NIPS 2014 Workshop)'
+  issued:
+    - year: 2014
+  source: Google Research
+  title: 'Machine Learning: The High Interest Credit Card of Technical Debt'
+  title-short: Machine Learning
+  type: paper-conference
+
+- id: smithDisciplinedApproachNeural2018
+  abstract: >-
+    Although deep learning has produced dazzling successes for applications of
+    image, speech, and video processing in the past few years, most trainings
+    are with suboptimal hyper-parameters, requiring unnecessarily long training
+    times. Setting the hyper-parameters remains a black art that requires years
+    of experience to acquire. This report proposes several efficient ways to set
+    the hyper-parameters that significantly reduce training time and improves
+    performance. Specifically, this report shows how to examine the training
+    validation/test loss function for subtle clues of underfitting and
+    overfitting and suggests guidelines for moving toward the optimal balance
+    point. Then it discusses how to increase/decrease the learning rate/momentum
+    to speed up training. Our experiments show that it is crucial to balance
+    every manner of regularization for each dataset and architecture. Weight
+    decay is used as a sample regularizer to show how its optimal value is
+    tightly coupled with the learning rates and momentums. Files to help
+    replicate the results reported here are available.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Smith
+      given: Leslie N.
+  container-title: 'arXiv:1803.09820 [cs, stat]'
+  issued:
+    - year: 2018
+      month: 4
+      day: 24
+  source: arXiv.org
+  title: >-
+    A disciplined approach to neural network hyper-parameters: Part 1 --
+    learning rate, batch size, momentum, and weight decay
+  title-short: A disciplined approach to neural network hyper-parameters
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1803.09820'
+
+- id: wilsonGoodEnoughPractices2017
+  abstract: >-
+    Author summary Computers are now essential in all branches of science, but
+    most researchers are never taught the equivalent of basic lab skills for
+    research computing. As a result, data can get lost, analyses can take much
+    longer than necessary, and researchers are limited in how effectively they
+    can work with software and data. Computing workflows need to follow the same
+    practices as lab projects and notebooks, with organized data, documented
+    steps, and the project structured for reproducibility, but researchers new
+    to computing often don't know where to start. This paper presents a set of
+    good computing practices that every researcher can adopt, regardless of
+    their current level of computational skill. These practices, which encompass
+    data management, programming, collaborating with colleagues, organizing
+    projects, tracking work, and writing manuscripts, are drawn from a wide
+    variety of published sources from our daily lives and from our work with
+    volunteer organizations that have delivered workshops to over 11,000 people
+    since 2010.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Wilson
+      given: Greg
+    - family: Bryan
+      given: Jennifer
+    - family: Cranston
+      given: Karen
+    - family: Kitzes
+      given: Justin
+    - family: Nederbragt
+      given: Lex
+    - family: Teal
+      given: Tracy K.
+  container-title: PLOS Computational Biology
+  container-title-short: PLOS Computational Biology
+  DOI: 10.1371/journal.pcbi.1005510
+  ISSN: 1553-7358
+  issue: '6'
+  issued:
+    - year: 2017
+      month: 6
+      day: 22
+  language: en
+  page: e1005510
+  publisher: Public Library of Science
+  source: PLoS Journals
+  title: Good enough practices in scientific computing
+  type: article-journal
+  URL: >-
+    https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510
+  volume: '13'
+
+- id: zahariaAcceleratingMachineLearning2018
+  abstract: >-
+    Machine learning development creates multiple new challenges that are not
+    present in a traditional software development lifecycle. These include
+    keeping track of the myriad inputs to an ML application (e.g., data
+    versions, code and tuning parameters), reproducing results, and production
+    deployment. In this paper, we summarize these challenges from our experience
+    with Databricks customers, and describe MLflow, an open source platform we
+    recently launched to streamline the machine learning lifecycle. MLflow
+    covers three key challenges: experimentation, reproducibility, and model
+    deployment, using generic APIs that work with any ML library, algorithm and
+    programming language. The project has a rapidly growing open source
+    community, with over 50 contributors since its launch in June 2018.
+  author:
+    - family: Zaharia
+      given: Matei
+    - family: Chen
+      given: Andrew
+    - family: Davidson
+      given: Aaron
+    - family: Ghodsi
+      given: Ali
+    - family: Hong
+      given: Sue Ann
+    - family: Konwinski
+      given: Andy
+    - family: Murching
+      given: Siddharth
+    - family: Nykodym
+      given: Tomas
+    - family: Ogilvie
+      given: Paul
+    - family: Parkhe
+      given: Mani
+    - family: Xie
+      given: Fen
+    - family: Zumar
+      given: Corey
+  container-title: IEEE Data Eng. Bull.
+  issued:
+    - year: 2018
+  source: Semantic Scholar
+  title: Accelerating the Machine Learning Lifecycle with MLflow
+  type: article-journal
+
+- id: zhangVELCNewVariational2020
+  abstract: >-
+    Anomaly detection is a classical but worthwhile problem, and many deep
+    learning-based anomaly detection algorithms have been proposed, which can
+    usually achieve better detection results than traditional methods. In view
+    of reconstruct ability of the model and the calculation of anomaly score,
+    this paper proposes a time series anomaly detection method based on
+    Variational AutoEncoder model(VAE) with re-Encoder and Latent Constraint
+    network(VELC). In order to modify reconstruct ability of the model to
+    prevent it from reconstructing abnormal samples well, we add a constraint
+    network in the latent space of the VAE to force it generate new latent
+    variables that are similar with that of training samples. To be able to
+    calculate anomaly score in two feature spaces, we train a re-encoder to
+    transform the generated data to a new latent space. For better handling the
+    time series, we use the LSTM as the encoder and decoder part of the VAE
+    framework. Experimental results of several benchmarks show that our method
+    outperforms state-of-the-art anomaly detection methods.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Zhang
+      given: Chunkai
+    - family: Li
+      given: Shaocong
+    - family: Zhang
+      given: Hongye
+    - family: Chen
+      given: Yingyang
+  container-title: 'arXiv:1907.01702 [cs, stat]'
+  issued:
+    - year: 2020
+      month: 4
+      day: 15
+  source: arXiv.org
+  title: >-
+    VELC: A New Variational AutoEncoder Based Model for Time Series Anomaly
+    Detection
+  title-short: VELC
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1907.01702'
+
+- id: zhaoReproducingScientificExperiment2019
+  abstract: >-
+    The reproducibility of scientific experiment is vital for the advancement of
+    disciplines based on previous work. To achieve this goal, many researchers
+    focus on complex methodology and self-invented tools which have difficulty
+    in practical usage. In this article, we introduce the DevOps infrastructure
+    from software engineering community and shows how DevOps can be used
+    effectively to reproduce experiments for computer science related
+    disciplines. DevOps can be enabled using freely available cloud computing
+    machines for medium sized experiment and self-hosted computing engines for
+    large scale computing, thus powering researchers to share their experiment
+    result with others in a more reliable way.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Zhao
+      given: Feng
+    - family: Niu
+      given: Xingzhi
+    - family: Huang
+      given: Shao-Lun
+    - family: Zhang
+      given: Lin
+  container-title: 'arXiv:1910.13397 [cs]'
+  issued:
+    - year: 2019
+      month: 10
+      day: 28
+  source: arXiv.org
+  title: Reproducing Scientific Experiment with Cloud DevOps
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1910.13397'
+
+- id: zhuClassificationSupervisedAutoEncoder2020
+  abstract: >-
+    Classic variational autoencoders are used to learn complex data
+    distributions, that are built on standard function approximators.
+    Especially, VAE has shown promise on a lot of complex task. In this paper, a
+    new autoencoder model - classification supervised autoencoder (CSAE) based
+    on predefined evenly-distributed class centroids (PEDCC) is proposed. Our
+    method uses PEDCC of latent variables to train the network to ensure the
+    maximization of inter-class distance and the minimization of inner-class
+    distance. Instead of learning mean/variance of latent variables distribution
+    and taking reparameterization of VAE, latent variables of CSAE are directly
+    used to classify and as input of decoder. In addition, a new loss function
+    is proposed to combine the loss function of classification. Based on the
+    basic structure of the universal autoencoder, we realized the comprehensive
+    optimal results of encoding, decoding, classification, and good model
+    generalization performance at the same time. Theoretical advantages are
+    reflected in experimental results.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 18
+  author:
+    - family: Zhu
+      given: Qiuyu
+    - family: Zhang
+      given: Ruixin
+  container-title: 'arXiv:1902.00220 [cs]'
+  issued:
+    - year: 2020
+      month: 1
+      day: 10
+  source: arXiv.org
+  title: >-
+    A Classification Supervised Auto-Encoder Based on Predefined
+    Evenly-Distributed Class Centroids
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1902.00220'
+
+- id: zotero-1
+  type: article
+...
