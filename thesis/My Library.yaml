@@ -30,6 +30,65 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1803.08375'
 
+- id: agliettaResponsePierreAuger2005
+  abstract: >-
+    The U.S. Department of Energy's Office of Scientific and Technical
+    Information
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Aglietta
+      given: M.
+    - family: Allison
+      given: P.
+    - family: Andres
+      given: E. C.
+    - family: Arneodo
+      given: F.
+    - family: Bertou
+      given: Xavier
+    - family: Bonifazi
+      given: C.
+    - family: Busca
+      given: N.
+    - family: Creusot
+      given: A.
+    - family: Deligny
+      given: O.
+    - family: Dornic
+      given: D.
+    - family: Genolini
+      given: B.
+    - family: Ghia
+      given: P. L.
+    - family: Grunfeld
+      given: C. M.
+    - family: Lhenry-Yvon
+      given: I.
+    - family: Mazur
+      given: P. O.
+    - family: Moreno
+      given: E.
+    - family: Perez
+      given: G.
+    - family: Salazar
+      given: H.
+    - family: Suomijarvi
+      given: T.
+  issued:
+    - year: 2005
+      month: 7
+      day: 1
+  language: English
+  number: FERMILAB-CONF-05-282-E-TD
+  publisher: 'Fermi National Accelerator Lab. (FNAL), Batavia, IL (United States)'
+  source: www.osti.gov
+  title: Response of the Pierre Auger Observatory water Cherenkov detectors to muons
+  type: report
+  URL: 'https://www.osti.gov/biblio/15020240'
+
 - id: albertScienceCaseWide2019
   abstract: >-
     We outline the science motivation for SGSO, the Southern Gamma-Ray Survey
