@@ -829,6 +829,30 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1511.07289'
 
+- id: collbergMeasuringReproducibilityComputer
+  abstract: >-
+    We describe a study into the willingness of Computer Systems researchers to
+    share their code and data. We ﬁnd that . . . . We also propose a novel
+    sharing speciﬁcation scheme that will require researchers to specify the
+    level of reproducibility that reviewers and readers can assume from a paper
+    either submitted for publication, or published.
+  author:
+    - family: Collberg
+      given: Christian
+    - family: Moraila
+      given: Gina
+    - family: Shankaran
+      given: Akash
+    - family: Shi
+      given: Zuoming
+    - family: Warren
+      given: Alex M
+  language: en
+  page: '37'
+  source: Zotero
+  title: Measuring Reproducibility in Computer Systems Research
+  type: article-journal
+
 - id: collinsDeliveringVisionMLOps
   author:
     - family: Collins
