@@ -1549,6 +1549,18 @@ references:
   type: book
   URL: 'https://github.com/iterative/dvc'
 
+- id: kearns2013machine
+  author:
+    - family: Kearns
+      given: Michael
+    - family: Nevmyvaka
+      given: Yuriy
+  container-title: 'High Frequency Trading: New Realities for Traders, Markets, and Regulators'
+  issued:
+    - year: 2013
+  title: Machine learning for market microstructure and high frequency trading
+  type: article-journal
+
 - id: keLightGBMHighlyEfficient2017
   accessed:
     - year: 2020
