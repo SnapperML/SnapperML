@@ -428,6 +428,39 @@ references:
   URL: 'http://arxiv.org/abs/1905.03532'
   volume: '7'
 
+- id: augerExtensiveCosmicRayShowers1939
+  abstract: 'DOI:https://doi.org/10.1103/RevModPhys.11.288'
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Auger
+      given: Pierre
+    - family: Ehrenfest
+      given: P.
+    - family: Maze
+      given: R.
+    - family: Daudin
+      given: J.
+    - family: Fréon
+      given: Robley A.
+  container-title: Reviews of Modern Physics
+  container-title-short: Rev. Mod. Phys.
+  DOI: 10.1103/RevModPhys.11.288
+  issue: 3-4
+  issued:
+    - year: 1939
+      month: 7
+      day: 1
+  page: 288-291
+  publisher: American Physical Society
+  source: APS
+  title: Extensive Cosmic-Ray Showers
+  type: article-journal
+  URL: 'https://link.aps.org/doi/10.1103/RevModPhys.11.288'
+  volume: '11'
+
 - id: AutoencoderBetaVAE2018
   abstract: >-
     Autocoders are a family of neural network models aiming to learn compressed
