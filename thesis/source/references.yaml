@@ -2306,6 +2306,32 @@ references:
   title-short: Machine Learning
   type: paper-conference
 
+- id: sculleyMachineLearningHigh2014a
+  author:
+    - family: Sculley
+      given: D.
+    - family: Holt
+      given: Gary
+    - family: Golovin
+      given: Daniel
+    - family: Davydov
+      given: Eugene
+    - family: Phillips
+      given: Todd
+    - family: Ebner
+      given: Dietmar
+    - family: Chaudhary
+      given: Vinay
+    - family: Young
+      given: Michael
+  container-title: 'SE4ML: Software Engineering for Machine Learning (NIPS 2014 Workshop)'
+  issued:
+    - year: 2014
+  source: Google Research
+  title: 'Machine Learning: The High Interest Credit Card of Technical Debt'
+  title-short: Machine Learning
+  type: paper-conference
+
 - id: smithDisciplinedApproachNeural2018
   abstract: >-
     Although deep learning has produced dazzling successes for applications of
