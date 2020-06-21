@@ -933,6 +933,43 @@ references:
   type: webpage
   URL: 'https://www.edge.org/response-detail/25340'
 
+- id: freireReproducibilityDataOrientedExperiments2016
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Freire
+      given: Juliana
+    - family: Fuhr
+      given: Norbert
+    - family: Rauber
+      given: Andreas
+  container-title: Dagstuhl Reports
+  DOI: 10.4230/DagRep.6.1.108
+  editor:
+    - family: Freire
+      given: Juliana
+    - family: Fuhr
+      given: Norbert
+    - family: Rauber
+      given: Andreas
+  event-place: 'Dagstuhl, Germany'
+  ISSN: 2192-5283
+  issue: '1'
+  issued:
+    - year: 2016
+  page: 108–159
+  publisher: Schloss Dagstuhl–Leibniz-Zentrum fuer Informatik
+  publisher-place: 'Dagstuhl, Germany'
+  source: Dagstuhl Research Online Publication Server
+  title: >-
+    Reproducibility of Data-Oriented Experiments in e-Science (Dagstuhl Seminar
+    16041)
+  type: article-journal
+  URL: 'http://drops.dagstuhl.de/opus/volltexte/2016/5817'
+  volume: '6'
+
 - id: geronHandsOnMachineLearning2019
   abstract: >-
     Through a series of recent breakthroughs, deep learning has boosted the
