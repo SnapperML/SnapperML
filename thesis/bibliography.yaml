@@ -1526,6 +1526,45 @@ references:
   URL: 'https://science.sciencemag.org/content/334/6060/1226'
   volume: '334'
 
+- id: PierreAugerCosmic2015
+  abstract: >-
+    The Pierre Auger Observatory, located on a vast, high plain in western
+    Argentina, is the world׳s largest cosmic ray observatory. The objectives of
+    the Observatory are to probe the origin and characteristics of cosmic rays
+    above 1017eV and to study the interactions of these, the most energetic
+    particles observed in nature. The Auger design features an array of 1660
+    water Cherenkov particle detector stations spread over 3000km2 overlooked by
+    24 air fluorescence telescopes. In addition, three high elevation
+    fluorescence telescopes overlook a 23.5km2, 61-detector infilled array with
+    750m spacing. The Observatory has been in successful operation since
+    completion in 2008 and has recorded data from an exposure exceeding
+    40,000km2sryr. This paper describes the design and performance of the
+    detectors, related subsystems and infrastructure that make up the
+    Observatory.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  container-title: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  container-title-short: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  DOI: 10.1016/j.nima.2015.06.058
+  ISSN: 0168-9002
+  issued:
+    - year: 2015
+      month: 10
+      day: 21
+  language: en
+  page: 172-213
+  source: ScienceDirect
+  title: The Pierre Auger Cosmic Ray Observatory
+  type: article-journal
+  URL: 'http://www.sciencedirect.com/science/article/pii/S0168900215008086'
+  volume: '798'
+
 - id: PolyaxonPolyaxon2020
   abstract: >-
     Cloud native machine learning automation platform. Contribute to
