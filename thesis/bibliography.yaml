@@ -1542,6 +1542,48 @@ references:
   URL: 'https://www.mdpi.com/2078-2489/11/2/108'
   volume: '11'
 
+- id: hutsonAIGlossaryArtificial2017
+  abstract: >-
+    Just what do people mean by artificial intelligence (AI)? The term has never
+    had clear boundaries. When it was introduced at a seminal 1956 workshop at
+    Dartmouth College, it was taken broadly to mean making a machine behave in
+    ways that would be called intelligent if seen in a human. An important
+    recent advance in AI has been machine learning, which shows up in
+    technologies from spellcheck to self-driving cars and is often carried out
+    by computer systems called neural networks. Any discussion of AI is likely
+    to include other terms as well. We present a glossary of key words and
+    phrases.
+
+    Defining the terms of artificial intelligence
+
+    Defining the terms of artificial intelligence
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Hutson
+      given: Matthew
+  container-title: Science
+  DOI: 10.1126/science.357.6346.19
+  ISSN: '0036-8075, 1095-9203'
+  issue: '6346'
+  issued:
+    - year: 2017
+      month: 7
+      day: 7
+  language: en
+  page: 19-19
+  PMID: '28684481'
+  publisher: American Association for the Advancement of Science
+  section: News
+  source: science.sciencemag.org
+  title: 'AI Glossary: Artificial intelligence, in so many words'
+  title-short: AI Glossary
+  type: article-journal
+  URL: 'https://science.sciencemag.org/content/357/6346/19'
+  volume: '357'
+
 - id: IDSIASacred2020
   abstract: >-
     Sacred is a tool to help you configure, organize, log and reproduce
