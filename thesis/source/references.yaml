@@ -980,6 +980,52 @@ references:
   URL: 'http://arxiv.org/abs/1807.09024'
   volume: '111'
 
+- id: headExtentConsequencesPHacking2015
+  abstract: >-
+    A focus on novel, confirmatory, and statistically significant results leads
+    to substantial bias in the scientific literature. One type of bias, known as
+    “p-hacking,” occurs when researchers collect or select data or statistical
+    analyses until nonsignificant results become significant. Here, we use
+    text-mining to demonstrate that p-hacking is widespread throughout science.
+    We then illustrate how one can test for p-hacking when performing a
+    meta-analysis and show that, while p-hacking is probably common, its effect
+    seems to be weak relative to the real effect sizes being measured. This
+    result suggests that p-hacking probably does not drastically alter
+    scientific consensuses drawn from meta-analyses.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Head
+      given: Megan L.
+    - family: Holman
+      given: Luke
+    - family: Lanfear
+      given: Rob
+    - family: Kahn
+      given: Andrew T.
+    - family: Jennions
+      given: Michael D.
+  container-title: PLOS Biology
+  container-title-short: PLOS Biology
+  DOI: 10.1371/journal.pbio.1002106
+  ISSN: 1545-7885
+  issue: '3'
+  issued:
+    - year: 2015
+      month: 3
+      day: 13
+  language: en
+  page: e1002106
+  publisher: Public Library of Science
+  source: PLoS Journals
+  title: The Extent and Consequences of P-Hacking in Science
+  type: article-journal
+  URL: >-
+    https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002106
+  volume: '13'
+
 - id: heckCORSIKAMonteCarlo1998
   accessed:
     - year: 2020
