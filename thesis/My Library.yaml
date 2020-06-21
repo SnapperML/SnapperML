@@ -891,6 +891,15 @@ references:
   type: book
   URL: 'https://github.com/dessa-oss/atlas'
 
+- id: EdgeOrg
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  title: Edge.org
+  type: webpage
+  URL: 'https://www.edge.org/response-detail/25340'
+
 - id: geronHandsOnMachineLearning2019
   abstract: >-
     Through a series of recent breakthroughs, deep learning has boosted the
