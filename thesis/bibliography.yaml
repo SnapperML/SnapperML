@@ -602,6 +602,59 @@ references:
     http://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970
   volume: '533'
 
+- id: bar-hillelPresentStatusAutomatic1960
+  abstract: >-
+    Machine translation (MT) has become a multimillion dollar affair. Fully
+    automatic, high quality translation is not a reasonable goal, not even for
+    scientific texts. This chapter surveys the situations where translation
+    involved has to be of high quality. A human translator, in order to arrive
+    at his/her high quality output, is obliged to make intelligent use of extra
+    linguistic knowledge that sometimes has to be of considerable breadth and
+    depth. Reasonable goals are either fully automatic, low quality translation
+    or partly automatic, or high quality translation. Full automation of the
+    translation process is incompatible with high quality. The two possible
+    directions where a compromise could be struck are sacrificing quality or
+    reducing the self-sufficiency of the machine output. There are many
+    situations where less than high quality machine output is satisfactory.
+    However, when the aim of MT is lowered to that of high quality translation
+    by a machine-post-editor partnership, the decisive problem becomes to
+    determine the region of optimality in the continuum of possible divisions of
+    labor. The exact position of this region will be a function of the state of
+    linguistic analysis where the languages involved are submitted. With
+    machine-time/efficiency becoming cheaper and human time becoming more
+    expensive, continuous efforts will be made to push this region in the
+    direction of reducing the human element. However, there is no good reason to
+    assume that this region can be pushed to the end of the line, certainly not
+    in the near future.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Bar-Hillel
+      given: Yehoshua
+  container-title: Advances in Computers
+  DOI: 10.1016/S0065-2458(08)60607-5
+  editor:
+    - family: Alt
+      given: Franz L.
+  issued:
+    - year: 1960
+      month: 1
+      day: 1
+  language: en
+  page: 91-163
+  publisher: Elsevier
+  source: ScienceDirect
+  title: >-
+    The Present Status of Automatic Translation of Languages**This article was
+    prepared with the sponsorship of the Informations Systems Branch, Office of
+    Naval Research, under Contract NR 049130. Reproduction as a whole or in part
+    for the purposes of the U. S. Government is permitted.
+  type: chapter
+  URL: 'http://www.sciencedirect.com/science/article/pii/S0065245808606075'
+  volume: '1'
+
 - id: bengioDeepLearning2017
   abstract: >-
     An introduction to a broad range of topics in deep learning, covering
