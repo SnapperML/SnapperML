@@ -1603,47 +1603,6 @@ references:
   URL: >-
     http://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree.pdf
 
-- id: lubsandorzhievHistoryPhotomultiplierTube2006
-  abstract: >-
-    In this very short note we review some historical aspects of photomultiplier
-    tube invention. It is our tribute to the memory of great Soviet-Russian
-    physicist and engineer Leonid Aleksandrovitch Kubetsky whose life and
-    scientific achievements are described briefly. Particular efforts are made
-    to shed light on a controversial issue of who invented the first
-    photomultiplier tube. It is asserted that if to recognize L.A. Kubetsky's
-    priority on the photomultiplier tube invention the last Beaune Conference
-    would be held on the eve of the 75th Anniversary of that great event.
-  accessed:
-    - year: 2020
-      month: 6
-      day: 21
-  author:
-    - family: Lubsandorzhiev
-      given: B. K.
-  collection-title: >-
-    Proceedings of the 4th International Conference on New Developments in
-    Photodetection
-  container-title: >-
-    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
-    Spectrometers, Detectors and Associated Equipment
-  container-title-short: >-
-    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
-    Spectrometers, Detectors and Associated Equipment
-  DOI: 10.1016/j.nima.2006.05.221
-  ISSN: 0168-9002
-  issue: '1'
-  issued:
-    - year: 2006
-      month: 11
-      day: 1
-  language: en
-  page: 236-238
-  source: ScienceDirect
-  title: On the history of photomultiplier tube invention
-  type: article-journal
-  URL: 'http://www.sciencedirect.com/science/article/pii/S0168900206009260'
-  volume: '567'
-
 - id: MachinableorgMachinable2020
   abstract: A modular configuration system for machine learning research
   accessed:
@@ -2233,37 +2192,6 @@ references:
   title: 'Machine Learning: The High Interest Credit Card of Technical Debt'
   title-short: Machine Learning
   type: paper-conference
-
-- id: shiPhotodiodesCommunicationsBioSensings2011
-  abstract: >-
-    This book describes different kinds of photodiodes for applications in
-    high-speed data communication, biomedical sensing, high-speed measurement,
-    UV-light detection, and high energy physics. The photodiodes discussed are
-    composed of several different semiconductor materials, such as InP, SiC, and
-    Si, which cover an extremely wide optical wavelength regime ranging from
-    infrared light to X-ray, making the suitable for diversified applications.
-    Several interesting and unique topics were discussed including: the
-    operation of high-speed photodiodes at low-temperature for super-conducting
-    electronics, photodiodes for bio-medical imaging, single photon detection,
-    photodiodes for the applications in nuclear physics, and for UV-light
-    detection.
-  author:
-    - family: Shi
-      given: Jin-Wei
-  ISBN: 978-953-307-277-7
-  issued:
-    - year: 2011
-      month: 9
-      day: 6
-  language: en
-  number-of-pages: '298'
-  publisher: BoD – Books on Demand
-  source: Google Books
-  title: >-
-    Photodiodes: Communications, Bio-Sensings, Measurements and High-Energy
-    Physics
-  title-short: Photodiodes
-  type: book
 
 - id: smithDisciplinedApproachNeural2018
   abstract: >-
