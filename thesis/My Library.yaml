@@ -2390,6 +2390,50 @@ references:
   URL: >-
     /paper/Setting-the-Default-to-Reproducible-Reproducibility-Stodden-Bailey/992647adcc7e3626768841acb039d2b4a70d5c95
 
+- id: trippiArtificialIntelligenceFinance1995
+  abstract: >-
+    From the Publisher: In Artificial Intelligence in Finance and Investing,
+    authors Robert Trippi and Jae Lee explain this fascinating new technology in
+    terms that portfolio managers, institutional investors, investment analysis,
+    and information systems professionals can understand. Using real-life
+    examples and a practical approach, this rare and readable volume discusses
+    the entire field of artificial intelligence of relevance to investing, so
+    that readers can realize the benefits and evaluate the features of existing
+    or proposed systems, and ultimately construct their own systems. Topics
+    include using Expert Systems for Asset Allocation, Timing Decisions, Pattern
+    Recognition, and Risk Assessment; overview of Popular Knowledge-Based
+    Systems; construction of Synergistic Rule Bases for Securities Selection;
+    incorporating the Markowitz Portfolio Optimization Model into
+    Knowledge-Based Systems; Bayesian Theory and Fuzzy Logic System Components;
+    Machine Learning in Portfolio Selection and Investment Timing, including
+    Pattern-Based Learning and Fenetic Algorithms; and Neural Network-Based
+    Systems. To illustrate the concepts presented in the book, the authors
+    conclude with a valuable practice session and analysis of a typical
+    knowledge-based system for investment management, K-FOLIO. For those who
+    want to stay on the cutting edge of the "application" revolution, Artificial
+    Intelligence in Finance and Investing offers a pragmatic introduction to the
+    use of knowledge-based systems in securities selection and portfolio
+    management.
+  author:
+    - family: Trippi
+      given: Robert R.
+    - family: Lee
+      given: Jae K.
+  edition: 1st
+  event-place: USA
+  ISBN: 978-1-55738-868-1
+  issued:
+    - year: 1995
+  number-of-pages: '246'
+  publisher: 'McGraw-Hill, Inc.'
+  publisher-place: USA
+  source: ACM Digital Library
+  title: >-
+    Artificial Intelligence in Finance and Investing: State-of-the-Art
+    Technologies for Securities Selection and Portfolio Management
+  title-short: Artificial Intelligence in Finance and Investing
+  type: book
+
 - id: wardenBigDataGlossary2011
   abstract: >-
     To help you navigate the large number of new data tools available, this
