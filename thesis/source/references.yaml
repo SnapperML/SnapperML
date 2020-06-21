@@ -2405,6 +2405,37 @@ references:
   URL: >-
     /paper/Setting-the-Default-to-Reproducible-Reproducibility-Stodden-Bailey/992647adcc7e3626768841acb039d2b4a70d5c95
 
+- id: wardenBigDataGlossary2011
+  abstract: >-
+    To help you navigate the large number of new data tools available, this
+    guide describes 60 of the most recent innovations, from NoSQL databases and
+    MapReduce approaches to machine learning and visualization tools.
+    Descriptions are based on first-hand experience with these tools in a
+    production environment. This handy glossary also includes a chapter of key
+    terms that help define many of these tool categories:NoSQL
+    DatabasesDocument-oriented databases using a key/value interface rather than
+    SQL MapReduceTools that support distributed computing on large datasets
+    StorageTechnologies for storing data in a distributed way ServersWays to
+    rent computing power on remote machines ProcessingTools for extracting
+    valuable information from large datasets Natural Language ProcessingMethods
+    for extracting information from human-created text Machine LearningTools
+    that automatically perform data analyses, based on results of a one-off
+    analysis VisualizationApplications that present meaningful data graphically
+    AcquisitionTechniques for cleaning up messy public data sources
+    SerializationMethods to convert data structure or object state into a
+    storable format
+  author:
+    - family: Warden
+      given: Pete
+  ISBN: 978-1-4493-1459-0
+  issued:
+    - year: 2011
+  number-of-pages: '60'
+  publisher: 'O''Reilly Media, Inc.'
+  source: ACM Digital Library
+  title: Big Data Glossary
+  type: book
+
 - id: wilsonGoodEnoughPractices2017
   abstract: >-
     Author summary Computers are now essential in all branches of science, but
