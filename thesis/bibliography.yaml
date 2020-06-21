@@ -1598,6 +1598,50 @@ references:
   URL: >-
     http://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree.pdf
 
+- id: kelleherDataScience2018
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Kelleher
+      given: John D.
+    - family: Tierney
+      given: Brendan
+  DOI: 10.7551/mitpress/11140.001.0001
+  ISBN: 978-0-262-34702-0
+  issued:
+    - year: 2018
+  language: en
+  publisher: The MIT Press
+  source: DOI.org (Crossref)
+  title: Data Science
+  type: book
+  URL: 'https://direct.mit.edu/books/book/3667/data-science'
+
+- id: kelleherSTANDARDDATASCIENCE2018
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  container-author:
+    - family: Kelleher
+      given: John D.
+    - family: Tierney
+      given: Brendan
+  container-title: Data Science
+  DOI: 10.7551/mitpress/11140.003.0009
+  ISBN: 978-0-262-34702-0
+  issued:
+    - year: 2018
+  language: en
+  publisher: The MIT Press
+  source: DOI.org (Crossref)
+  title: STANDARD DATA SCIENCE TASKS
+  type: chapter
+  URL: >-
+    https://direct.mit.edu/books/book/3667/chapter/122276/standard-data-science-tasks
+
 - id: MachinableorgMachinable2020
   abstract: A modular configuration system for machine learning research
   accessed:
