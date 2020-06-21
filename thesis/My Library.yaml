@@ -2150,6 +2150,21 @@ references:
     Management Systems
   type: article-journal
 
+- id: provost1998glossary
+  author:
+    - family: Provost
+      given: Foster
+    - family: Kohavi
+      given: R
+  container-title: Journal of Machine Learning
+  issue: 2-3
+  issued:
+    - year: 1998
+  page: 271–274
+  title: Glossary of terms
+  type: article-journal
+  volume: '30'
+
 - id: raffStepQuantifyingIndependently2019
   abstract: >-
     What makes a paper independently reproducible? Debates on reproducibility
