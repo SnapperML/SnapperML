@@ -309,6 +309,15 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/2003.12808'
 
+- id: ArtificialIntelligenceFaces
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  title: Artificial intelligence faces reproducibility crisis | Science
+  type: webpage
+  URL: 'https://science.sciencemag.org/content/359/6377/725.summary'
+
 - id: assisLATTESNovelDetector2018
   abstract: >-
     The Large Array Telescope for Tracking Energetic Sources (LATTES), is a
