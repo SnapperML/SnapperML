@@ -1642,6 +1642,35 @@ references:
   URL: >-
     https://direct.mit.edu/books/book/3667/chapter/122276/standard-data-science-tasks
 
+- id: kruchtenTechnicalDebtMetaphor2012
+  abstract: >-
+    The metaphor of technical debt in software development was introduced two
+    decades ago to explain to nontechnical stakeholders the need for what we
+    call now "refactoring." As the term is being used to describe a wide range
+    of phenomena, this paper proposes an organization of the technical debt
+    landscape, and introduces the papers on technical debt contained in the
+    issue.
+  author:
+    - family: Kruchten
+      given: Philippe
+    - family: Nord
+      given: Robert L.
+    - family: Ozkaya
+      given: Ipek
+  container-title: IEEE Software
+  DOI: 10.1109/MS.2012.167
+  ISSN: 1937-4194
+  issue: '6'
+  issued:
+    - year: 2012
+      month: 11
+  page: 18-21
+  source: IEEE Xplore
+  title: 'Technical Debt: From Metaphor to Theory and Practice'
+  title-short: Technical Debt
+  type: article-journal
+  volume: '29'
+
 - id: MachinableorgMachinable2020
   abstract: A modular configuration system for machine learning research
   accessed:
