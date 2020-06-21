@@ -964,6 +964,21 @@ references:
   title: Delivering on the Vision of MLOps
   type: article-journal
 
+- id: d2011new
+  author:
+    - family: D’Ascenzo
+      given: Nicola
+    - family: Saveliev
+      given: Valeri
+  container-title: >-
+    Photodiodes-Communications, Bio-Sensings, Measurements and High-Energy
+    Physics ch13 (InTech)
+  issued:
+    - year: 2011
+  page: 261–284
+  title: The new photodetectors for high energy physics and nuclear medicine
+  type: article-journal
+
 - id: degrangeIntroductionHighenergyGammaray2015
   abstract: >-
     The present issue is the first of of a two-volume review devoted to
