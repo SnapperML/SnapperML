@@ -1736,6 +1736,58 @@ references:
   type: article-journal
   volume: '29'
 
+- id: luRecommenderSystems2012
+  abstract: >-
+    The ongoing rapid expansion of the Internet greatly increases the necessity
+    of effective recommender systems for filtering the abundant information.
+    Extensive research for recommender systems is conducted by a broad range of
+    communities including social and computer scientists, physicists, and
+    interdisciplinary researchers. Despite substantial theoretical and practical
+    achievements, unification and comparison of different approaches are
+    lacking, which impedes further advances. In this article, we review recent
+    developments in recommender systems and discuss the major challenges. We
+    compare and evaluate available algorithms and examine their roles in the
+    future developments. In addition to algorithms, physical aspects are
+    described to illustrate macroscopic behavior of recommender systems.
+    Potential impacts and future directions are discussed. We emphasize that
+    recommendation has great scientific depth and combines diverse research
+    fields which makes it interesting for physicists as well as
+    interdisciplinary researchers.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Lü
+      given: Linyuan
+    - family: Medo
+      given: Matúš
+    - family: Yeung
+      given: Chi Ho
+    - family: Zhang
+      given: Yi-Cheng
+    - family: Zhang
+      given: Zi-Ke
+    - family: Zhou
+      given: Tao
+  collection-title: Recommender Systems
+  container-title: Physics Reports
+  container-title-short: Physics Reports
+  DOI: 10.1016/j.physrep.2012.02.006
+  ISSN: 0370-1573
+  issue: '1'
+  issued:
+    - year: 2012
+      month: 10
+      day: 1
+  language: en
+  page: 1-49
+  source: ScienceDirect
+  title: Recommender systems
+  type: article-journal
+  URL: 'http://www.sciencedirect.com/science/article/pii/S0370157312000828'
+  volume: '519'
+
 - id: MachinableorgMachinable2020
   abstract: A modular configuration system for machine learning research
   accessed:
