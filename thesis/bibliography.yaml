@@ -1762,6 +1762,58 @@ references:
   URL: 'http://arxiv.org/abs/1904.07981'
   volume: '22'
 
+- id: moritzRayDistributedFramework2018
+  abstract: >-
+    The next generation of AI applications will continuously interact with the
+    environment and learn from these interactions. These applications impose new
+    and demanding systems requirements, both in terms of performance and
+    flexibility. In this paper, we consider these requirements and present
+    Ray---a distributed system to address them. Ray implements a unified
+    interface that can express both task-parallel and actor-based computations,
+    supported by a single dynamic execution engine. To meet the performance
+    requirements, Ray employs a distributed scheduler and a distributed and
+    fault-tolerant store to manage the system's control state. In our
+    experiments, we demonstrate scaling beyond 1.8 million tasks per second and
+    better performance than existing specialized systems for several challenging
+    reinforcement learning applications.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Moritz
+      given: Philipp
+    - family: Nishihara
+      given: Robert
+    - family: Wang
+      given: Stephanie
+    - family: Tumanov
+      given: Alexey
+    - family: Liaw
+      given: Richard
+    - family: Liang
+      given: Eric
+    - family: Elibol
+      given: Melih
+    - family: Yang
+      given: Zongheng
+    - family: Paul
+      given: William
+    - family: Jordan
+      given: Michael I.
+    - family: Stoica
+      given: Ion
+  container-title: 'arXiv:1712.05889 [cs, stat]'
+  issued:
+    - year: 2018
+      month: 9
+      day: 29
+  source: arXiv.org
+  title: 'Ray: A Distributed Framework for Emerging AI Applications'
+  title-short: Ray
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1712.05889'
+
 - id: nagarajanDeterministicImplementationsReproducibility2019
   abstract: >-
     While deep reinforcement learning (DRL) has led to numerous successes in
