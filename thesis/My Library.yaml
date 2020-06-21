@@ -602,32 +602,6 @@ references:
     http://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970
   volume: '533'
 
-- id: baker500ScientistsLift2016a
-  abstract: Survey sheds light on the ‘crisis’ rocking research.
-  accessed:
-    - year: 2020
-      month: 6
-      day: 21
-  author:
-    - family: Baker
-      given: Monya
-  container-title: Nature News
-  DOI: 10.1038/533452a
-  issue: '7604'
-  issued:
-    - year: 2016
-      month: 5
-      day: 26
-  language: en
-  page: '452'
-  section: News Feature
-  source: www.nature.com
-  title: '1,500 scientists lift the lid on reproducibility'
-  type: article-journal
-  URL: >-
-    http://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970
-  volume: '533'
-
 - id: bengioDeepLearning2017
   abstract: >-
     An introduction to a broad range of topics in deep learning, covering
