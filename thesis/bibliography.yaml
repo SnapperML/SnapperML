@@ -1210,6 +1210,34 @@ references:
   title-short: 'Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow'
   type: book
 
+- id: gibneyThisAIResearcher2019
+  abstract: >-
+    Joelle Pineau is leading an effort to encourage artificial-intelligence
+    researchers to open up their code.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Gibney
+      given: Elizabeth
+  container-title: Nature
+  DOI: 10.1038/d41586-019-03895-5
+  issue: '7788'
+  issued:
+    - year: 2019
+      month: 12
+      day: 19
+  language: en
+  number: '7788'
+  page: 14-14
+  publisher: Nature Publishing Group
+  source: www.nature.com
+  title: This AI researcher is trying to ward off a reproducibility crisis
+  type: article-journal
+  URL: 'https://www.nature.com/articles/d41586-019-03895-5'
+  volume: '577'
+
 - id: guillenDeepLearningTechniques2019
   abstract: >-
     Deep neural networks are a powerful technique that have found ample
