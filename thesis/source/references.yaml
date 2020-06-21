@@ -1453,6 +1453,55 @@ references:
   type: article-journal
   URL: 'https://inspirehep.net/literature/469835'
 
+- id: howardFastaiLayeredAPI2020
+  abstract: >-
+    fastai is a deep learning library which provides practitioners with
+    high-level components that can quickly and easily provide state-of-the-art
+    results in standard deep learning domains, and provides researchers with
+    low-level components that can be mixed and matched to build new approaches.
+    It aims to do both things without substantial compromises in ease of use,
+    flexibility, or performance. This is possible thanks to a carefully layered
+    architecture, which expresses common underlying patterns of many deep
+    learning and data processing techniques in terms of decoupled abstractions.
+    These abstractions can be expressed concisely and clearly by leveraging the
+    dynamism of the underlying Python language and the flexibility of the
+    PyTorch library. fastai includes: a new type dispatch system for Python
+    along with a semantic type hierarchy for tensors; a GPU-optimized computer
+    vision library which can be extended in pure Python; an optimizer which
+    refactors out the common functionality of modern optimizers into two basic
+    pieces, allowing optimization algorithms to be implemented in 4&ndash;5
+    lines of code; a novel 2-way callback system that can access any part of the
+    data, model, or optimizer and change it at any point during training; a new
+    data block API; and much more. We used this library to successfully create a
+    complete deep learning course, which we were able to write more quickly than
+    using previous approaches, and the code was more clear. The library is
+    already in wide use in research, industry, and teaching.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Howard
+      given: Jeremy
+    - family: Gugger
+      given: Sylvain
+  container-title: Information
+  DOI: 10.3390/info11020108
+  issue: '2'
+  issued:
+    - year: 2020
+      month: 2
+  language: en
+  number: '2'
+  page: '108'
+  publisher: Multidisciplinary Digital Publishing Institute
+  source: www.mdpi.com
+  title: 'Fastai: A Layered API for Deep Learning'
+  title-short: Fastai
+  type: article-journal
+  URL: 'https://www.mdpi.com/2078-2489/11/2/108'
+  volume: '11'
+
 - id: IDSIASacred2020
   abstract: >-
     Sacred is a tool to help you configure, organize, log and reproduce
