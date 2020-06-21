@@ -1656,6 +1656,53 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1803.09820'
 
+- id: stoddenSettingDefaultReproducible2013
+  abstract: >-
+    Science is built upon foundations of theory and experiment validated and
+    improved through open, transparent communication. With the increasingly
+    central role of computation in scientific discovery this means communicating
+    all details of the computations needed for others to replicate the
+    experiment, i.e. making available to others the associated data and code.
+    The “reproducible research” movement recognizes that traditional scientific
+    research and publication practices now fall short of this ideal, and
+    encourages all those involved in the production of computational science ‐
+    scientists who use computational methods and the institutions that employ
+    them, journals and dissemination mechanisms, and funding agencies ‐ to
+    facilitate and practice really reproducible research. This report summarizes
+    discussions that took place during the ICERM Workshop on Reproducibility in
+    Computational and Experimental Mathematics, held December 10-14, 2012. The
+    main recommendations that emerged from the workshop discussions are: 1. It
+    is important to promote a culture change that will integrate computational
+    reproducibility into the research process.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Stodden
+      given: Victoria
+    - family: Bailey
+      given: David H.
+    - family: Borwein
+      given: Jonathan M.
+    - family: LeVeque
+      given: Randall J.
+    - family: Rider
+      given: William J.
+    - family: Stein
+      given: William
+  container-title: undefined
+  issued:
+    - year: 2013
+  language: en
+  source: www.semanticscholar.org
+  title: >-
+    Setting the Default to Reproducible Reproducibility in Computational and
+    Experimental Mathematics
+  type: webpage
+  URL: >-
+    /paper/Setting-the-Default-to-Reproducible-Reproducibility-Stodden-Bailey/992647adcc7e3626768841acb039d2b4a70d5c95
+
 - id: wilsonGoodEnoughPractices2017
   abstract: >-
     Author summary Computers are now essential in all branches of science, but
