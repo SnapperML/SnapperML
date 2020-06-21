@@ -17,11 +17,12 @@ herramienta, Mlflow.
 - Especificación de buenas prácticas: La creación de una lista de pautas y requisitos necesarios para
 hacer reproducible un proyecto. Desde la recolección de datos hasta la gestión de experimentos.
 
-- Aplicación de la herramienta a la resolución de un problema real: Este objetivo está orientado a la
-experimentación, trata de la aplicación de diferentes técnicas de Machine Learning tradicional y Deep learning
-para la resolución de un problema común en física, la detección de primarios. En dicha aplicación, hacemos un
-uso extensivo de la herramienta y valoramos los beneficios y el coste en recursos de tiempo y capitales de su uso
-para este caso concreto.
+- Aplicación de la herramienta a la resolución de un problema real: Aplicación de diferentes técnicas de Machine
+Learning tradicional y Deep learning para la resolución de un problema común en física, la detección de primarios.
+El problema consiste en la detección del tipo de primario a partir de una señal registrada por un detector de
+partículas que almacena una mezcla de señal electromagnética y muónica. El objetivo es encontrar un buen modelo 
+para el dominio en cuestión, y hacer un uso extensivo de la herramienta y para valorar los beneficios, y
+el coste en recursos de tiempo y capital para este caso concreto.
 
 
 ## Alcance de los objetivos
@@ -41,6 +42,8 @@ entre el desarrollo de software y el desarrollo de proyectos de machine learning
 se van tener en cuenta también aspectos relacionados con el despliegue e integración de software, lo
 que se conoce como DevOps, cuya aplicación al machine learning es más bien conocida como MLOps.
 
-
 El tercer y último objetivo comprende el desarrollo de un proyecto de machine learning real, enfocado al modelado
-y a la experimentación. El alcance comprende el entendimiento del problema, procesado de datos, y modelado.
+y a la experimentación. El alcance comprende la parte de análisis de modelado del *proceso de ciencia de datos* (ver Fundamentos) -
+entendimiento del problema, procesado de datos, modelado, etc. Como objetivo secundario, se profundiza en el desarrollo
+de los autoencoders, atajando el problema de clasificación desde un enfoque de aprendizaje no supervisado, para
+finalmente compararlo con el resto de métodos tradicionales.

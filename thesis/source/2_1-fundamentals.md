@@ -82,15 +82,12 @@ en un area. La investigación relativa al Machine Learning o a otras areas donde
 está exenta de este requisito de la investigación científica. Por tanto, adoptando un flujo de trabajo reproducible, estamos
 ofreciendo a la audiencia las herramientas necesarias que demuestran las decisiones tomadas y que permiten validar nuestros resultados.
 Por otro lado, para que un estudio computacional pueda  ser reproducido correctamente por un investigador independiente
- es necesario el acceso completo a los datos, código, parámetros de los experimentos, información sobre el entorno de ejecución, etc.
- 
+ es necesario el acceso completo a los datos, código, parámetros de los experimentos, información sobre el entorno de ejecución, etc. 
  
 Otro motivo de interés para la búsqueda de la reproducibilidad es el de facilitar el uso de nuestros métodos por el resto
 de la comunidad científica o incluso en aplicaciones comerciales. Ofreciendo acceso a los datos y al código, como se ha comentado antes,
 permitimos que nuestros métodos se puedan aplicar a otros problemas, tanto en investigación como para fines comerciales, así como
 facilita la extensión de nuestro trabajo.
-
-
 
 En los últimos años nos hemos encontrado con muchos casos de publicaciones científicas que
 muestran resultados difíciles o incluso imposibles de reproducir. Este fenómeno se conoce como
@@ -481,6 +478,22 @@ de sistema de ML para dicho dominio.
 - **Procesos** – Entrega y despliegue de actividades de manera eficiente, efectiva y mensurable, que impliquen científicos, ingenieros y administradores.
 - **Gobernanza** – En general, la habilidad para construir soluciones de inteligencia artificial seguras, responsables y justas.
 
+### MLOps y Reproducibilidad
+
+Como se puede observar, MLOps y el problema de la reproducibilidad están estrechamente relacionados.
+Para poder implementar correctamente las buenas prácticas de MLOps, es necesario que cada paso del
+proceso sea lo más reproducible y determinista posible. Esto es un requisito necesario para poder
+implementar las prácticas de integración y entrega continua, ya que se fundamentan en la automatización.
+Por tanto, las prácticas descritas en la sección de *Reproducibilidad* sobre el control de las particiones
+de datos, estocásticidad, parámetros del experimento, etc, deben ser aplicados también para el desarrollo
+de sistemas de ML en la industria.
+
+Por el motivo anterior, la mayoría de software y plataformas orientadas a MLOps ofrecen herramientas para
+la gestión y control de experimentos, así como control sobre el entorno software y/o hardware. Además, las herramientas
+de MLOps están orientadas en su mayoría a la ejecución de trabajos en la nube y la colaboración, lo cual puede
+ser de utilidad para la investigación, cuando se estén tratando con datos o algoritmos que requieran de una capacidad
+de cómputo superior a los ordenadores locales disponibles. Es por eso, que nuestro objetivo va a ser el estudio de las diferentes
+herramientas para MLOps y el desarrollo de nuestra propia herramienta con foco en la reproducibilidad.
 
 ## Redes neuronales
 
@@ -854,3 +867,85 @@ a resultados subóptimos.
 
 
 ## Estado del Arte
+
+En esta sección vamos a analizar el estado del arte para las herramientas de MLOps, herramientas orientadas a la reproducibilidad
+exclusivamente, así como el trabajo realizado hasta la fecha en relación al problema a resolver.
+
+### Herramientas para la reproducibilidad
+
+Existen herramientas dedicadas a facilitar la reproducibilidad de experimentos en el campo de la investigación.
+A continuación, se resumen algunas de las herramientas más utilizadas:
+
+- **Reprozip**: Utilidad de código libre cuyo objetivo es el de empaquetar todo el trabajo con sus respectivas
+dependencias, variables de entorno, etc, en un paquete autocontenido. Una vez creado ese paquete, Reprozip
+puede restablecer el entorno tal y como se originó para que se pueda reproducir en una máquina distinta, ahorrando
+al usuario de la instalación de dependencias y la configuración del entorno. Reprozip puede utilizarse con cualquier
+lenguaje de programación y con una gran variedad de herramientas de análisis, incluidos los cuadernos de *Jupyter*.
+
+- **Sacred**: Sacred es una herramienta en Python, cuyo objetivo es el de facilitar la configuración, organización y
+registro de experimentos. Está diseñada para añadir una sobrecarga mínima y permitir la modularidad y configuración
+de experimentos. Las funcionalidades principales de esta herramienta son:
+  - Registrar los parametros de los experimentos
+  - Facilitar la ejecución de experimentos con diferente configuración 
+  - Almacenar la información sobre los experimentos en una base de datos
+  - Reproducir los resultados
+Además, se integra fácilmente con herramientas de visualización de monitorización de experimentos como *Tensorboard*.
+
+### Herramientas para MLOps
+
+- **MLFlow:** MLFlow es una herramienta de código abierto para el manejo del ciclo de vida completo de un proyecto de ML,
+incluida la experimentación, reproducibilidad y despliegue. Actualmente, este proyecto ofrece tres módilos principales:
+Tracking, Projects, Models. La API de Tracking permite registrar experimentos, parámetros, métricas, artefactos, y otros
+metadatos. El module de Projects permite empaquetar y distribuir los proyectos usando un formato simple como YAML.
+En este fichero se le especifican las dependencias, el entorno, los parámetros, y el punto de entrada del proyecto.
+El módulo Models permite empaquetar modelos de los frameworks más conocidos - Tensorflow, Pytorch, Sklearn, MXNet, etc,
+en un formato genérico, almacenarlos en un *Registro de modelos* (ver Nomenclatura), y desplegarlos. Soporta múltiples
+lenguajes y ofrece una API REST para la consulta de información por servicios externos.
+
+- **CometML**: Comet ofrece una plataforma para el registro, rastreo, comparación y optimización de experimentos y
+modelos. Esta plataforma está basada en cloud (aunque con soporte para alojarlo en servidores propios).
+Algunas de las características a destacar son: soporte para cuadernos de *Jupyter*, optimización de hiperparámetros
+nativa (*meta-learning*), y un potente sistema de visualización. Además, permite recoger métricas del sistema -
+uso de CPU, memoria, etc, a lo largo de la ejecución de los experimentos. Soporta múltiples lenguajes y
+ofrece una API REST para la consulta de información por servicios externos.
+
+- **Polyaxon**: Polyaxon es una herramienta enfocada también al ciclo de vida completo de un proyecto de ML.
+La plataforma utiliza Kubernetes para hacer los proyectos reproducibles, escalables y portables. Esta herramienta
+permite definir experimentos, almacenar información (métricas, parámetros, etc), así como desplegar modelos.
+Una funcionalidad que ofrece esta herramienta, que no se encuentra en las dos anteriores, es soporte propio para
+optimización de hiperparámetros. Además, ofrece un completo sistema de manejo de usuarios y un marketplace de
+integraciones. Esta plataforma es ideal para organanizaciones de tamaño medio-grande que requieran una gestión
+de usuarios y roles completa, escalabilidad, y gobernanza sobre los modelos desplegados.
+
+- **ModelDB**: ModelDB is a system to manage machine learning experiments. The aim is to support the data
+scientist in finding trends and characteristics by performing meta-analyses across models [VM].
+For a detailed description of the components, we refer to Section 3.2 Management of Workflows in
+Machine Learning.
+
+- **Kubeflow**: El objetivo de Kubeflow no es implementar una plataforma para el ciclo de vida ni para el manejo de modelos,
+el objetivo principal es el de despliegue de flujos de trabajo completos en Kubernetes. Esta herramienta
+permite desplegar modelos en diferentes infraestructuras de forma sencilla, portable, y escalable.
+Por otro lado, con Kubeflow Pipelines se pueden desplegar *pipelines* completas usando Argo como
+motor.
+
+- Weight & Biases:
+
+- Amazon SageMaker:
+
+- Google AI Platform: La nube de Google Cloud Platform (GCP) ofrece un conjunto de herramientas que cubren todo
+el proceso de ciencia de datos. A este conjunto de herramientas se le conoce como *Google AI Platform*,
+aunque cada herramienta se puede utilizar por separado. Para la gestión y procesado de datos Google Cloud
+ofrece bases de datos a escala (*BigQuery*), un y un servicio de etiquetado automático (*Data Labelling Service*).
+Para la construcción y entrenamiento de modelos, GCP ofrece imágenes de máquinas virtuales, sevicios 
+de *cuadernos de Jupyter* en la nube, y otras herramientas para la ejecución de trabajos en la nube.
+
+- Azure Machine Learning:
+
+- Neptune:
+
+- Gradient:
+
+- Algorithmia:
+
+
+### Análisis de rayos gammas
