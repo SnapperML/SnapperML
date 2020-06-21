@@ -1915,7 +1915,7 @@ references:
   title-short: Machine Learning
   type: paper-conference
 
-- id: shiPhotodiodesCommunicationsBioSensings2011
+- id: shi2011
   abstract: >-
     This book describes different kinds of photodiodes for applications in
     high-speed data communication, biomedical sensing, high-speed measurement,
@@ -1931,22 +1931,20 @@ references:
   author:
     - family: Shi
       given: Jin-Wei
+  container-title: >-
+    Photodiodes: Communications, Bio-Sensings, Measurements and High-Energy
+    Physics
   ISBN: 978-953-307-277-7
   issued:
     - year: 2011
       month: 9
       day: 6
   language: en
-  number-of-pages: '298'
   publisher: BoD – Books on Demand
   source: Google Books
-  title: >-
-    Photodiodes: Communications, Bio-Sensings, Measurements and High-Energy
-    Physics
-  title-short: Photodiodes
-  type: book
+  type: chapter
 
-- id: shiPhotodiodesCommunicationsBioSensings2011a
+- id: shiPhotodiodesCommunicationsBioSensings2011
   abstract: >-
     This book describes different kinds of photodiodes for applications in
     high-speed data communication, biomedical sensing, high-speed measurement,
@@ -2277,7 +2275,4 @@ references:
 
 - id: zotero-1
   type: article
-
-- id: zotero-172
-  type: chapter
 ...
