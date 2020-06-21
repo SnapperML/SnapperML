@@ -1328,6 +1328,59 @@ references:
   URL: 'http://arxiv.org/abs/1807.09024'
   volume: '111'
 
+- id: gulliDeepLearningKeras2017
+  abstract: >-
+    Get to grips with the basics of Keras to implement fast and efficient
+    deep-learning modelsAbout This BookImplement various deep-learning
+    algorithms in Keras and see how deep-learning can be used in gamesSee how
+    various deep-learning models and practical use-cases can be implemented
+    using KerasA practical, hands-on guide with real-world examples to give you
+    a strong foundation in KerasWho This Book Is ForIf you are a data scientist
+    with experience in machine learning or an AI programmer with some exposure
+    to neural networks, you will find this book a useful entry point to
+    deep-learning with Keras. A knowledge of Python is required for this
+    book.What You Will LearnOptimize step-by-step functions on a large neural
+    network using the Backpropagation AlgorithmFine-tune a neural network to
+    improve the quality of resultsUse deep learning for image and audio
+    processingUse Recursive Neural Tensor Networks (RNTNs) to outperform
+    standard word embedding in special casesIdentify problems for which
+    Recurrent Neural Network (RNN) solutions are suitableExplore the process
+    required to implement AutoencodersEvolve a deep neural network using
+    reinforcement learningIn DetailThis book starts by introducing you to
+    supervised learning algorithms such as simple linear regression, the
+    classical multilayer perceptron and more sophisticated deep convolutional
+    networks. You will also explore image processing with recognition of hand
+    written digit images, classification of images into different categories,
+    and advanced objects recognition with related image annotations. An example
+    of identification of salient points for face detection is also provided.
+    Next you will be introduced to Recurrent Networks, which are optimized for
+    processing sequence data such as text, audio or time series. Following that,
+    you will learn about unsupervised learning algorithms such as Autoencoders
+    and the very popular Generative Adversarial Networks (GAN). You will also
+    explore non-traditional uses of neural networks as Style Transfer.Finally,
+    you will look at Reinforcement Learning and its application to AI game
+    playing, another popular direction of research and application of neural
+    networks.Style and approachThis book is an easy-to-follow guide full of
+    examples and real-world applications to help you gain an in-depth
+    understanding of Keras. This book will showcase more than twenty working
+    Deep Neural Networks coded in Python using Keras.
+  author:
+    - family: Gulli
+      given: Antonio
+    - family: Pal
+      given: Sujit
+  ISBN: 978-1-78712-903-0
+  issued:
+    - year: 2017
+      month: 4
+      day: 26
+  language: en
+  number-of-pages: '310'
+  publisher: Packt Publishing Ltd
+  source: Google Books
+  title: Deep Learning with Keras
+  type: book
+
 - id: headExtentConsequencesPHacking2015
   abstract: >-
     A focus on novel, confirmatory, and statistically significant results leads
