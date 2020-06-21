@@ -1921,6 +1921,37 @@ references:
   title-short: Reproducibility in Machine Learning-Based Studies
   type: paper-conference
 
+- id: pengReproducibilityCrisisScience2015
+  abstract: >-
+    More people have more access to data than ever before. But a comparative
+    lack of analytical skills has resulted in scientific findings that are
+    neither replicable nor reproducible. It is time to invest in statistics
+    education, says Roger Peng
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Peng
+      given: Roger
+  container-title: Significance
+  DOI: 10.1111/j.1740-9713.2015.00827.x
+  ISSN: 1740-9713
+  issue: '3'
+  issued:
+    - year: 2015
+  language: en
+  note: >-
+    _eprint:
+    https://rss.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1740-9713.2015.00827.x
+  page: 30-32
+  source: Wiley Online Library
+  title: 'The reproducibility crisis in science: A statistical counterattack'
+  title-short: The reproducibility crisis in science
+  type: article-journal
+  URL: 'https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.1740-9713.2015.00827.x'
+  volume: '12'
+
 - id: pengReproducibleResearchComputational2011
   abstract: >-
     Computational science has led to exciting new developments, but the nature
