@@ -933,6 +933,51 @@ references:
   type: webpage
   URL: 'https://www.edge.org/response-detail/25340'
 
+- id: freireComputationalReproducibilityStateoftheart2012
+  abstract: >-
+    Computational experiments have become an integral part of the scientific
+    method, but reproducing, archiving, and querying them is still a challenge.
+    The first barrier to a wider adoption is the fact that it is hard both for
+    authors to derive a compendium that encapsulates all the components needed
+    to reproduce a result and for reviewers to verify the results. In this
+    tutorial, we will present a series of guidelines and, through hands-on
+    examples, review existing tools to help authors create of reproducible
+    results. We will also outline open problems and new directions for
+    database-related research having to do with querying computational
+    experiments.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Freire
+      given: Juliana
+    - family: Bonnet
+      given: Philippe
+    - family: Shasha
+      given: Dennis
+  collection-title: SIGMOD '12
+  container-title: >-
+    Proceedings of the 2012 ACM SIGMOD International Conference on Management of
+    Data
+  DOI: 10.1145/2213836.2213908
+  event-place: 'Scottsdale, Arizona, USA'
+  ISBN: 978-1-4503-1247-9
+  issued:
+    - year: 2012
+      month: 5
+      day: 20
+  page: 593–596
+  publisher: Association for Computing Machinery
+  publisher-place: 'Scottsdale, Arizona, USA'
+  source: ACM Digital Library
+  title: >-
+    Computational reproducibility: state-of-the-art, challenges, and database
+    research opportunities
+  title-short: Computational reproducibility
+  type: paper-conference
+  URL: 'https://doi.org/10.1145/2213836.2213908'
+
 - id: freireReproducibilityDataOrientedExperiments2016
   accessed:
     - year: 2020
