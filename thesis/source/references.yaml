@@ -2246,4 +2246,7 @@ references:
 
 - id: zotero-1
   type: article
+
+- id: zotero-172
+  type: chapter
 ...
