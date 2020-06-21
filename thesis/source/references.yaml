@@ -1546,6 +1546,55 @@ references:
   type: book
   URL: 'https://github.com/iterative/dvc'
 
+- id: keLightGBMHighlyEfficient2017
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Ke
+      given: Guolin
+    - family: Meng
+      given: Qi
+    - family: Finley
+      given: Thomas
+    - family: Wang
+      given: Taifeng
+    - family: Chen
+      given: Wei
+    - family: Ma
+      given: Weidong
+    - family: Ye
+      given: Qiwei
+    - family: Liu
+      given: Tie-Yan
+  container-title: Advances in Neural Information Processing Systems 30
+  editor:
+    - family: Guyon
+      given: I.
+    - family: Luxburg
+      given: U. V.
+    - family: Bengio
+      given: S.
+    - family: Wallach
+      given: H.
+    - family: Fergus
+      given: R.
+    - family: Vishwanathan
+      given: S.
+    - family: Garnett
+      given: R.
+  issued:
+    - year: 2017
+  page: 3146–3154
+  publisher: 'Curran Associates, Inc.'
+  source: Neural Information Processing Systems
+  title: 'LightGBM: A Highly Efficient Gradient Boosting Decision Tree'
+  title-short: LightGBM
+  type: chapter
+  URL: >-
+    http://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree.pdf
+
 - id: lubsandorzhievHistoryPhotomultiplierTube2006
   abstract: >-
     In this very short note we review some historical aspects of photomultiplier
