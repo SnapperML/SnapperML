@@ -2214,6 +2214,45 @@ references:
   type: book
   URL: 'https://github.com/polyaxon/polyaxon'
 
+- id: polyzotisDataManagementChallenges2017
+  abstract: >-
+    The tutorial discusses data-management issues that arise in the context of
+    machine learning pipelines deployed in production. Informed by our own
+    experience with such largescale pipelines, we focus on issues related to
+    understanding, validating, cleaning, and enriching training data. The goal
+    of the tutorial is to bring forth these issues, draw connections to prior
+    work in the database literature, and outline the open research questions
+    that are not addressed by prior art.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Polyzotis
+      given: Neoklis
+    - family: Roy
+      given: Sudip
+    - family: Whang
+      given: Steven Euijong
+    - family: Zinkevich
+      given: Martin
+  collection-title: SIGMOD '17
+  container-title: Proceedings of the 2017 ACM International Conference on Management of Data
+  DOI: 10.1145/3035918.3054782
+  event-place: 'Chicago, Illinois, USA'
+  ISBN: 978-1-4503-4197-4
+  issued:
+    - year: 2017
+      month: 5
+      day: 9
+  page: 1723–1726
+  publisher: Association for Computing Machinery
+  publisher-place: 'Chicago, Illinois, USA'
+  source: ACM Digital Library
+  title: Data Management Challenges in Production Machine Learning
+  type: paper-conference
+  URL: 'https://doi.org/10.1145/3035918.3054782'
+
 - id: poppComprehensiveSupportLifecycle
   author:
     - family: Popp
