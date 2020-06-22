@@ -1170,6 +1170,24 @@ references:
   type: post-weblog
   URL: 'https://www.comet.ml/site/'
 
+- id: DataScienceCollaboration
+  abstract: >-
+    Neptune is an experiment tracking tool bringing organization and
+    collaboration to data science projects. Exploratory notebooks, model
+    training runs, code, hyperparameters, metrics, data versions, results
+    exploration visualizations and more. Everything is safely stored, ready to
+    be analyzed, shared and discussed with your team.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: neptune.ai
+  language: en-US
+  source: neptune.ai
+  title: Data science collaboration hub.
+  type: webpage
+  URL: 'https://neptune.ai/'
+
 - id: degrangeIntroductionHighenergyGammaray2015
   abstract: >-
     The present issue is the first of of a two-volume review devoted to
