@@ -2376,6 +2376,27 @@ references:
   title-short: Reproducibility in Machine Learning-Based Studies
   type: paper-conference
 
+- id: OnnxOnnx2020
+  abstract: Open standard for machine learning interoperability
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  genre: PureBasic
+  issued:
+    - year: 2020
+      month: 6
+      day: 22
+  original-date:
+    - year: 2017
+      month: 9
+      day: 7
+  publisher: Open Neural Network Exchange
+  source: GitHub
+  title: onnx/onnx
+  type: book
+  URL: 'https://github.com/onnx/onnx'
+
 - id: pengReproducibilityCrisisScience2015
   abstract: >-
     More people have more access to data than ever before. But a comparative
