@@ -2796,6 +2796,44 @@ references:
   title-short: Artificial Intelligence in Finance and Investing
   type: book
 
+- id: vincentConnectionScoreMatching2011
+  abstract: >-
+    Denoising autoencoders have been previously shown to be competitive
+    alternatives to restricted Boltzmann machines for unsupervised pretraining
+    of each layer of a deep architecture. We show that a simple denoising
+    autoencoder training criterion is equivalent to matching the score (with
+    respect to the data) of a specific energy-based model to that of a
+    nonparametric Parzen density estimator of the data. This yields several
+    useful insights. It defines a proper probabilistic model for the denoising
+    autoencoder technique, which makes it in principle possible to sample from
+    them or rank examples by their energy. It suggests a different way to apply
+    score matching that is related to learning to denoise and does not require
+    computing second derivatives. It justifies the use of tied weights between
+    the encoder and decoder and suggests ways to extend the success of denoising
+    autoencoders to a larger family of energy-based models.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Vincent
+      given: Pascal
+  container-title: Neural Computation
+  DOI: 10.1162/NECO_a_00142
+  ISSN: 0899-7667
+  issue: '7'
+  issued:
+    - year: 2011
+      month: 4
+      day: 14
+  page: 1661-1674
+  publisher: MIT Press
+  source: MIT Press Journals
+  title: A Connection Between Score Matching and Denoising Autoencoders
+  type: article-journal
+  URL: 'https://doi.org/10.1162/NECO_a_00142'
+  volume: '23'
+
 - id: wangAutoencoderBasedDimensionality2016
   abstract: >-
     Auto-encoder—a tricky three-layered neural network, known as
