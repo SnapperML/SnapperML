@@ -1890,6 +1890,21 @@ references:
   type: article-journal
   volume: '29'
 
+- id: Kubeflow
+  abstract: >-
+    Kubeflow makes deployment of ML Workflows on Kubernetes straightforward and
+    automated
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: Kubeflow
+  language: en
+  source: www.kubeflow.org
+  title: Kubeflow
+  type: webpage
+  URL: /
+
 - id: luRecommenderSystems2012
   abstract: >-
     The ongoing rapid expansion of the Internet greatly increases the necessity
