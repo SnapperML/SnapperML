@@ -2747,6 +2747,53 @@ references:
   title-short: Artificial Intelligence in Finance and Investing
   type: book
 
+- id: wangAutoencoderBasedDimensionality2016
+  abstract: >-
+    Auto-encoder—a tricky three-layered neural network, known as
+    auto-association before, constructs the “building block” of deep learning,
+    which has been demonstrated to achieve good performance in various domains.
+    In this paper, we try to investigate the dimensionality reduction ability of
+    auto-encoder, and see if it has some kind of good property that might
+    accumulate when being stacked and thus contribute to the success of deep
+    learning. Based on the above idea, this paper starts from auto-encoder and
+    focuses on its ability to reduce the dimensionality, trying to understand
+    the difference between auto-encoder and state-of-the-art dimensionality
+    reduction methods. Experiments are conducted both on the synthesized data
+    for an intuitive understanding of the method, mainly on two and
+    three-dimensional spaces for better visualization, and on some real
+    datasets, including MNIST and Olivetti face datasets. The results show that
+    auto-encoder can indeed learn something different from other methods.
+    Besides, we preliminarily investigate the influence of the number of hidden
+    layer nodes on the performance of auto-encoder and its possible relation
+    with the intrinsic dimensionality of input data.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Wang
+      given: Yasi
+    - family: Yao
+      given: Hongxun
+    - family: Zhao
+      given: Sicheng
+  collection-title: 'RoLoD: Robust Local Descriptors for Computer Vision 2014'
+  container-title: Neurocomputing
+  container-title-short: Neurocomputing
+  DOI: 10.1016/j.neucom.2015.08.104
+  ISSN: 0925-2312
+  issued:
+    - year: 2016
+      month: 4
+      day: 5
+  language: en
+  page: 232-242
+  source: ScienceDirect
+  title: Auto-encoder based dimensionality reduction
+  type: article-journal
+  URL: 'http://www.sciencedirect.com/science/article/pii/S0925231215017671'
+  volume: '184'
+
 - id: wardenBigDataGlossary2011
   abstract: >-
     To help you navigate the large number of new data tools available, this
