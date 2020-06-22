@@ -2134,6 +2134,20 @@ references:
     Tensor Computations Approach
   type: article-journal
 
+- id: ng2011sparse
+  author:
+    - family: Ng
+      given: Andrew
+    - literal: others
+  container-title: CS294A Lecture notes
+  issue: '2011'
+  issued:
+    - year: 2011
+  page: 1–19
+  title: Sparse autoencoder
+  type: article-journal
+  volume: '72'
+
 - id: nwankpaActivationFunctionsComparison2018
   abstract: >-
     Deep neural networks have been successfully used in diverse emerging domains
