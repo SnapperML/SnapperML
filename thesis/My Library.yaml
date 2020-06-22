@@ -594,6 +594,23 @@ references:
   type: webpage
   URL: 'https://radicalrafi.github.io/posts/autoencoders-as-classifiers/'
 
+- id: AWSCloudComputing
+  abstract: >-
+    Descubra la infraestructura de la nube que ofrece Amazon Web Services,
+    servicios de alojamiento en la nube, servicios informática en la nube y
+    servicios en la nube para empresas. Regístrate gratis y paga sólo por el
+    uso.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: 'Amazon Web Services, Inc.'
+  language: es-ES
+  source: aws.amazon.com
+  title: AWS | Cloud Computing - Servicios de informática en la nube
+  type: webpage
+  URL: 'https://aws.amazon.com/es/'
+
 - id: baker500ScientistsLift2016
   abstract: Survey sheds light on the ‘crisis’ rocking research.
   accessed:
