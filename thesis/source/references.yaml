@@ -1752,6 +1752,35 @@ references:
   URL: >-
     https://direct.mit.edu/books/book/3667/chapter/122276/standard-data-science-tasks
 
+- id: kingmaIntroductionVariationalAutoencoders2019
+  abstract: >-
+    Variational autoencoders provide a principled framework for learning deep
+    latent-variable models and corresponding inference models. In this work, we
+    provide an introduction to variational autoencoders and some important
+    extensions.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Kingma
+      given: Diederik P.
+    - family: Welling
+      given: Max
+  container-title: Foundations and Trends® in Machine Learning
+  container-title-short: FNT in Machine Learning
+  DOI: 10.1561/2200000056
+  ISSN: '1935-8237, 1935-8245'
+  issue: '4'
+  issued:
+    - year: 2019
+  page: 307-392
+  source: arXiv.org
+  title: An Introduction to Variational Autoencoders
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1906.02691'
+  volume: '12'
+
 - id: kruchtenTechnicalDebtMetaphor2012
   abstract: >-
     The metaphor of technical debt in software development was introduced two
