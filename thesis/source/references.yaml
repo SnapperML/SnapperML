@@ -1093,6 +1093,17 @@ references:
   title: Delivering on the Vision of MLOps
   type: article-journal
 
+- id: CometBuildBetter
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  language: en-US
+  source: www.comet.ml
+  title: Comet – Build better models faster!
+  type: post-weblog
+  URL: 'https://www.comet.ml/site/'
+
 - id: degrangeIntroductionHighenergyGammaray2015
   abstract: >-
     The present issue is the first of of a two-volume review devoted to
