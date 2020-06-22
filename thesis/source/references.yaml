@@ -2359,6 +2359,21 @@ references:
   URL: 'https://science.sciencemag.org/content/334/6060/1226'
   volume: '334'
 
+- id: PolyaxonMachineLearning
+  abstract: >-
+    Get familiar with Polyaxon - Open source machine learning on Kubernetes,
+    deep Learning on Kubernetes.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: Polyaxon
+  language: en
+  source: polyaxon.com
+  title: Polyaxon - machine learning at scale
+  type: webpage
+  URL: 'https://polyaxon.com/'
+
 - id: PolyaxonPolyaxon2020
   abstract: >-
     Cloud native machine learning automation platform. Contribute to
