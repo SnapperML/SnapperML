@@ -384,6 +384,24 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1902.08429'
 
+- id: AmazonSageMaker
+  abstract: >-
+    Amazon SageMaker es un servicio completamente administrado que brinda a
+    todos los científicos de datos y desarrolladores la capacidad de crear,
+    entrenar e implementar modelos de aprendizaje automático de forma rápida.
+    SageMaker elimina las tareas arduas de cada paso del proceso de aprendizaje
+    automático para que sea más fácil crear modelos de alta calidad.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: 'Amazon Web Services, Inc.'
+  language: es-ES
+  source: aws.amazon.com
+  title: Amazon SageMaker
+  type: webpage
+  URL: 'https://aws.amazon.com/es/sagemaker/'
+
 - id: arnoldAutomatingAIOperations2020
   abstract: >-
     Today's AI deployments often require significant human involvement and skill
