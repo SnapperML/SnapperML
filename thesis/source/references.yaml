@@ -2847,6 +2847,52 @@ references:
   type: webpage
   URL: 'http://bair.berkeley.edu/blog/2017/07/18/learning-to-learn/'
 
+- id: shawahnaFPGABasedAcceleratorsDeep2019
+  abstract: >-
+    Due to recent advances in digital technologies, and availability of credible
+    data, an area of artificial intelligence, deep learning, has emerged and has
+    demonstrated its ability and effectiveness in solving complex learning
+    problems not possible before. In particular, convolutional neural networks
+    (CNNs) have demonstrated their effectiveness in the image detection and
+    recognition applications. However, they require intensive CPU operations and
+    memory bandwidth that make general CPUs fail to achieve the desired
+    performance levels. Consequently, hardware accelerators that use
+    application-specific integrated circuits, field-programmable gate arrays
+    (FPGAs), and graphic processing units have been employed to improve the
+    throughput of CNNs. More precisely, FPGAs have been recently adopted for
+    accelerating the implementation of deep learning networks due to their
+    ability to maximize parallelism and their energy efficiency. In this paper,
+    we review the recent existing techniques for accelerating deep learning
+    networks on FPGAs. We highlight the key features employed by the various
+    techniques for improving the acceleration performance. In addition, we
+    provide recommendations for enhancing the utilization of FPGAs for CNNs
+    acceleration. The techniques investigated in this paper represent the recent
+    trends in the FPGA-based accelerators of deep learning networks. Thus, this
+    paper is expected to direct the future advances on efficient hardware
+    accelerators and to be useful for deep learning researchers.
+  author:
+    - family: Shawahna
+      given: Ahmad
+    - family: Sait
+      given: Sadiq M.
+    - family: El-Maleh
+      given: Aiman
+  container-title: IEEE Access
+  DOI: 10.1109/ACCESS.2018.2890150
+  ISSN: 2169-3536
+  issued:
+    - year: 2019
+  page: 7823-7859
+  source: IEEE Xplore
+  title: >-
+    FPGA-Based Accelerators of Deep Learning Networks for Learning and
+    Classification: A Review
+  title-short: >-
+    FPGA-Based Accelerators of Deep Learning Networks for Learning and
+    Classification
+  type: article-journal
+  volume: '7'
+
 - id: smithDisciplinedApproachNeural2018
   abstract: >-
     Although deep learning has produced dazzling successes for applications of
