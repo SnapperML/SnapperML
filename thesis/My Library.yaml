@@ -2214,6 +2214,53 @@ references:
   type: book
   URL: 'https://github.com/polyaxon/polyaxon'
 
+- id: polyzotisDataLifecycleChallenges2018
+  abstract: >-
+    Machine learning has become an essential tool for gleaning knowledge from
+    data and tackling a diverse set of computationally hard tasks. However, the
+    accuracy of a machine learned model is deeply tied to the data that it is
+    trained on. Designing and building robust processes and tools that make it
+    easier to analyze, validate, and transform data that is fed into large-scale
+    machine learning systems poses data management challenges. Drawn from our
+    experience in developing data-centric infrastructure for a production
+    machine learning platform at Google, we summarize some of the interesting
+    research challenges that we encountered, and survey some of the relevant
+    literature from the data management and machine learning communities.
+    Specifically, we explore challenges in three main areas of focus - data
+    understanding, data validation and cleaning, and data preparation. In each
+    of these areas, we try to explore how different constraints are imposed on
+    the solutions depending on where in the lifecycle of a model the problems
+    are encountered and who encounters them.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Polyzotis
+      given: Neoklis
+    - family: Roy
+      given: Sudip
+    - family: Whang
+      given: Steven Euijong
+    - family: Zinkevich
+      given: Martin
+  container-title: ACM SIGMOD Record
+  container-title-short: SIGMOD Rec.
+  DOI: 10.1145/3299887.3299891
+  ISSN: 0163-5808
+  issue: '2'
+  issued:
+    - year: 2018
+      month: 12
+      day: 11
+  page: 17–28
+  source: June 2018
+  title: 'Data Lifecycle Challenges in Production Machine Learning: A Survey'
+  title-short: Data Lifecycle Challenges in Production Machine Learning
+  type: article-journal
+  URL: 'https://doi.org/10.1145/3299887.3299891'
+  volume: '47'
+
 - id: polyzotisDataManagementChallenges2017
   abstract: >-
     The tutorial discusses data-management issues that arise in the context of
