@@ -1441,6 +1441,51 @@ references:
     https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002106
   volume: '13'
 
+- id: hecht-nielsenIIITheoryBackpropagation1992
+  abstract: >-
+    This chapter presents a survey of the elementary theory of the basic
+    backpropagation neural network architecture, covering the areas of
+    architectural design, performance measurement, function approximation
+    capability, and learning. The survey includes a formulation of the
+    backpropagation neural network architecture to make it a valid neural
+    network and a proof that the backpropagation mean squared error function
+    exists and is differentiable. Also included in the survey is a theorem
+    showing that any L2 function can be implemented to any desired degree of
+    accuracy with a three-layer backpropagation neural network. An appendix
+    presents a speculative neurophysiological model illustrating the way in
+    which the backpropagation neural network architecture might plausibly be
+    implemented in the mammalian brain for corticocortical learning between
+    nearby regions of cerebral cortex. One of the crucial decisions in the
+    design of the backpropagation architecture is the selection of a sigmoidal
+    activation function.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Hecht-nielsen
+      given: ROBERT
+  container-title: Neural Networks for Perception
+  DOI: 10.1016/B978-0-12-741252-8.50010-8
+  editor:
+    - family: Wechsler
+      given: Harry
+  ISBN: 978-0-12-741252-8
+  issued:
+    - year: 1992
+      month: 1
+      day: 1
+  language: en
+  page: 65-93
+  publisher: Academic Press
+  source: ScienceDirect
+  title: >-
+    III.3 - Theory of the Backpropagation Neural Network**Based on “nonindent”
+    by Robert Hecht-Nielsen, which appeared in Proceedings of the International
+    Joint Conference on Neural Networks 1, 593–611, June 1989. © 1989 IEEE.
+  type: chapter
+  URL: 'http://www.sciencedirect.com/science/article/pii/B9780127412528500108'
+
 - id: heckCORSIKAMonteCarlo1998
   accessed:
     - year: 2020
