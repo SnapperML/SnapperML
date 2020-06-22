@@ -2702,6 +2702,21 @@ references:
   title-short: Machine Learning
   type: paper-conference
 
+- id: seitaLearningLearn
+  abstract: The BAIR Blog
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Seita
+      given: Daniel
+  container-title: The Berkeley Artificial Intelligence Research Blog
+  source: bair.berkeley.edu
+  title: Learning to Learn
+  type: webpage
+  URL: 'http://bair.berkeley.edu/blog/2017/07/18/learning-to-learn/'
+
 - id: smithDisciplinedApproachNeural2018
   abstract: >-
     Although deep learning has produced dazzling successes for applications of
