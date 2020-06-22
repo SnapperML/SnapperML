@@ -2431,6 +2431,31 @@ references:
     https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285
   volume: '9'
 
+- id: schelter2018challenges
+  author:
+    - family: Schelter
+      given: Sebastian
+    - family: Biessmann
+      given: Felix
+    - family: Januschowski
+      given: Tim
+    - family: Salinas
+      given: David
+    - family: Seufert
+      given: Stephan
+    - family: Szarvas
+      given: Gyuri
+    - family: Deshpande
+      given: A
+  container-title: IEEE Data Eng. Bull.
+  issue: '4'
+  issued:
+    - year: 2018
+  page: 5–15
+  title: On challenges in machine learning model management.
+  type: article-journal
+  volume: '41'
+
 - id: sculleyHiddenTechnicalDebt2015
   abstract: >-
     Machine learning offers a fantastically powerful toolkit for building useful
