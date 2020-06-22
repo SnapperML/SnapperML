@@ -1637,6 +1637,29 @@ references:
   type: book
   URL: 'https://github.com/IDSIA/sacred'
 
+- id: IDSIASacred2020a
+  abstract: >-
+    Sacred is a tool to help you configure, organize, log and reproduce
+    experiments developed at IDSIA.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  genre: Python
+  issued:
+    - year: 2020
+      month: 6
+      day: 22
+  original-date:
+    - year: 2014
+      month: 3
+      day: 31
+  publisher: IDSIA
+  source: GitHub
+  title: IDSIA/sacred
+  type: book
+  URL: 'https://github.com/IDSIA/sacred'
+
 - id: IterativeDvc2020
   abstract: "\U0001F989Data Version Control | Git for Data & Models. Contribute to iterative/dvc development by creating an account on GitHub."
   accessed:
