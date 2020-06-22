@@ -602,6 +602,17 @@ references:
     http://www.nature.com/news/1-500-scientists-lift-the-lid-on-reproducibility-1.19970
   volume: '533'
 
+- id: baldi2012autoencoders
+  author:
+    - family: Baldi
+      given: Pierre
+  container-title: Proceedings of ICML workshop on unsupervised and transfer learning
+  issued:
+    - year: 2012
+  page: 37–49
+  title: 'Autoencoders, unsupervised learning, and deep architectures'
+  type: paper-conference
+
 - id: bar-hillelPresentStatusAutomatic1960
   abstract: >-
     Machine translation (MT) has become a multimillion dollar affair. Fully
