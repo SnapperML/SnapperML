@@ -2495,6 +2495,19 @@ references:
     Management Systems
   type: article-journal
 
+- id: ProductionGradeContainerOrchestration
+  abstract: Production-Grade Container Orchestration
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: Kubernetes
+  language: en
+  source: kubernetes.io
+  title: Production-Grade Container Orchestration
+  type: webpage
+  URL: 'https://kubernetes.io/'
+
 - id: provost1998glossary
   author:
     - family: Provost
