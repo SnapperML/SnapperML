@@ -147,6 +147,22 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1803.08375'
 
+- id: AIPlatform
+  abstract: >-
+    A development platform to build AI applications that run on GCP and
+    on-premises. Take your ML projects to production, quickly and
+    cost-effectively.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  container-title: Google Cloud
+  language: en
+  source: cloud.google.com
+  title: AI Platform
+  type: webpage
+  URL: 'https://cloud.google.com/ai-platform'
+
 - id: albertScienceCaseWide2019
   abstract: >-
     We outline the science motivation for SGSO, the Southern Gamma-Ray Survey
