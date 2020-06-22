@@ -2673,6 +2673,42 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1909.06674'
 
+- id: rampinReproZipReproducibilityPacker2016
+  abstract: >-
+    Rampin et al, (2016), ReproZip: The Reproducibility Packer, Journal of Open
+    Source Software, 1(8), 107, doi:10.21105/joss.00107
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  author:
+    - family: Rampin
+      given: Rémi
+    - family: Chirigati
+      given: Fernando
+    - family: Shasha
+      given: Dennis
+    - family: Freire
+      given: Juliana
+    - family: Steeves
+      given: Vicky
+  container-title: Journal of Open Source Software
+  DOI: 10.21105/joss.00107
+  ISSN: 2475-9066
+  issue: '8'
+  issued:
+    - year: 2016
+      month: 12
+      day: 1
+  language: en
+  page: '107'
+  source: joss.theoj.org
+  title: 'ReproZip: The Reproducibility Packer'
+  title-short: ReproZip
+  type: article-journal
+  URL: 'https://joss.theoj.org/papers/10.21105/joss.00107'
+  volume: '1'
+
 - id: reOvertonDataSystem2019
   abstract: >-
     We describe a system called Overton, whose main design goal is to support
