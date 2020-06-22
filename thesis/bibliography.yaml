@@ -627,6 +627,21 @@ references:
   type: webpage
   URL: 'https://aws.amazon.com/es/'
 
+- id: AzureMachineLearning
+  abstract: >-
+    Cree e implemente modelos de aprendizaje automático de manera simplificada
+    con Azure Machine Learning Service. Mejore la accesibilidad al aprendizaje
+    automático con características automatizadas.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 22
+  language: es
+  source: azure.microsoft.com
+  title: Azure Machine Learning | Microsoft Azure
+  type: webpage
+  URL: 'https://azure.microsoft.com/es-es/services/machine-learning/'
+
 - id: baker500ScientistsLift2016
   abstract: Survey sheds light on the ‘crisis’ rocking research.
   accessed:
