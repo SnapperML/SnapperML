@@ -1987,7 +1987,7 @@ references:
   source: www.kubeflow.org
   title: Kubeflow
   type: webpage
-  URL: /
+  URL: 'https://www.kubeflow.org/'
 
 - id: luRecommenderSystems2012
   abstract: >-

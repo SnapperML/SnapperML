@@ -10,7 +10,7 @@ $endif$
 \let\origfigure=\figure
 \let\endorigfigure=\endfigure
 \renewenvironment{figure}[1][]{%
-\origfigure[H]
+  \origfigure[H]
 }{%
 \endorigfigure
 }
@@ -166,6 +166,8 @@ $for(header-includes)$
 $header-includes$
 $endfor$
 
+\pagenumbering{arabic}
+
 \begin{document}
 $if(title)$
 \maketitle
@@ -183,7 +185,7 @@ $endfor$
 $if(toc)$
 {
 \hypersetup{linkcolor=black}
-\setcounter{tocdepth}{$toc-depth$}
+\setcounter{tocdepth}{1}
 \tableofcontents
 }
 $endif$

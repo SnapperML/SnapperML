@@ -3,30 +3,41 @@
 A lo largo de este capitulo, describiremos principalmente los fundamentos del trabajo y el estado
 del arte. Para los fundamentos, destacaremos la nomenclatura utilizada, añadiendo un pequeño
 glosario de términos. Posteriormente, se define el concepto de *reproducibilidad* en los proyectos de investigación
-basados de Machine Learning (ML), y los aspectos críticos de dictaminan cuando un proyecto es reproducible o no.
+basados de *Machine Learning* (ML), y los aspectos críticos de dictaminan cuando un proyecto es reproducible o no.
 Por otro lado, se define el proceso de ciencia de datos, con una descripción de cada uno de los pasos, y la
 deuda técnica asociada a dicho proceso. 
 
-En las sección de MLOps se describe un concepto novedoso sobre un conjunto de buenas prácticas para el desarrollo
+En las sección de *MLOps* se describe un concepto novedoso sobre un conjunto de buenas prácticas para el desarrollo
 de proyectos de ciencia de datos que la industria está implementando progresivamente. En las posteriores secciones, 
-se describen varios de los algoritmos de Machine Learning y Deep Learning utilizados en la experimentación, con especial
+se describen varios de los algoritmos de *Machine Learning* y *Deep Learning* utilizados en la experimentación, con especial
 atención a los *autoencoders*. Finalmente, se hace un repaso del estado del arte para las herramientas para reproducibilidad,
-MLOps y para los algoritmos implementados.
+*MLOps* y para los algoritmos implementados.
 
 
 ## Nomenclatura
 
-El area de la ciencia de datos, Machine Learning y MLOps, se hace uso de una terminología concreta,
+El area de la ciencia de datos, *Machine Learning* y *MLOps*, se hace uso de una terminología concreta
+[@wardenBigDataGlossary2011; @hutsonAIGlossaryArtificial2017; @provost1998glossary],
 basada principalmente en la terminología de *Aprendizaje estadístico*, *Desarrollo Software*, y 
 *DevOps* en el caso de *MLOps*. En esta sección se desarrollan algunos de los términos más utilizados:
 
 - **Canalización o Pipeline**: Consiste en una definición e implementación exhaustiva de los diferentes
 pasos de un proceso. Un pipeline se puede definir como un script, conjunto de scripts, ficheros de
-configuración, etc. Además, permite la ejecución del proceso de manera automatizada.
+configuración, etc. Además, permite la ejecución del proceso de manera automatizada  . 
 
 - **Conjuntos de datos** – Colección de datos estructurada que se utiliza para entrenar modelos de ML,
 para análisis, o para inferencia. Aunque los conjuntos de datos pueden contener información de
 diferentes fuentes, el conjunto en sí tiene un solo cuerpo de trabajo.
+
+- **Experimento** – Un proceso o actividad que permite testear una hipóstasis y validarla iterativamente.
+Los resultados de una cierta iteración deben ser almacenados para poder ser evaluados, comparados,
+y monitorizados para propósitos de auditoría.
+
+- **Artefacto**: Pieza de información generada en un experimento. Incluye modelos entrenados,
+datos generados, imágenes, documentación autogenerada, etc.
+
+- **Modelo** – Es un caso concreto de artefacto que permite predecir valores en un sistema ML o bien,
+permite ser usado como pieza de otro modelo (mediante *ensamblado* o *transferencia de conocimiento*).
 
 - **Repositorio**: Fuente de código común para la organización. Se entiende por repositorio
 aquel directorio gestionado por un control de versiones (como Git). Este repositorio puede
@@ -50,26 +61,15 @@ Alguno de los entornos objetivos más comunes son:
     Útil para dispositivos con conectividad limitada, IoT, etc.
     - Parte de un sistema de predicción por lotes.
 
-- **Experimento** – Un proceso o actividad que permite testear una hipóstasis y validarla iterativamente.
-Los resultados de una cierta iteración deben ser almacenados para poder ser evaluados, comparados,
-y monitorizados para propósitos de auditoría.
-
-- **Artefacto**: Pieza de información generada en un experimento. Incluye modelos entrenados,
-datos generados, imágenes, documentación autogenerada, etc.
-
-- **Modelo** – Es un caso concreto de artefacto que permite predecir valores en un sistema ML o bien,
-permite ser usado como pieza de otro modelo (mediante *ensamblado* o *transferencia de conocimiento*).
-
 
 ## Reproducibilidad
-
 
 Según una encuesta realizada por Nature, una de las revistas científicas más prestigiosas a nivel mundial,
 más del 70 por ciento de los 1,576 investigadores encuestados no han podido reproducir alguno de sus propios
 experimentos. Además, los datos son claros, la mayoría piensa que existe una *crisis de reproducibilidad*
 (ver Figura \ref{fig:nature}).
 
-![Resultados de una encuesta sobre reproducibilidad. @baker500ScientistsLift2016](source/figures/nature_survey.jpeg){#fig:nature}
+![Resultados de la encuesta sobre reproducibilidad. @baker500ScientistsLift2016](source/figures/nature_survey.jpeg){#fig:nature}
 
 A día de hoy, los estudios suelen ofrecer los resultados en forma de gráficas y tablas, pero en muchos casos
 carecen de la información necesaria para poder contrastar los resultados. Está información suele
@@ -78,7 +78,7 @@ algoritmos, etc) entre otros. Para aumentar la accesibilidad de los estudios, lo
 de ofrecer esta información además de las gráficas y tablas.
 
 La verificación independiente tiene como objetivo la confirmación de credibilidad y la extensión del conocimiento
-en un area. La investigación relativa al Machine Learning o a otras areas donde se haga uso del mismo, no
+en un area. La investigación relativa al *Machine Learning* o a otras areas donde se haga uso del mismo, no
 está exenta de este requisito de la investigación científica. Por tanto, adoptando un flujo de trabajo reproducible, estamos
 ofreciendo a la audiencia las herramientas necesarias que demuestran las decisiones tomadas y que permiten validar nuestros resultados.
 Por otro lado, para que un estudio computacional pueda  ser reproducido correctamente por un investigador independiente
@@ -91,28 +91,30 @@ facilita la extensión de nuestro trabajo.
 
 En los últimos años nos hemos encontrado con muchos casos de publicaciones científicas que
 muestran resultados difíciles o incluso imposibles de reproducir. Este fenómeno se conoce como
-la crisis de la reproducibilidad, donde incluso estudios prominentes no se pueden reproducir.
-Este fenómeno ha estudiado de manera extensiva en otros campos, pero en el area del Machine Learning
-está tomando últimamente mucho importancia. Esto es debido a que tradicionalmente, los experimentos
+la crisis de la reproducibilidad, donde incluso estudios prominentes no se pueden reproducir
+[@pengReproducibilityCrisisScience2015; @baker500ScientistsLift2016] .
+Este fenómeno ha estudiado de manera extensiva en otros campos, pero en el area del *Machine Learning*
+está tomando últimamente mucha importancia. Esto es debido a que tradicionalmente, los experimentos
 científicos se deben describir de tal forma que cualquiera pueda replicarlos, sin embargo, los experimentos
 computacionales tienes varias complicaciones que los hacen particularmente difíciles de replicar: versiones
 de software, dependencias concretas, variaciones del hardware, etc.
 
 Con motivo de esta crisis de la reproducibilidad que afecta en gran medida a AI/ML, conferencias como
 NeurIPS han optado por añadir este factor en su proceso de revisión, e implementan
-políticas para alentar el código compartido. Por otro lado, algunos autores (incluido nosotros) han propuesto
-herramientas para facilitar la reproducibilidad, mientras que otros han propuesto una serie de reglas o 
-heurísticas que para evaluar este aspecto.
+políticas para alentar el código compartido [@gibneyThisAIResearcher2019]. Por otro lado, algunos autores
+(incluido nosotros) han propuesto herramientas para facilitar la reproducibilidad, mientras que otros
+han propuesto una serie de reglas o heurísticas que para evaluar este aspecto
+[@wilsonGoodEnoughPractices2017; @collbergMeasuringReproducibilityComputer; @sandveTenSimpleRules2013].
 
 
 ### Tipos de reproducibilidad
 
 Para poder atajar de una manera directa y eficiente el problema de la reproducibilidad es necesario separarla
-en diferentes niveles. Esta separación nos permite desarrollar una serie de buenas prácticas y herramientas
+en diferentes niveles [@EdgeOrg]. Esta separación nos permite desarrollar una serie de buenas prácticas y herramientas
 específicas para cada nivel, así como ver de una manera clara que aspectos se pueden recoger en un framework común,
-y cuales son inherentes del estudio científico en cuestión. Entre los niveles de reproducibilidad podemos destacar:
+y cuales son inherentes del estudio científico en cuestión. Entre los niveles de reproducibilidad  podemos destacar:
 
-- Reproducibilidad computacional: Cuando se provee con información detallada del código, software, hardware y decisiones de implementación.
+- Reproducibilidad computacional : Cuando se provee con información detallada del código, software, hardware y decisiones de implementación.
 
 
 - Reproducibilidad empírica: Cuando se provee información sobre experimentación empírica no computacional u observaciones.
@@ -126,13 +128,12 @@ objetivo a la hora de desarrollar el framework. Mientras que la reproducibilidad
 en mayor medida, haciendo los datos accesibles, la reproducibilidad estadística se consigue mediante el desarrollo de un diseño inicial
 del estudio. En este diseño se especifica la hipótesis base, las asunciones del problema, los test estadísticos a realizar,
 y los p-valores correspondientes. El establecer las bases estadísticas sobre las que se va a desarrollar el estudio de antemano,
-nos puede ayudar además a evitar problemas como el p-hacking.
+nos puede ayudar además a evitar problemas como el *p-hacking* [@headExtentConsequencesPHacking2015].
 
 Por otro lado, el término reproducibilidad además de poder descomponerse según la información o parte del trabajo que se
 esté tratando, llamémosla la escala o eje horizontal, también se puede descomponer en otro eje, llamémosle vertical,
 que indica como de replicable y reproducible es un estudio en su conjunto. Los niveles de esta nueva escala son los
-siguientes:
-
+siguientes [@stoddenSettingDefaultReproducible2013]:
 
 - **Investigación revisable**. Las descripciones de los métodos de investigación pueden ser
 evaluados de manera independiente y los resultados juzgados. Esto incluye tanto los tradicionales
@@ -161,7 +162,10 @@ También debe permitir extender los resultados o aplicar el método desarrollado
 ### Aspectos críticos
 
 Una vez hemos definido los diferentes niveles de reproducibilidad, vamos a definir los aspectos que consideramos
-críticos para lograr una investigación *abierta o reproducible*.
+críticos para lograr una investigación *abierta o reproducible*
+[@collbergMeasuringReproducibilityComputer; @olorisadeReproducibilityMachineLearningBased2017;
+@pengReproducibleResearchComputational2011 @sandveTenSimpleRules2013;
+@stoddenSettingDefaultReproducible2013; @wilsonGoodEnoughPractices2017].
 
 - **Conjunto de datos**: La información sobre la localización y el proceso de extracción de los datos. Este factor
 es determinante a la hora de hacer un estudio reproducible. El objetivo es el de facilitar los datos y/o
@@ -192,7 +196,7 @@ mínima que se debe proporcionar es:
 - **Evaluación del modelo**: Información sobre como se evalúa un modelo entrenado. Información similar al punto anterior
 se aplica aquí.
 
-- **Control de la estocásticidad**: La mayoría de operaciones en Machine Learning tienen un factor de aleatoriedad.
+- **Control de la estocásticidad**: La mayoría de operaciones en *Machine Learning* tienen un factor de aleatoriedad.
 Por tanto, es esencial establecer los valores de las semilla que controlar dichos procesos.
 La mayoría de herramientas de cálculo científico ofrecen algún método para establecer la semilla del
 generador de números aleatorios.
@@ -211,8 +215,8 @@ de los recursos utilizados, tanto GPU como CPU, así como de las versiones de su
 ## Proceso de ciencia de datos y deuda técnica
 
 La mayoría de proyectos de ciencia de datos recogen una serie de pasos distinguidos. Una vez definido el caso
-comercial (el producto), y la métrica que mide el éxito, los pasos para llevar a cabo un proyecto de Machine Learning
-son los siguientes:
+comercial (el producto), y la métrica que mide el éxito, los pasos para llevar a cabo un proyecto de *Machine Learning*
+son los siguientes [@kelleherSTANDARDDATASCIENCE2018; @MLOpsContinuousDelivery]:
 
 - **Extracción de datos**: Se seleccionan e integran datos de diferentes fuentes que sean relevantes para el problema.
 
@@ -246,15 +250,16 @@ vital a tener en cuenta. Un factor que puede ralentizar enormemente las iteracio
 en cada paso del proceso. Además, la alta dependencia que hay en el orden de los pasos del proceso de ciencia de datos,
 hace muy difícil la refactorización.
 
-La deuda técnica es un concepto acuñado en el desarrollo software para describir aquellas decisiones, que se
-toman por falta de tiempo o conocimiento, que provocan un coste adicional sobre los nuevos cambios conforme pasan
-el tiempo. Este término está basado en el concepto de *deuda monetaria*, y al igual que este tipo de deuda, si no
-se paga temprano, el coste adicional aumenta de manera exponencial (*intereses compuestos*). Algunas de las causas de
-deuda técnica son: falta de tests, falta de documentación, falta de conocimiento, presión comercial (deadlines
-irreales), refactorización tardía, etc.
+La deuda técnica [@kruchtenTechnicalDebtMetaphor2012] es un concepto acuñado en el desarrollo software para describir
+aquellas decisiones, que se toman por falta de tiempo o conocimiento, que provocan un coste adicional
+sobre los nuevos cambios conforme pasan el tiempo. Este término está basado en el concepto de *deuda monetaria*,
+y al igual que este tipo de deuda, si no se paga temprano, el coste adicional aumenta de manera exponencial
+(*intereses compuestos*). Algunas de las causas de deuda técnica son: falta de tests, falta de documentación,
+falta de conocimiento, presión comercial (deadlines irreales), refactorización tardía, etc.
 
 Además de la deuda técnica originada por el propio desarrollo software, existe
-unos elementos particulares al proceso de ciencia de datos que pueden aumentar drásticamente esta deuda:
+unos elementos particulares al proceso de ciencia de datos que pueden aumentar drásticamente esta deuda
+[@sculleyHiddenTechnicalDebt2015; @sculleyMachineLearningHigh2014]:
 
 - **Bucles de retroalimentación**: Este problema ocurre cuando, de manera indirecta, la salida del modelo influencia 
 la entrada al mismo. De esta forma, los sistemas de ML modifican su propio comportamiento conforme pasa el tiempo.
@@ -299,7 +304,7 @@ algoritmos, del entrenamiento en paralelo, y de las interacciones con el mundo e
 ### Anti-patrones
 
 ![Solamente una fracción pequeña es dedicada al código de ML. El reston de código de arquitectura es necesario,
-y complejo. @sculleyHiddenTechnicalDebt2015](source/figures/technical_debt.png)
+y complejo. @sculleyHiddenTechnicalDebt2015](source/figures/technical_debt.png){#fig:technical_debt}
 
 Sorprendentemente, en la mayoría de sistemas de ML, solamente una pequeña fracción del código está dedicado
 al entrenamiento y predicción. El resto de código, conocido como *plumbing*, es susceptible a una serie
@@ -338,14 +343,15 @@ de anti-patrones que se describen a continuación:
     unas restricciones de tiempo fuertes.
 
  
-## Machine Learning Operations (MLOps)
+## *Machine Learning Operations (MLOps)*
 
-
-Durante los últimos años, el papel de la ciencia de datos y del Machine Learning ha tomado gran relevancia en la
+Durante los últimos años, el papel de la ciencia de datos y del *Machine Learning* ha tomado gran relevancia en la
 industria. En la actualidad,  la ciencia de datos se utiliza para resolver problemas complejos, y ofrecer una
-gran variedad de productos de datos: traductores automáticos, sistemas de recomendación, sistemas de trading de alta frecuencia, etc.  
+gran variedad de productos de datos: traductores automáticos [@bar-hillelPresentStatusAutomatic1960],
+sistemas de recomendación [@luRecommenderSystems2012], sistemas de trading de alta frecuencia
+[@trippiArtificialIntelligenceFinance1995; @kearns2013machine], etc.  
 La ciencia de datos ha podido ser aplicada a una variedad muy amplia de campos, ha aportado valor en cada uno de ellos,
-incluso haya revolucionado algunas industrias. Para que esto haya sido posible, y para que siga siendo posible, es necesario
+incluso haya revolucionado algunas industrias . Para que esto haya sido posible, y para que siga siendo posible, es necesario
 una gran cantidad de datos, recursos de computación (CPU y GPU) accesibles, hardware optimizado para cálculo científico, así
 como una activa comunidad de investigadores.
 
@@ -354,14 +360,14 @@ hace indispensable unos flujos de desarrollo orientados a la industria. La cienc
 no obstante, conforme los sistemas de ML se integran con el resto de componentes de una organización, es necesario aplicar
 las técnicas y buenas prácticas conocidas en el desarrollo software, con el fin de ofrecer a los usuarios sistemas
 predictivos con valor comercial y mínimo coste. Los científicos de datos pueden implementar y entrenar modelos localmente,
-sin conexión a internet incluso, pero el verdadero desafío consiste en implementar un sistema ML integrado, y operarlo
-en producción de manera continua.
+sin conexión a internet incluso, pero el verdadero desafío consiste en implementar un sistema ML completo, y operarlo
+en producción de manera continua [@polyzotisDataManagementChallenges2017; @polyzotisDataLifecycleChallenges2018; @schelterChallengesMachineLearning2018].
 
-Como se ha detallado en la sección anterior, y como se muestra en la figura X, el ciclo de desarrollo de un producto de
+Como se ha detallado en la sección anterior el ciclo de desarrollo de un producto de
 un sistema ML implica diferentes fases. El código relacionado con la propia implementación y entrenamiento de modelos
-es mínimo comparado con el resto de código necesario para el desarrollo de estos sistemas. Además, debido a la necesidad
-de grandes cantidades de datos y de recursos computaciones amplios, estos sistemas deben incluir otros módulos relativos
-a la infraestructura: manejos de recursos, monitorización, automatización, etc.
+es mínimo comparado con el resto de código necesario para el desarrollo de estos sistemas (ver Figura \ref{fig:technical_debt}).
+Además, debido a la necesidad de grandes cantidades de datos y de recursos computaciones amplios, estos sistemas
+deben incluir otros módulos relativos a la infraestructura: manejos de recursos, monitorización, automatización, etc.
 
 
 ### DevOps. Definición
@@ -396,7 +402,7 @@ aplicaciones y la infraestructura sobre la experiencia usuario.
 incremento de la comunicación y la colaboración en las organizaciones.
 
 
-### DevOps aplicado al Machine Learning
+### *DevOps* aplicado al *Machine Learning*
 
 *MLOps* se fundamenta en los principios y prácticas de *DevOps*. Nociones, como se
 ha comentado previamente, orientadas a la eficiencia en el desarrollo: integración y entrega
@@ -410,12 +416,13 @@ de ML a escala, resultando en:
 
 ![El desarrollo de sistemas de ML es complejo e implica varios pasos bien diferenciados. MLOps tiene
 como objetivo mejorar cada uno de los pasos, pero especial aquellos que corresponden a la etapa de
-Operaciones. @arnoldAutomatingAIOperations2020](source/figures/mlops_overview.png)
+Operaciones. @arnoldAutomatingAIOperations2020](source/figures/mlops_overview.png){#fig:mlops_overview}
 
 
 Para poder analizar la interacción entre DevOps y el desarrollo de sistemas de ML, es necesario
 destacar las tareas claves de este proceso. Teniendo en cuenta el proceso de ciencia de datos
-descrito en la sección anterior, (también representado en la Figura X) podemos destacar las siguientes tareas:
+descrito en la sección anterior, (también representado en la Figura \ref{fig:mlops_overview})
+podemos destacar las siguientes tareas:
 
 - **Recolectar y preparar datos**: Generar y preparar los conjuntos de datos para el entrenamiento.
 
@@ -441,10 +448,10 @@ de sistemas. Además, existen ciertos requisitos que solamente se conocen una ve
 se monitoriza. Como pueden ser el *desfase de datos*, sesgo inherente o fallas del sistema.
 
 Para responder a estos desafíos de manera exitosa, los equipos de ML deben implementar las
-siguientes prácticas.
+siguientes prácticas [@collinsDeliveringVisionMLOps].
 
 - **Reproducibilidad**: Como se ha explicado en al principio del capítulo, este aspecto
-es fundamental y es uno de los objetivos de MLOps. Cuando se automatizan los diferentes
+es fundamental y es uno de los objetivos de *MLOps*. Cuando se automatizan los diferentes
 pasos del proceso de ciencia de datos, es necesario que cada paso sea determinista, para
 evitar resultados indeseables. 
 
@@ -459,53 +466,52 @@ del proyecto y el valor comercial.
 
 - **Automatización** – Al igual que en DevOps, para aplicar integración y entrega continua se require
 automatización. Los *pipelines* deben ser fácilmente repetibles, especialmente cuando se aplica gobernanza, o
-testing. Desarrolladores y científicos de datos pueden adoptar MLOps para
+testing. Desarrolladores y científicos de datos pueden adoptar *MLOps* para
 colaborar y asegurar que las iniciativas de ML están alineadas con el resto de entrega del software,
 así como con el negocio en general.
 
 ![Tabla que resume los aspectos claves de la adopción de MLOps en la industria a diferentes niveles según el
-modelo de madurez descrito en esta sección. @collinsDeliveringVisionMLOps](source/figures/mlops_levels.jpg)
+modelo de madurez descrito en esta sección. @collinsDeliveringVisionMLOps](source/figures/mlops_levels.jpg){#fig:mlops_levels}
 
 Las prácticas anteriores son un indicador de la madurez del equipo de ciencia de datos, así como de las relaciones
 con el resto de equipos de desarrollo, y la compañía. Cada compañía puede implementar estas prácticas a diferentes
-niveles. El modelo de madurez de MLOps *MLOps Maturity Model*. En la figura X se muestra un resumen de cada nivel según
-este modelo. Las categorías recogidas en él son las siguientes:
+niveles. El modelo de madurez de *MLOps* *MLOps Maturity Model*. En la figura \ref{fig:mlops_levels}) se muestra un
+resumen de cada nivel según este modelo. Las categorías recogidas en él son las siguientes:
 
-- **Estrategia**: Como la compañía puede alinear las actividades de MLOps con las prioridades ejecutivas, de organización y culturales.
+- **Estrategia**: Como la compañía puede alinear las actividades de *MLOps* con las prioridades ejecutivas, de organización y culturales.
 - **Arquitectura** – La habilidad para manejar datos, modelos, entornos de despliegue y otros artefactos de manera unificada.
 - **Modelado** – Habilidades de ciencia de datos y experiencia, que sumados al conocimiento de dominio, permitan el desarrollo y entrega
 de sistema de ML para dicho dominio.
 - **Procesos** – Entrega y despliegue de actividades de manera eficiente, efectiva y mensurable, que impliquen científicos, ingenieros y administradores.
 - **Gobernanza** – En general, la habilidad para construir soluciones de inteligencia artificial seguras, responsables y justas.
 
-### MLOps y Reproducibilidad
+### *MLOps* y Reproducibilidad
 
-Como se puede observar, MLOps y el problema de la reproducibilidad están estrechamente relacionados.
-Para poder implementar correctamente las buenas prácticas de MLOps, es necesario que cada paso del
+Como se puede observar, *MLOps* y el problema de la reproducibilidad están estrechamente relacionados.
+Para poder implementar correctamente las buenas prácticas de *MLOps*, es necesario que cada paso del
 proceso sea lo más reproducible y determinista posible. Esto es un requisito necesario para poder
 implementar las prácticas de integración y entrega continua, ya que se fundamentan en la automatización.
 Por tanto, las prácticas descritas en la sección de *Reproducibilidad* sobre el control de las particiones
 de datos, estocásticidad, parámetros del experimento, etc, deben ser aplicados también para el desarrollo
 de sistemas de ML en la industria.
 
-Por el motivo anterior, la mayoría de software y plataformas orientadas a MLOps ofrecen herramientas para
+Por la razón anterior, la mayoría de software y plataformas orientadas a *MLOps* ofrecen herramientas para
 la gestión y control de experimentos, así como control sobre el entorno software y/o hardware. Además, las herramientas
-de MLOps están orientadas en su mayoría a la ejecución de trabajos en la nube y la colaboración, lo cual puede
+de *MLOps* están orientadas en su mayoría a la ejecución de trabajos en la nube y la colaboración. Esto puede
 ser de utilidad para la investigación, cuando se estén tratando con datos o algoritmos que requieran de una capacidad
-de cómputo superior a los ordenadores locales disponibles. Es por eso, que nuestro objetivo va a ser el estudio de las diferentes
-herramientas para MLOps y el desarrollo de nuestra propia herramienta con foco en la reproducibilidad.
+de cómputo superior a los ordenadores locales. Es por eso que nuestro objetivo principal va a ser el estudio de las
+diferentes herramientas para *MLOps* y el desarrollo de nuestra propia herramienta con foco en la reproducibilidad.
 
 ## Redes neuronales
 
 Las redes neuronales son algoritmos de aprendizaje automático que han adquirido una gran
 popularidad en los últimos años, y que han sido desarrollados y utilizados en una gran variedad
-de problemas, desde aprendizaje supervisado, hasta no supervisado, pasando por aprendizaje por refuerzo
-y reducción de la dimensionalidad.
+de problemas: aprendizaje supervisado, no supervisado, aprendizaje por refuerzo, y reducción de la dimensionalidad, entre otros.
 
 Para describir una red neuronal vamos a empezar por la arquitectura más básica, una sola neurona.
 Una forma de representar dicha neurona en una diagrama es la siguiente:
 
-![Diagrama de una neurona, también llamada unidad. Apuntes de CS294A por Andrew Ng](source/figures/single_neuron.png)
+![Diagrama de una neurona, también llamada unidad. @ng2011sparse](source/figures/single_neuron.png){fig:neuron}
 
 Una neurona no es más que una unidad computacional que toma como entrada un vector $x$ (más un elemento a 1 para el sesgo),
 y cuya salida es $h_{W, b}(x)=f\left(W^{T} x\right)=f\left(\sum_{i=1}^{3} W_{i} x_{i}+b\right)$, donde
@@ -513,7 +519,7 @@ $f: \mathbb{R} \mapsto \mathbb{R}$ es la llamada **función de activación**. En
 más comunes se encuentran: sigmoide, tanh, RELU, LeakyRELU y Swish.
 
 Una red neuronal se construye juntando varias neuronas, de forma que las salidas de unas neuronas son las
-entradas de otra, como se muestra en la figura X. En la figura, los círculos representan una neurona, y aquellos
+entradas de otra, como se muestra en la \ref{fig:neuron}). En la figura, los círculos representan una neurona, y aquellos
 con etiqueta +1 son las **unidades de sesgo**. Por otro lado, las unidades o neuronas se agrupan en capas, una
 capa está representada como una columna de círculos. Dentro de estas capas, podemos diferenciar tres tipos:
 la capa de entrada (más a la izquierda), la capa interna, y la capa de salida que solamente contiene una neurona (a la derecha).
@@ -557,7 +563,6 @@ podemos aprovechar bibliotecas y rutinas de algebra lineal con implementaciones 
 BLAS o LAPACK.
 
 
-
 ### Algoritmo de propagación hacia atrás
 
 Suponiendo que tenemos un conjunto de datos
@@ -598,9 +603,9 @@ b_{i}^{(l)} &:=b_{i}^{(l)}-\alpha \frac{\partial}{\partial b_{i}^{(l)}} J(W, b)
 $$
 
 El parámetro $\alpha$ corresponde al ratio de aprendizaje.
-El algoritmo de propagación hacia atrás nos ofrece una forma eficiente de calcular las derivadas
-parciales necesarias para actualizar los pesos mediante gradiente descendiente. Para calcular
-las derivadas parciales, es necesario formular dichas derivadas. 
+El algoritmo de propagación hacia atrás [@hecht-nielsenIIITheoryBackpropagation1992] nos ofrece una forma
+eficiente de calcular las derivadas parciales necesarias para actualizar los pesos mediante
+gradiente descendiente. Para calcular las derivadas parciales, es necesario formular dichas derivadas. 
 
 $$
 \begin{aligned}
@@ -627,7 +632,7 @@ $$\delta_{i}^{\left(n_{l}\right)}=\frac{\partial}{\partial z_{i}^{\left(n_{l}\ri
 
 ## Autoencoders
 
-Autoencoders son redes neuronales entrenadas para reconstruir la entrada,
+Autoencoders [@baldi2012autoencoders] son redes neuronales entrenadas para reconstruir la entrada,
 es decir, para copiar la entrada en la salida. Internamente, estas arquitecturas
 contienen un capa interna llamada **código**. Este código es una representación
 de los datos de entrada en un espacio vectorial de dimensión igual o distinta a los mismo.
@@ -646,14 +651,14 @@ de manera aproximada. Debido a dichas restricciones, el modelo es forzado a prio
 que deben ser copiadas y encontrando así patrones útiles en los datos.
 
 Tradicionalmente, este tipo de arquitecturas se han utilizado para reducción de dimensionalidad o aprendizaje
-de características. La reducción de la dimensionalidad es posible debido que la capa interna (*código*)
-contienen información relevante que permite reconstruir los datos originales a partir de ella.
-Por ese motivo, si utilizamos una capa de código con un número de neuronas menor que la dimensión de los
+de características [@wangAutoencoderBasedDimensionality2016]. La reducción de la dimensionalidad es posible debido que
+la capa interna (*código*) contienen información relevante que permite reconstruir los datos originales a
+partir de ella. Por ese motivo, si utilizamos una capa de código con un número de neuronas menor que la dimensión de los
 datos de entrada, podemos conseguir una representación aproximada de dichos datos
 en un espacio de dimension inferior. Para el aprendizaje de características, un uso interesante que se le ha
-dado a esta arquitectura es el de preentrenar arquitecturas o partes de ellas a partir de datos sin etiquetas.
-Esto se consigue entrenando un autoencoder, y transfiriendo los pesos de dicha arquitectura, normalmente de 
-la parte del codificador, hay otra arquitectura diseñada para un problema supervisado. De esta forma,
+dado a esta arquitectura es el de preentrenar arquitecturas o partes de ellas a partir de datos sin etiquetas
+[@bengioDeepLearning2017]. Esto se consigue entrenando un autoencoder, y transfiriendo los pesos de dicha arquitectura,
+normalmente de  la parte del codificador, hay otra arquitectura diseñada para un problema supervisado. De esta forma,
 si disponemos de datos no etiquetados, podemos aprovecharlos también para un problema supervisado.
 
 
@@ -707,8 +712,8 @@ Incluso si la capacidad del modelo es suficiente como para aprender la función 
 
 #### Autoencoders dispersos
 
-Un autoencoder disperso es simplemente un autoencoder cuya función de coste contiene una penalización
-por dispersión. La nueva función de coste es la siguiente:
+Un autoencoder disperso [@bengioDeepLearning2017; @ng2011sparse] es simplemente un autoencoder cuya función de
+coste contiene una penalización por dispersión. La nueva función de coste es la siguiente:
 
 $$L(\boldsymbol{x}, g(f(\boldsymbol{x})))+\Omega(\boldsymbol{h})$$
 
@@ -750,8 +755,9 @@ este arquitecturas, es añadiendo una capa de **Dropout** como capa de entrada.
 
 ### Autoencoders variacionales
 
-Este tipo de autoencoders tienen dos enfoques, el enfoque de Deep Learning o el enfoque probabilístico.
-En nuestro caso, este tipo de arquitecturas se describen desde el enfoque del Deep Learning.
+Los autoencoders variacionales [@kingmaIntroductionVariationalAutoencoders2019] tienen dos enfoques, el enfoque de
+*Deep Learning* o el enfoque probabilístico. En nuestro caso, este tipo de arquitecturas se describen desde
+el enfoque del *Deep Learning*.
 
 El principal uso de este tipo de arquitecturas es como *modelos generacionales*. Se utilizan para producir
 nuevos datos (especialmente imágenes) a partir de unos datos de entrenamiento. Desde el punto de vista de
@@ -780,7 +786,8 @@ representa el error de reconstrucción.
 El termino de la esperanza en la función de coste implica la generación de ejemplos de la distribución
 $\mathbf{z} \sim q_{\phi}(\mathbf{z} | \mathbf{x})$.
 Muestrear es un proceso estocástico, por tanto, no podemos aplicar la propagación hacia atrás.
-Para poder optimizar dicha función de coste, se aplica el truco de la reparametrización (**reparameterization trick**).
+Para poder optimizar dicha función de coste, se aplica el truco de la reparametrización (**reparameterization trick**)
+[@kingmaAutoEncodingVariationalBayes2014].
 
 Una variable aleatorio $\mathbf{z}$ se puede expresar como una variable determinística 
 $\mathbf{z}=\mathcal{T}_{\phi}(\mathbf{x}, \boldsymbol{\epsilon})$, donde $\epsilon$ es una variable aleatoria 
@@ -812,8 +819,8 @@ en la variable aleatoria $\boldsymbol{\epsilon} \sim \mathcal{N}(0, \boldsymbol{
 Aunque en las secciones anteriores tanto el codificador como el decodificador se han tratado como dos capas
 dentro de una red de 3 capas. La realidad es que en muchos casos se necesita más capas tanto a un lado como
 a otro. Aquellos autoencoders donde o bien el codificador o bien el decodificador tienen más de una capa,
-se les conoce con el nombre de Autoencoders apilados (**Stacked Autoencoders**). Al igual que para
-el resto de arquitecturas de Deep Learning, añadir más capas permite reducir la linealidad y aprender
+se les conoce con el nombre de Autoencoders apilados (**Stacked Autoencoders**) [@bengioDeepLearning2017] .
+Al igual que para el resto de arquitecturas de *Deep Learning*, añadir más capas permite reducir la linealidad y aprender
 patrones más complejos.
 
 El principal factor a tener en cuenta en estos casos, es que los autoencoders son muy potentes de por si,
@@ -822,14 +829,14 @@ se vuelve esencial a la hora de apilar diferentes capas a un lado u a otro.
 
 En cuanto a diseño, la forma más común de diseñarlos es de manera simétrica - el mismo número de capas
 y unidades para el encoder y el decoder. Además, las capas suelen tener un número de neuronas decrecientes
-para el encoder y crecientes para el decoder. Esto permite aplicar un técnica conocida como **Tied Weights**.
+para el encoder y crecientes para el decoder. Esto permite aplicar un técnica conocida como **Tied Weights** .
 Esta técnica consiste en compartir los pesos entre el codificar y el decodificador, haciendo que los
 pesos de este último corresponda con la transpuesta del primero:
 
 $$\theta_{d} = \theta_{e}^T$$
 
 Esta técnica mejor el rendimiento en el entrenamiento, ya que se entrenan menos parámetros, pero además,
-sirve como método de regularización.
+sirve como método de regularización [@vincentConnectionScoreMatching2011].
 
 ### Aplicaciones de los autoencoders
 
@@ -868,7 +875,7 @@ a resultados subóptimos.
 
 ## Estado del Arte
 
-En esta sección vamos a analizar el estado del arte para las herramientas de MLOps, herramientas orientadas a la reproducibilidad
+En esta sección vamos a analizar el estado del arte para las herramientas de *MLOps*, herramientas orientadas a la reproducibilidad
 exclusivamente, así como el trabajo realizado hasta la fecha en relación al problema a resolver.
 
 ### Herramientas para la reproducibilidad
@@ -876,76 +883,86 @@ exclusivamente, así como el trabajo realizado hasta la fecha en relación al pr
 Existen herramientas dedicadas a facilitar la reproducibilidad de experimentos en el campo de la investigación.
 A continuación, se resumen algunas de las herramientas más utilizadas:
 
-- **Reprozip**: Utilidad de código libre cuyo objetivo es el de empaquetar todo el trabajo con sus respectivas
-dependencias, variables de entorno, etc, en un paquete autocontenido. Una vez creado ese paquete, Reprozip
-puede restablecer el entorno tal y como se originó para que se pueda reproducir en una máquina distinta, ahorrando
-al usuario de la instalación de dependencias y la configuración del entorno. Reprozip puede utilizarse con cualquier
-lenguaje de programación y con una gran variedad de herramientas de análisis, incluidos los cuadernos de *Jupyter*.
+- **Reprozip**: *Reprozip* [@rampinReproZipReproducibilityPacker2016] es una utilidad de
+código libre cuyo objetivo es el de empaquetar todo el trabajo con sus respectivas dependencias,
+variables de entorno, etc, en un paquete autocontenido.
+Una vez creado ese paquete, *Reprozip* puede restablecer el entorno tal y como se originó para que se
+pueda reproducir en una máquina distinta, ahorrando al usuario de la instalación de dependencias
+y la configuración del entorno. *Reprozip* puede utilizarse con cualquier lenguaje de programación y
+con una gran variedad de herramientas de análisis, incluidos los cuadernos de *Jupyter*.
 
-- **Sacred**: Sacred es una herramienta en Python, cuyo objetivo es el de facilitar la configuración, organización y
+- **Sacred**: Sacred [@IDSIASacred2020a] es una herramienta en Python, cuyo objetivo es el de facilitar la configuración, organización y
 registro de experimentos. Está diseñada para añadir una sobrecarga mínima y permitir la modularidad y configuración
 de experimentos. Las funcionalidades principales de esta herramienta son:
-  - Registrar los parametros de los experimentos
+  - Registrar los parámetros de los experimentos
   - Facilitar la ejecución de experimentos con diferente configuración 
   - Almacenar la información sobre los experimentos en una base de datos
   - Reproducir los resultados
 Además, se integra fácilmente con herramientas de visualización de monitorización de experimentos como *Tensorboard*.
 
-### Herramientas para MLOps
+### Herramientas para *MLOps*
 
-- **MLFlow:** MLFlow es una herramienta de código abierto para el manejo del ciclo de vida completo de un proyecto de ML,
-incluida la experimentación, reproducibilidad y despliegue. Actualmente, este proyecto ofrece tres módilos principales:
-Tracking, Projects, Models. La API de Tracking permite registrar experimentos, parámetros, métricas, artefactos, y otros
-metadatos. El module de Projects permite empaquetar y distribuir los proyectos usando un formato simple como YAML.
-En este fichero se le especifican las dependencias, el entorno, los parámetros, y el punto de entrada del proyecto.
-El módulo Models permite empaquetar modelos de los frameworks más conocidos - Tensorflow, Pytorch, Sklearn, MXNet, etc,
-en un formato genérico, almacenarlos en un *Registro de modelos* (ver Nomenclatura), y desplegarlos. Soporta múltiples
-lenguajes y ofrece una API REST para la consulta de información por servicios externos.
+- **MLFlow:** MLFlow [@zahariaAcceleratingMachineLearning2018] es una herramienta de código abierto para el manejo
+del ciclo de vida completo de un proyecto de ML, incluida la experimentación, reproducibilidad y despliegue.
+Actualmente, este proyecto ofrece tres módilos principales: Tracking, Projects, Models.
+  - *Tracking*: La API de Tracking permite registrar experimentos, parámetros, métricas, artefactos, y otros metadatos.
+  - *Projects*: El module de Projects permite empaquetar y distribuir los proyectos usando un formato simple como YAML.
+    En este fichero se le especifican las dependencias, el entorno, los parámetros, y el punto de entrada del proyecto.
+  - *Models*: El módulo Models permite empaquetar modelos de los frameworks más conocidos - Tensorflow, Pytorch, Sklearn, MXNet, etc,
+    en un formato genérico, almacenarlos en un *Registro de modelos* (ver Nomenclatura), y desplegarlos.
+  Soporta múltiples lenguajes y ofrece una API REST para la consulta de información por servicios externos.
 
-- **CometML**: Comet ofrece una plataforma para el registro, rastreo, comparación y optimización de experimentos y
+- **CometML**: Comet [@CometBuildBetter]k ofrece una plataforma para el registro, rastreo, comparación y optimización de experimentos y
 modelos. Esta plataforma está basada en cloud (aunque con soporte para alojarlo en servidores propios).
 Algunas de las características a destacar son: soporte para cuadernos de *Jupyter*, optimización de hiperparámetros
-nativa (*meta-learning*), y un potente sistema de visualización. Además, permite recoger métricas del sistema -
-uso de CPU, memoria, etc, a lo largo de la ejecución de los experimentos. Soporta múltiples lenguajes y
-ofrece una API REST para la consulta de información por servicios externos.
+nativa (*meta-learning* [@seitaLearningLearn]), y un potente sistema de visualización. Además, permite recoger métricas
+del sistema - uso de CPU, memoria, etc, a lo largo de la ejecución de los experimentos. Soporta múltiples lenguajes y
+ofrece una *API REST* para la consulta de información por servicios externos.
 
-- **Polyaxon**: Polyaxon es una herramienta enfocada también al ciclo de vida completo de un proyecto de ML.
-La plataforma utiliza Kubernetes para hacer los proyectos reproducibles, escalables y portables. Esta herramienta
-permite definir experimentos, almacenar información (métricas, parámetros, etc), así como desplegar modelos.
+- **Polyaxon**: *Polyaxon* [@PolyaxonMachineLearning] es una herramienta enfocada también al ciclo de vida completo de un proyecto de ML.
+La plataforma utiliza Kubernetes [@ProductionGradeContainerOrchestration] para hacer los proyectos reproducibles, escalables y portables.
+Esta herramienta permite definir experimentos, almacenar información (métricas, parámetros, etc), así como desplegar modelos.
 Una funcionalidad que ofrece esta herramienta, que no se encuentra en las dos anteriores, es soporte propio para
 optimización de hiperparámetros. Además, ofrece un completo sistema de manejo de usuarios y un marketplace de
-integraciones. Esta plataforma es ideal para organanizaciones de tamaño medio-grande que requieran una gestión
+integraciones. Esta plataforma es ideal para organizaciones de tamaño medio-grande que requieran una gestión
 de usuarios y roles completa, escalabilidad, y gobernanza sobre los modelos desplegados.
 
-- **ModelDB**: ModelDB is a system to manage machine learning experiments. The aim is to support the data
-scientist in finding trends and characteristics by performing meta-analyses across models [VM].
-For a detailed description of the components, we refer to Section 3.2 Management of Workflows in
-Machine Learning.
-
-- **Kubeflow**: El objetivo de Kubeflow no es implementar una plataforma para el ciclo de vida ni para el manejo de modelos,
+- **Kubeflow**: El objetivo de *Kubeflow* [@Kubeflow] no es implementar una plataforma para el ciclo de vida ni para el manejo de modelos,
 el objetivo principal es el de despliegue de flujos de trabajo completos en Kubernetes. Esta herramienta
 permite desplegar modelos en diferentes infraestructuras de forma sencilla, portable, y escalable.
-Por otro lado, con Kubeflow Pipelines se pueden desplegar *pipelines* completas usando Argo como
+Por otro lado, con *Kubeflow Pipelines* se pueden desplegar *pipelines* completas usando *Argo* como
 motor.
 
-- Weight & Biases:
+- **Amazon SageMaker**: *SageMaker* [@AmazonSageMaker] es la plataforma de ML de Amazon Web Services (AWS) . Esta plataforma integra
+herramientas que cubren todo el proceso de ciencia de datos. Incluye servicios de gestión de datos y etiquetado,
+cuadernos de Jupyter en la nube, registro y seguimiento de experimentos, despliegue, monitorización, y optimización
+de hiperparámetros. Hay varias características que hacen única esta plataforma, entre ellas: ofrece un IDE orientado
+a ML (Amazon SageMaker Studio), ofrece herramientas de depuración (Amazon SageMaker Debugger), y una integración
+con el servicio de etiquetado humano Amazon Mechanical Turk.
 
-- Amazon SageMaker:
-
-- Google AI Platform: La nube de Google Cloud Platform (GCP) ofrece un conjunto de herramientas que cubren todo
-el proceso de ciencia de datos. A este conjunto de herramientas se le conoce como *Google AI Platform*,
+- **Google AI Platform**: La nube de *Google Cloud Platform* (GCP) ofrece un conjunto de herramientas que cubren todo
+el proceso de ciencia de datos. A este conjunto de herramientas se le conoce como *Google AI Platform* [@AIPlatform],
 aunque cada herramienta se puede utilizar por separado. Para la gestión y procesado de datos Google Cloud
 ofrece bases de datos a escala (*BigQuery*), un y un servicio de etiquetado automático (*Data Labelling Service*).
-Para la construcción y entrenamiento de modelos, GCP ofrece imágenes de máquinas virtuales, sevicios 
+Para la construcción y entrenamiento de modelos, GCP ofrece imágenes de máquinas virtuales, servicios 
 de *cuadernos de Jupyter* en la nube, y otras herramientas para la ejecución de trabajos en la nube.
+Además, todos los trabajos se pueden ejecutar tanto en máquinas de GCP, como en servidores propios gracias
+al soporte para *Kubeflow Pipelines*.
 
-- Azure Machine Learning:
+- **Azure Machine Learning**: El conjunto de servicios y herramientas para ciencia de datos de Azure se llama
+*Azure Machine Learning* [@AzureMachineLearning]. Al igual que la GCP, Azure ofrece herramientas para todas las etapas del ciclo de
+vida del proceso de ciencia de datos. Azure Machine Learning ofrece soporte para pipelines reproducibles,
+imágenes de maquinas virtuales, gestión del código y datos, etc. Además, ofrece soporte para seguimiento
+de experimentos e hiperparametrización. Una característica interesante es que ofrece la posibilidad de
+empaquetar modelos en formato ONNX [@OnnxOnnx2020] y desplegarlos en diferentes entornos objetivos ofertados por
+Azure, incluido instancias con FPGA [@shawahnaFPGABasedAcceleratorsDeep2019].
 
-- Neptune:
-
-- Gradient:
-
-- Algorithmia:
+- **Neptune**: *Neptune* [@DataScienceCollaboration] ofrece una biblioteca de código libre para Python con la que poder
+registrar y hacer un seguimiento de experimentos. Neptune ofrece una gestión de proyectos y un sistema de usuarios y roles completo.
+Además, cada experimento puede ser visualizarlo, compartido y debatido entre los diferentes miembros del equipo.
+*Neptune* es un framework ligero pero se integra fácilmente con diferentes herramientas, como MLFlow.
+En lugar de enfocarse en todo el proceso de ciencia de datos, el objetivo principal de esta herramienta es el
+de gestionar experimentos y registrar toda la información de una manera sencilla.
 
 
 ### Análisis de rayos gammas
