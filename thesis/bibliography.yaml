@@ -2081,6 +2081,21 @@ references:
   URL: >-
     http://blog.shakirm.com/2015/10/machine-learning-trick-of-the-day-4-reparameterisation-tricks/
 
+- id: merkel2014docker
+  author:
+    - family: Merkel
+      given: Dirk
+  container-title: Linux journal
+  issue: '239'
+  issued:
+    - year: 2014
+  page: '2'
+  title: >-
+    Docker: lightweight linux containers for consistent development and
+    deployment
+  type: article-journal
+  volume: '2014'
+
 - id: mesnardReproducibleWorkflowPublic2020
   abstract: >-
     In a new effort to make our research transparent and reproducible by others,
