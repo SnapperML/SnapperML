@@ -163,6 +163,59 @@ references:
   type: webpage
   URL: 'https://cloud.google.com/ai-platform'
 
+- id: akibaOptunaNextgenerationHyperparameter2019
+  abstract: >-
+    The purpose of this study is to introduce new design-criteria for
+    next-generation hyperparameter optimization software. The criteria we
+    propose include (1) define-by-run API that allows users to construct the
+    parameter search space dynamically, (2) efficient implementation of both
+    searching and pruning strategies, and (3) easy-to-setup, versatile
+    architecture that can be deployed for various purposes, ranging from
+    scalable distributed computing to light-weight experiment conducted via
+    interactive interface. In order to prove our point, we will introduce
+    Optuna, an optimization software which is a culmination of our effort in the
+    development of a next generation optimization software. As an optimization
+    software designed with define-by-run principle, Optuna is particularly the
+    first of its kind. We will present the design-techniques that became
+    necessary in the development of the software that meets the above criteria,
+    and demonstrate the power of our new design through experimental results and
+    real world applications. Our software is available under the MIT license
+    (https://github.com/pfnet/optuna/).
+  accessed:
+    - year: 2020
+      month: 6
+      day: 24
+  author:
+    - family: Akiba
+      given: Takuya
+    - family: Sano
+      given: Shotaro
+    - family: Yanase
+      given: Toshihiko
+    - family: Ohta
+      given: Takeru
+    - family: Koyama
+      given: Masanori
+  collection-title: KDD '19
+  container-title: >-
+    Proceedings of the 25th ACM SIGKDD International Conference on Knowledge
+    Discovery & Data Mining
+  DOI: 10.1145/3292500.3330701
+  event-place: 'Anchorage, AK, USA'
+  ISBN: 978-1-4503-6201-6
+  issued:
+    - year: 2019
+      month: 7
+      day: 25
+  page: 2623–2631
+  publisher: Association for Computing Machinery
+  publisher-place: 'Anchorage, AK, USA'
+  source: ACM Digital Library
+  title: 'Optuna: A Next-generation Hyperparameter Optimization Framework'
+  title-short: Optuna
+  type: paper-conference
+  URL: 'https://doi.org/10.1145/3292500.3330701'
+
 - id: albertScienceCaseWide2019
   abstract: >-
     We outline the science motivation for SGSO, the Southern Gamma-Ray Survey
