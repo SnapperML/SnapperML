@@ -2535,6 +2535,47 @@ references:
   type: book
   URL: 'https://github.com/onnx/onnx'
 
+- id: ostapchenkoQGSJETIIReliableDescription2006
+  abstract: >-
+    Since a number of years the QGSJET model has been successfully used by
+    different groups in the field of high energy cosmic rays. Current work is
+    devoted to the first general update of the model. The key improvement is
+    connected to an account for non-linear interaction effects which are of
+    crucial importance for reliable model extrapolation into the ultra-high
+    energy domain. The proposed formalism allows to obtain a consistent
+    description of hadron-hadron cross sections and hadron structure functions
+    and to treat non-linear effects explicitly in individual hadronic and
+    nuclear collisions. Other ameliorations concern the treatment of low mass
+    diffraction, employment of realistic nuclear density profiles, and
+    re-calibration of model parameters using a wider set of accelerator data.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 25
+  author:
+    - family: Ostapchenko
+      given: S.
+  collection-title: VERY HIGH ENERGY COSMIC RAY INTERACTIONS
+  container-title: Nuclear Physics B - Proceedings Supplements
+  container-title-short: Nuclear Physics B - Proceedings Supplements
+  DOI: 10.1016/j.nuclphysbps.2005.07.026
+  ISSN: 0920-5632
+  issue: '1'
+  issued:
+    - year: 2006
+      month: 1
+      day: 1
+  language: en
+  page: 143-146
+  source: ScienceDirect
+  title: >-
+    QGSJET-II: towards reliable description of very high energy hadronic
+    interactions
+  title-short: QGSJET-II
+  type: article-journal
+  URL: 'http://www.sciencedirect.com/science/article/pii/S0920563205009175'
+  volume: '151'
+
 - id: pengReproducibilityCrisisScience2015
   abstract: >-
     More people have more access to data than ever before. But a comparative
