@@ -2640,6 +2640,54 @@ references:
   URL: 'https://science.sciencemag.org/content/334/6060/1226'
   volume: '334'
 
+- id: pierogEPOSLHCTest2015
+  abstract: >-
+    EPOS is a Monte-Carlo event generator for minimum bias hadronic
+    interactions, used for both heavy ion interactions and cosmic ray air shower
+    simulations. Since the last public release in 2009, the LHC experiments have
+    provided a number of very interesting data sets comprising minimum bias p-p,
+    p-Pb and Pb-Pb interactions. We describe the changes required to the model
+    to reproduce in detail the new data available from LHC and the consequences
+    in the interpretation of these data. In particular we discuss the effect of
+    the collective hadronization in p-p scattering. A different parametrization
+    of flow has been introduced in the case of a small volume with high density
+    of thermalized matter (core) reached in p-p compared to large volume
+    produced in heavy ion collisions. Both parametrizations depend only on the
+    geometry and the amount of secondary particles entering in the core and not
+    on the beam mass or energy. The transition between the two flow regimes can
+    be tested with p-Pb data. EPOS LHC is able to reproduce all minimum bias
+  accessed:
+    - year: 2020
+      month: 6
+      day: 25
+  author:
+    - family: Pierog
+      given: T.
+    - family: Karpenko
+      given: Iu
+    - family: Katzy
+      given: J. M.
+    - family: Yatsenko
+      given: E.
+    - family: Werner
+      given: K.
+  container-title: Physical Review C
+  container-title-short: Phys. Rev. C
+  DOI: 10.1103/PhysRevC.92.034906
+  ISSN: '0556-2813, 1089-490X'
+  issue: '3'
+  issued:
+    - year: 2015
+      month: 9
+      day: 14
+  page: 034906
+  source: arXiv.org
+  title: 'EPOS LHC : test of collective hadronization with LHC data'
+  title-short: EPOS LHC
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1306.0121'
+  volume: '92'
+
 - id: PolyaxonMachineLearning
   abstract: >-
     Get familiar with Polyaxon - Open source machine learning on Kubernetes,
