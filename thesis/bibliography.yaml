@@ -471,6 +471,71 @@ references:
   type: webpage
   URL: 'https://aws.amazon.com/es/sagemaker/'
 
+- id: argiroOfflineSoftwareFramework2007
+  abstract: >-
+    The Pierre Auger Observatory is designed to unveil the nature and the
+    origins of the highest energy cosmic rays. The large and geographically
+    dispersed collaboration of physicists and the wide-ranging collection of
+    simulation and reconstruction tasks pose some special challenges for the
+    offline analysis software. We have designed and implemented a general
+    purpose framework which allows collaborators to contribute algorithms and
+    sequencing instructions to build up the variety of applications they
+    require. The framework includes machinery to manage these user codes, to
+    organize the abundance of user-contributed configuration files, to
+    facilitate multi-format file handling, and to provide access to event and
+    time-dependent detector information which can reside in various data
+    sources. A number of utilities are also provided, including a novel geometry
+    package which allows manipulation of abstract geometrical objects
+    independent of coordinate system choice. The framework is implemented in
+    C++, and takes advantage of object oriented design and common open source
+    tools, while keeping the user side simple enough for C++ novices to learn in
+    a reasonable time. The distribution system incorporates unit and acceptance
+    testing in order to support rapid development of both the core framework and
+    contributed user code.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 25
+  author:
+    - family: Argiro
+      given: S.
+    - family: Barroso
+      given: S. L. C.
+    - family: Gonzalez
+      given: J.
+    - family: Nellen
+      given: L.
+    - family: Paul
+      given: T.
+    - family: Porter
+      given: T. A.
+    - family: Prado Jr.
+      given: L.
+    - family: Roth
+      given: M.
+    - family: Ulrich
+      given: R.
+    - family: Veberic
+      given: D.
+  container-title: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  container-title-short: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  DOI: 10.1016/j.nima.2007.07.010
+  ISSN: 01689002
+  issue: '3'
+  issued:
+    - year: 2007
+      month: 10
+  page: 1485-1496
+  source: arXiv.org
+  title: The Offline Software Framework of the Pierre Auger Observatory
+  type: article-journal
+  URL: 'http://arxiv.org/abs/0707.1652'
+  volume: '580'
+
 - id: arnoldAutomatingAIOperations2020
   abstract: >-
     Today's AI deployments often require significant human involvement and skill
