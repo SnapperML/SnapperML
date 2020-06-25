@@ -898,6 +898,42 @@ references:
   title: Deep Learning
   type: book
 
+- id: bergstraAlgorithmsHyperParameterOptimization2011
+  accessed:
+    - year: 2020
+      month: 6
+      day: 25
+  author:
+    - family: Bergstra
+      given: James S.
+    - family: Bardenet
+      given: Rémi
+    - family: Bengio
+      given: Yoshua
+    - family: Kégl
+      given: Balázs
+  container-title: Advances in Neural Information Processing Systems 24
+  editor:
+    - family: Shawe-Taylor
+      given: J.
+    - family: Zemel
+      given: R. S.
+    - family: Bartlett
+      given: P. L.
+    - family: Pereira
+      given: F.
+    - family: Weinberger
+      given: K. Q.
+  issued:
+    - year: 2011
+  page: 2546–2554
+  publisher: 'Curran Associates, Inc.'
+  source: Neural Information Processing Systems
+  title: Algorithms for Hyper-Parameter Optimization
+  type: chapter
+  URL: >-
+    http://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf
+
 - id: boehmSystemDSDeclarativeMachine2020
   abstract: >-
     Machine learning (ML) applications become increasingly common in many
