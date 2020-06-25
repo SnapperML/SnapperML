@@ -1772,6 +1772,49 @@ references:
   type: article-journal
   URL: 'https://inspirehep.net/literature/469835'
 
+- id: hewittActorModelComputation2015
+  abstract: >-
+    The Actor model is a mathematical theory that treats "Actors" as the
+    universal primitives of concurrent digital computation. The model has been
+    used both as a framework for a theoretical understanding of concurrency, and
+    as the theoretical basis for several practical implementations of concurrent
+    systems. Unlike previous models of computation, the Actor model was inspired
+    by physical laws. It was also influenced by the programming languages Lisp,
+    Simula 67 and Smalltalk-72, as well as ideas for Petri Nets,
+    capability-based systems and packet switching. The advent of massive
+    concurrency through client-cloud computing and many-core computer
+    architectures has galvanized interest in the Actor model. Actor technology
+    will see significant application for integrating all kinds of digital
+    information for individuals, groups, and organizations so their information
+    usefully links together. Information integration needs to make use of the
+    following information system principles: * Persistence. Information is
+    collected and indexed. * Concurrency: Work proceeds interactively and
+    concurrently, overlapping in time. * Quasi-commutativity: Information can be
+    used regardless of whether it initiates new work or become relevant to
+    ongoing work. * Sponsorship: Sponsors provide resources for computation,
+    i.e., processing, storage, and communications. * Pluralism: Information is
+    heterogeneous, overlapping and often inconsistent. * Provenance: The
+    provenance of information is carefully tracked and recorded The Actor Model
+    is intended to provide a foundation for inconsistency robust information
+    integration
+  accessed:
+    - year: 2020
+      month: 6
+      day: 25
+  author:
+    - family: Hewitt
+      given: Carl
+  container-title: 'arXiv:1008.1459 [cs]'
+  issued:
+    - year: 2015
+      month: 1
+      day: 21
+  source: arXiv.org
+  title: 'Actor Model of Computation: Scalable Robust Information Systems'
+  title-short: Actor Model of Computation
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1008.1459'
+
 - id: howardFastaiLayeredAPI2020
   abstract: >-
     fastai is a deep learning library which provides practitioners with
