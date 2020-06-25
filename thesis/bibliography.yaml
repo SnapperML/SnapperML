@@ -3305,6 +3305,20 @@ references:
   URL: >-
     /paper/Setting-the-Default-to-Reproducible-Reproducibility-Stodden-Bailey/992647adcc7e3626768841acb039d2b4a70d5c95
 
+- id: sutton1998introduction
+  author:
+    - family: Sutton
+      given: Richard S
+    - family: Barto
+      given: Andrew G
+    - literal: others
+  issued:
+    - year: 1998
+  publisher: MIT press Cambridge
+  title: Introduction to reinforcement learning
+  type: book
+  volume: '135'
+
 - id: trippiArtificialIntelligenceFinance1995
   abstract: >-
     From the Publisher: In Artificial Intelligence in Finance and Investing,
