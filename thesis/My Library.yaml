@@ -3426,7 +3426,7 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1803.09820'
 
-- id: stanevHighEnergyCosmic2010
+- id: stanev2010
   abstract: >-
     Cosmic rays are an essential part of the universe. Their origin is related
     to many important astrophysical processes, such as star formation, stellar
@@ -3455,19 +3455,18 @@ references:
   author:
     - family: Stanev
       given: Todor
+  container-title: High Energy Cosmic Rays
   ISBN: 978-3-540-85148-6
   issued:
     - year: 2010
       month: 3
       day: 10
   language: en
-  number-of-pages: '333'
   publisher: Springer Science & Business Media
   source: Google Books
-  title: High Energy Cosmic Rays
-  type: book
+  type: chapter
 
-- id: stanevHighEnergyCosmic2010a
+- id: stanevHighEnergyCosmic2010
   abstract: >-
     Cosmic rays are an essential part of the universe. Their origin is related
     to many important astrophysical processes, such as star formation, stellar
