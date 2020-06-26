@@ -2142,6 +2142,54 @@ references:
   URL: 'http://arxiv.org/abs/1906.02691'
   volume: '12'
 
+- id: kraghQuantumGenerationsHistory2002
+  abstract: >-
+    At the end of the nineteenth century, some physicists believed that the
+    basic principles underlying their subject were already known, and that
+    physics in the future would only consist of filling in the details. They
+    could hardly have been more wrong. The past century has seen the rise of
+    quantum mechanics, relativity, cosmology, particle physics, and solid-state
+    physics, among other fields. These subjects have fundamentally changed our
+    understanding of space, time, and matter. They have also transformed daily
+    life, inspiring a technological revolution that has included the development
+    of radio, television, lasers, nuclear power, and computers. In Quantum
+    Generations, Helge Kragh, one of the world's leading historians of physics,
+    presents a sweeping account of these extraordinary achievements of the past
+    one hundred years. The first comprehensive one-volume history of
+    twentieth-century physics, the book takes us from the discovery of X rays in
+    the mid-1890s to superstring theory in the 1990s. Unlike most previous
+    histories of physics, written either from a scientific perspective or from a
+    social and institutional perspective, Quantum Generations combines both
+    approaches. Kragh writes about pure science with the expertise of a trained
+    physicist, while keeping the content accessible to nonspecialists and paying
+    careful attention to practical uses of science, ranging from compact disks
+    to bombs. As a historian, Kragh skillfully outlines the social and economic
+    contexts that have shaped the field in the twentieth century. He writes, for
+    example, about the impact of the two world wars, the fate of physics under
+    Hitler, Mussolini, and Stalin, the role of military research, the emerging
+    leadership of the United States, and the backlash against science that began
+    in the 1960s. He also shows how the revolutionary discoveries of scientists
+    ranging from Einstein, Planck, and Bohr to Stephen Hawking have been built
+    on the great traditions of earlier centuries. Combining a mastery of detail
+    with a sure sense of the broad contours of historical change, Kragh has
+    written a fitting tribute to the scientists who have played such a decisive
+    role in the making of the modern world.
+  author:
+    - family: Kragh
+      given: Helge
+  ISBN: 978-0-691-09552-3
+  issued:
+    - year: 2002
+      month: 3
+      day: 24
+  language: en
+  number-of-pages: '514'
+  publisher: Princeton University Press
+  source: Google Books
+  title: 'Quantum Generations: A History of Physics in the Twentieth Century'
+  title-short: Quantum Generations
+  type: book
+
 - id: kruchtenTechnicalDebtMetaphor2012
   abstract: >-
     The metaphor of technical debt in software development was introduced two
