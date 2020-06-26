@@ -3467,7 +3467,7 @@ references:
   title: High Energy Cosmic Rays
   type: book
 
-- id: stanevOverview2010
+- id: stanevHighEnergyCosmic2010a
   abstract: >-
     Cosmic rays are an essential part of the universe. Their origin is related
     to many important astrophysical processes, such as star formation, stellar
@@ -3505,7 +3505,7 @@ references:
   language: en
   publisher: Springer Science & Business Media
   source: Google Books
-  title: Overview
+  title: High Energy Cosmic Rays - Overview
   type: chapter
 
 - id: stoddenSettingDefaultReproducible2013
