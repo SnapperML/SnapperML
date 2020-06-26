@@ -3426,46 +3426,6 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1803.09820'
 
-- id: stanev2010
-  abstract: >-
-    Cosmic rays are an essential part of the universe. Their origin is related
-    to many important astrophysical processes, such as star formation, stellar
-    evolution, supernova explosions and the state of interstellar matter in the
-    Galaxy. Cosmic Ray Physics reviews our present knowledge of cosmic rays,
-    describing how they are born in a wide range of cosmic processes, how they
-    are accelerated and how they interact with matter, magnetic fields and
-    radiation during their journey across the Galaxy. The book also describes
-    the detection of cosmic rays, and the processes which take place, both at
-    the top and within the Earth’s atmosphere. The author also describes the
-    very important area of the underground detection of very high energy cosmic
-    rays and particles such as neutrinos. The book is divided into two parts,
-    the first describing the standard model of cosmic rays and contemporary
-    challenges, and the second part dealing with very high energy cosmic rays
-    that cannot be detected directly in satellite and balloon experiments, and
-    with gamma-ray and neutrino astronomy. It is in this particular aspect of
-    the book that the greatest developments have taken place during the 5 years
-    since the first edition was completed. Consequently, it is in the chapters
-    cosmic ray showers, their spectrum, on high energy neutrinos, and on
-    gamma-ray astronomy of this revised and updated 2nd edition that a
-    considerable amount of new material has been incorporated with more minor
-    revisions and updating taking place in the first part of the book. Students
-    and lecturers of advanced undergraduate courses on cosmic rays and
-    astroparticle physics as well as post graduates and researchers will
-    continue to find this book a valuable source of learning and reference.
-  author:
-    - family: Stanev
-      given: Todor
-  container-title: High Energy Cosmic Rays
-  ISBN: 978-3-540-85148-6
-  issued:
-    - year: 2010
-      month: 3
-      day: 10
-  language: en
-  publisher: Springer Science & Business Media
-  source: Google Books
-  type: chapter
-
 - id: stanevHighEnergyCosmic2010
   abstract: >-
     Cosmic rays are an essential part of the universe. Their origin is related
@@ -3506,6 +3466,47 @@ references:
   source: Google Books
   title: High Energy Cosmic Rays
   type: book
+
+- id: stanevOverview2010
+  abstract: >-
+    Cosmic rays are an essential part of the universe. Their origin is related
+    to many important astrophysical processes, such as star formation, stellar
+    evolution, supernova explosions and the state of interstellar matter in the
+    Galaxy. Cosmic Ray Physics reviews our present knowledge of cosmic rays,
+    describing how they are born in a wide range of cosmic processes, how they
+    are accelerated and how they interact with matter, magnetic fields and
+    radiation during their journey across the Galaxy. The book also describes
+    the detection of cosmic rays, and the processes which take place, both at
+    the top and within the Earth’s atmosphere. The author also describes the
+    very important area of the underground detection of very high energy cosmic
+    rays and particles such as neutrinos. The book is divided into two parts,
+    the first describing the standard model of cosmic rays and contemporary
+    challenges, and the second part dealing with very high energy cosmic rays
+    that cannot be detected directly in satellite and balloon experiments, and
+    with gamma-ray and neutrino astronomy. It is in this particular aspect of
+    the book that the greatest developments have taken place during the 5 years
+    since the first edition was completed. Consequently, it is in the chapters
+    cosmic ray showers, their spectrum, on high energy neutrinos, and on
+    gamma-ray astronomy of this revised and updated 2nd edition that a
+    considerable amount of new material has been incorporated with more minor
+    revisions and updating taking place in the first part of the book. Students
+    and lecturers of advanced undergraduate courses on cosmic rays and
+    astroparticle physics as well as post graduates and researchers will
+    continue to find this book a valuable source of learning and reference.
+  author:
+    - family: Stanev
+      given: Todor
+  container-title: High Energy Cosmic Rays
+  ISBN: 978-3-540-85148-6
+  issued:
+    - year: 2010
+      month: 3
+      day: 10
+  language: en
+  publisher: Springer Science & Business Media
+  source: Google Books
+  title: Overview
+  type: chapter
 
 - id: stoddenSettingDefaultReproducible2013
   abstract: >-
