@@ -1070,6 +1070,78 @@ references:
   URL: 'http://www.sciencedirect.com/science/article/pii/S016890029700048X'
   volume: '389'
 
+- id: burrowsBaadeZwickySupernovae2015
+  abstract: >-
+    In 1934, two astronomers in two of the most prescient papers in the
+    astronomical literature coined the term “supernova,” hypothesized the
+    existence of neutron stars, and knit them together with the origin of
+    cosmic-rays to inaugurate one of the most surprising syntheses in the annals
+    of science.
+
+
+    From the vantage point of 80 y, the centrality of supernova explosions in
+    astronomical thought would seem obvious. Supernovae are the source of many
+    of the elements of nature, and their blasts roil the interstellar medium in
+    ways that inaugurate and affect star formation and structurally alter the
+    visible component of galaxies at birth. They are the origin of most
+    cosmic-rays, and these energetic rays have pronounced effects in the galaxy,
+    even providing an appreciable fraction of the human radiation doses at the
+    surface of the Earth and in jet flight. Prodiguously bright supernovae can
+    be seen across the Universe and have been used to great effect to take its
+    measure, and a majority of them give birth to impressively dense neutron
+    stars and black holes. Indeed, the radio and X-ray pulsars of popular
+    discourse, novels, and movies are rapidly spinning neutron stars injected
+    into the galaxy upon the eruption of a supernova (Fig. 1).
+
+
+
+
+    Fig. 1. 
+
+    A picture of the inner regions of the famous Crab Nebula captures emergent
+    jets and the “Napoleon Hat” structure of surrounding plasma. The
+    radio/optical/X-ray pulsar, a neutron star rotating at ∼30 Hz, is buried in
+    the center. The Crab was produced in a supernova explosion in A.D. 1054.
+    Image courtesy of ESA/NASA.
+
+
+
+
+    However, it was only with the two startlingly prescient PNAS papers by Baade
+    and Zwicky (1 … 
+
+
+    [↵][1]1Email: burrows{at}astro.princeton.edu.
+
+     [1]: #xref-corresp-1-1
+  accessed:
+    - year: 2020
+      month: 6
+      day: 26
+  author:
+    - family: Burrows
+      given: Adam S.
+  container-title: Proceedings of the National Academy of Sciences
+  container-title-short: PNAS
+  DOI: 10.1073/pnas.1422666112
+  ISSN: '0027-8424, 1091-6490'
+  issue: '5'
+  issued:
+    - year: 2015
+      month: 2
+      day: 3
+  language: en
+  page: 1241-1242
+  PMID: '25650425'
+  publisher: National Academy of Sciences
+  section: Commentary
+  source: www.pnas.org
+  title: 'Baade and Zwicky: “Super-novae,” neutron stars, and cosmic rays'
+  title-short: Baade and Zwicky
+  type: article-journal
+  URL: 'https://www.pnas.org/content/112/5/1241'
+  volume: '112'
+
 - id: chalapathyDeepLearningAnomaly2019
   abstract: >-
     Anomaly detection is an important problem that has been well-studied within
