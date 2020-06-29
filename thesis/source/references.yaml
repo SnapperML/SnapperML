@@ -3877,6 +3877,34 @@ references:
   title: Big Data Glossary
   type: book
 
+- id: williamsUsingNystromMethod2001
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  author:
+    - family: Williams
+      given: Christopher K. I.
+    - family: Seeger
+      given: Matthias
+  container-title: Advances in Neural Information Processing Systems 13
+  editor:
+    - family: Leen
+      given: T. K.
+    - family: Dietterich
+      given: T. G.
+    - family: Tresp
+      given: V.
+  issued:
+    - year: 2001
+  page: 682–688
+  publisher: MIT Press
+  source: Neural Information Processing Systems
+  title: Using the Nyström Method to Speed Up Kernel Machines
+  type: chapter
+  URL: >-
+    http://papers.nips.cc/paper/1866-using-the-nystrom-method-to-speed-up-kernel-machines.pdf
+
 - id: wilsonGoodEnoughPractices2017
   abstract: >-
     Author summary Computers are now essential in all branches of science, but

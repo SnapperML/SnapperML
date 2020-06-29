@@ -96,20 +96,20 @@ Una representación utilizada en trabajos previos, consiste en integrar la seña
 obteniendo un único valor real para cada PMT. Disponiendo así de un vector con N valores reales,
 tantos como PMTs haya en el WCD.
 
-La representación que se propone en este trabajo consiste en utilizar la señal de los PMTs de manera independiente,
-es decir, modelar un clasificador a nivel de PMT en lugar de WCDs. De esta forma podemos profundizar en la información
-recogida en la señal, en lugar de condensar toda esa información en un solo número real (la integral).
+La representación que se propone en este trabajo consiste en utilizar la media de las señales de los PMTs.
+Utilizando la media de las tres señales podemos profundizar en la información recogida en la señal, en lugar
+de condensar toda esa información en un solo número real (la integral).
 Elegir la granularidad con la que se analizan los datos es uno de los retos más importantes de este problema.
 Como se ha mencionado al principio del capítulo, una *cascada atmosférica extensa* puede producir una señal en
 multiples PMTs dentro de un mismo detector WCD, pero además, puede afectar a varios detectores vecinos.
 Teniendo esto en cuenta, el problema se puede modelar a nivel de PMT, a nivel de WCD, o a nivel de estación.
-En nuestro caso lo vamos a analizar a nivel de PMT.
+En nuestro caso lo vamos a analizar a nivel de WCD.
 
 Como trabajar con la señal en crudo puede ser muy costosa en términos de memoria, y recursos
 de CPU, los valores de cada vector se extraen a partir de la salida de *Offline de Auger*.
 La señal recogida está discretizada por lo que se puede utilizar como un vector de tamaño
-fijo. Sin embargo, la traza puede ser caracterizada completamente mediante un conjunto más
-pequeño de variables que se describen a continuación:
+fijo. Sin embargo, según los expertos, la traza puede ser caracterizada en gran medida mediante
+un conjunto más pequeño de variables que se describen a continuación:
 
 **Variables extraídas directamente de las simulaciones**
 
@@ -126,27 +126,37 @@ pequeño de variables que se describen a continuación:
 - Tiempo de caída: Tiempo en el que la señal empieza a descender.
 - Area sobre el punto máximo de la señal: Suma de todas las señales en cada traza dividida por el máximo valor en cada traza.
 
+Estas son las variables utilizadas para todos los experimentos llevados a cabo en este capitulo.
+
+
 ## Procedimiento
 
-Para el desarrollo de los diferentes experimentos se utilizado el framework descrito en el capítulo anterior.
+Para el desarrollo de los diferentes experimentos se utilizado el framework *ml-experiment* descrito en el capítulo anterior.
 Para cada algoritmo de ML o arquitectura de DL se ha implementado un script de entrenamiento y un fichero
-de configuración asociado. Como la cantidad de datos o la dimensionalidad no son relativamente grandes, se ha
+de configuración asociado. Como la cantidad de datos o la dimensionalidad de los mismos no son relativamente grandes, se ha
 podido aplicar optimización de hiperparámetros. Para ello, el fichero de configuración asociado a cada algoritmo
 define un Grupo de experimentos (ver *Diseño y desarrollo del framework*) con un espacio de hiperparámetros
-diseñado especialmente para cada tipo de modelo. Los grupos de experimentos se han ejecutado de manera local,
+diseñado especialmente para cada tipo de modelo. Estos grupos de experimentos se han ejecutado de manera local
 aprovechando todos los núcleos de la CPU. Por otra parte, el proyecto de experimentación se llevado a cabo
-teniendo en cuenta los aspectos críticos de la reproducibilidad descritos en *Fundamentos*, y aplicando las buenas prácticas de MLOps.
+teniendo en cuenta los aspectos críticos de la reproducibilidad descritos en *Fundamentos*,
+y aplicando las buenas prácticas de MLOps.
 
-![Todos los experimentos ejecutados con parámetros, métricas, artefactos, y otros metadatos, se almacenan en un servidor de MLFlow en local](source/figures/mlflow_experiments.png){#fig:mlflow_experiments}
+![Todos los experimentos ejecutados con sus parámetros, métricas, artefactos, y otros metadatos, se almacenan en un servidor de MLFlow en local](source/figures/mlflow_experiments.png){#fig:mlflow_experiments}
 
 Por una parte, el procedimiento de partición y procesado de los datos se realiza desde una interfaz compartida por todos los scripts
-de entrenamiento utilizando un *DataLoader* (ver Manual). Además, las semillas para la partición, procesado y entrenamiento de modelos
-se establece y queda almacenada como metadatos en cada experimento. Esto nos asegura que todos los modelos son entrenados y validados
-con los mismos datos, así como facilita la *replicabilidad* del experimento. Por otra parte, los parámetros, métricas y artefactos de
+de entrenamiento utilizando las *DataLoader* (ver Manual). En concreto, se ha definido dos *DataLoaders* uno para los autoencoders y otro para el resto de algoritmos.
+Para los autoencoders, se genera una pareja de entrenamiento-validación para cada tipo de primario (ver Listing \ref{#split_data_loader}).
+Para los modelos de aprendizaje supervisado, los datos de entrenamiento de todos los primarios se unifican en un solo conjunto de datos 
+y posteriormente se extrae el conjunto de validación (ver Listing \ref{#unified_data_loader}).
+Finalmente, tanto para el conjunto unificado como para los conjuntos separados, se aplica un *reescalado* mediante *estandarización* (z-score).
+
+Por otro lado, las semillas para la partición, procesado, y entrenamiento de modelos se establecen y
+quedan almacenadas como metadatos en cada experimento. Esto nos asegura que todos los modelos son entrenados y validados
+con los mismos datos, así como facilita la *replicabilidad* del experimento. Además, los parámetros, métricas y artefactos de
 cada experimento están almacenados en el servidor de *MLFlow* (ver figura \ref{fig:mlflow_experiments}), permitiendo visualizar
 y comparar entre las modelos y entre las diferentes configuraciones de hiperparámetros para cada algoritmo. Finalmente,
 la información relativa al hardware y el software donde se han ejecutado los experimentos también queda almacenada,
-en concreto, la información relativa al hardware es la siguiente:
+en concreto, la información relativa al hardware que se ha recogido es la siguiente:
 
 |       Tag      |                                    Value                                   |
 |:--------------:|:--------------------------------------------------------------------------:|
@@ -155,23 +165,412 @@ en concreto, la información relativa al hardware es la siguiente:
 |    GPU Info    |                                      -                                     |
 
 
+En cuanto a la métrica utiliza para evaluar los modelos, después de conocer que no existe ninguna preferencia respecto a un primario
+u otro, y que el conjunto de datos está balanceado, se ha decidido utilizar la precisión (*accuracy*) como métrica. Para evaluar los
+modelos se utiliza una partición aleatoria con un ratio 80-20 para entrenamiento y validación respectivamente. Por otro lado, el conjunto de test
+se utiliza exclusivamente para evaluar el modelo final seleccionado.
+
+
+``` {#split_data_loader .python caption="Implementación del DataLoader para autoencoders separados."}
+Dataset = Tuple[np.ndarray, np.ndarray]
+VALIDATION_SPLIT = 0.2
+SEED = 1234
+
+
+class SplitDataLoader(DataLoader):
+    @classmethod
+    def load_data(cls) -> Tuple[
+                            List[Dataset],
+                            List[Dataset]]:
+        train_files = glob.glob('data/raw/QGSJet-*-train.txt')
+        train_datasets, val_datasets, = [], []
+        datasets = [np.genfromtxt(file, delimiter=',')
+                    for file in train_files]
+
+        for i, dataset in enumerate(datasets):
+            dataset = dataset[:, 3:-1]
+            class_vector = np.full(dataset.shape[0], i)
+            X_train, X_val, y_train, y_val = train_test_split(
+                dataset, class_vector,
+                test_size=VALIDATION_SPLIT,
+                random_state=SEED)
+            scaler = MinMaxScaler()
+            X_train = scaler.fit_transform(X_train)
+            X_val = scaler.transform(X_val)
+            train_datasets.append((X_train, y_train))
+            val_datasets.append((X_val, y_val))
+
+        return train_datasets, val_datasets
+```
+
+``` {#unified_data_loader .python caption="Implementación de DataLoader para los algoritmos de aprendizaje supervisado."}
+class UnifiedDataLoader(DataLoader):
+    @classmethod
+    def load_data(cls) -> Tuple[np.ndarray,
+                                np.ndarray,
+                                np.ndarray,
+                                np.ndarray]:
+        train_files = glob.glob('data/raw/QGSJet-*-train.txt')
+        datasets = [np.genfromtxt(file, delimiter=',')
+                    for file in train_files]
+        X, y = [], []
+
+        for i, dataset in enumerate(datasets):
+            X.append(dataset[:, 3:-1])
+            y.append(np.full(dataset.shape[0], i))
+
+        X = np.concatenate(X, axis=0)
+        y = np.concatenate(y, axis=0)
+
+        X_train, X_val, y_train, y_val = train_test_split(
+            X, y, test_size=VALIDATION_SPLIT, random_state=SEED)
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_val = scaler.transform(X_val)
+        return X_train, X_val, y_train, y_val
+```
+
+
 ## Modelos considerados
 
-### Deep Learning
+Entro los algoritmos candidatos, se han empleado SVM, Xgboost, y Autoencoder (simple, profundo, y variacional).
+Como se ha comentado anteriormente, para cada tipo de modelo se utiliza un espacio de hiperparámetros y se ejecuta
+un grupo de experimentos (entre 50-100 configuraciones distintas). En las siguientes secciones se especifican el
+el espacio de hiperparámetros, detalles de implementación, así como otra información relativa a cada experimento.
 
-#### Autoencoders
+### SVM
 
-### Machine Learning tradicional
+El primer algoritmo con el que se experimentó fue SVM [@cortesSupportvectorNetworks1995]. SVM es un algoritmo de aprendizaje
+supervisado cuya función de coste tienen como objetivo maximizar el margen entre clases. Además, permite utilizar el
+*kernel trick* para entrenar modelos con funciones de decisión complejas mapeando los datos a un espacio de dimensión superior.
+La implementación de SVM utilizada es LinearSVC de *sklearn* como se puede ver en Listing \ref{#svm_code}.
+En concreto, se utiliza un SVM linear con un transformador basado en *aproximación del kernel*,
+una forma de mapear los datos más eficiente que el *kernel trick*, pero también inexacta.
+Para la aproximación del kernel se utiliza el método de Nystroem, el cual es un método genérico para aproximaciones de
+bajo rango de kernels. A rasgos generales, Nystroem muestrea un número limitado
+de ejemplos de entrenamiento (100 por defecto en el caso de *sklearn*) y les aplica el kernel real.
+Con esos ejemplos transformados construye una matriz de transformación de bajo rango que aproxima el kernel aplicado 
+[@williamsUsingNystromMethod2001]. Esto permite poder entrenar SVMs de manera más eficiente, incluso utilizar *online learning*,
+en nuestro caso, nos permite aumentar el número de configuraciones distintas para la optimización de hiperparámetros.
+Los detalles del experimento y de la configuración de hiperparámetros son las siguientes:
 
-#### SVM
 
-#### Xgboost
+| Detalle                   | Valor |
+|:-------------------------:|:-----:|
+| Nombre del experimento    | SVM  |
+| Número de configuraciones | 50   |
+| Optuna Sampler            | TPE  |
 
-#### Autoencoder Simple
 
-#### Autoencoder Apilado
+| Parámetro | Distribución                          |
+|-----------|---------------------------------------|
+| C         | loguniform\(0\.001, 1000\)            |
+| kernel    | choice\(\['rbf', 'poly', 'linear'\]\) |
+| gamma     | choice\(\['scale', 'auto'\]\)         |
+| degree    | range\(2, 5\) (solo aplica si kernel = 'poly') |
 
-#### Autoencoder Variacional
 
+``` {#svm_code .python caption="Implementación del script de entrenamiento para SVM."}
+from typing import *
+from modelling.utils.data import UnifiedDataLoader, SEED
+import numpy as np
+from ml_experiment import job
+from sklearn.svm import LinearSVC
+from sklearn.kernel_approximation import Nystroem
+
+
+@job(data_loader=UnifiedDataLoader())
+def main(C: float = 1.0, kernel: str = 'rbf',
+         degree: int = 3, gamma: Any = 'scale'):
+    np.random.seed(SEED)
+    X_train, X_val, y_train, y_val = \
+        UnifiedDataLoader.load_data()
+
+    if isinstance(gamma, str):
+        if gamma == 'scale':
+            gamma = 1.0 / (X_train.shape[1] * X_train.var())
+        if gamma == 'auto':
+            gamma = 1.0 / X_train.shape[1]
+
+    if kernel != 'linear':
+        degree = degree if kernel == 'poly' else None
+        feature_map = Nystroem(
+            kernel=kernel, gamma=gamma, degree=degree)
+        X_train = feature_map.fit_transform(X_train)
+        X_val = feature_map.transform(X_val)
+
+    model = LinearSVC(C=C)
+    model.fit(X_train, y_train)
+    accuracy = model.score(X_val, y_val)
+    return {'val_accuracy': accuracy}
+
+
+if __name__ == '__main__':
+    main()
+```
+
+### Xgboost
+
+| Detalle                   | Valor |
+|:-------------------------:|:-----:|
+| Nombre del experimento    | XGBoost  |
+| Número de configuraciones | 100   |
+| Optuna Sampler            | TPE  |
+
+
+| Parámetro | Distribución                          |
+|-----------|---------------------------------------|
+| num_boost_round | choice([10, 100, 250, 500, 1000, 2500]) |
+| learning_rate | loguniform(0.0001, 1) |
+| max_depth | range(2, 15) |
+| gamma | choice([0, 0.5, 2, 10, 20]) |
+| min_child_weight | loguniform(0.01, 1) |
+| subsample | uniform(0.1, 0.9) |
+
+
+``` {#xgboost_code .python caption="Implementación del script de entrenamiento para Xgboost."}
+@job(data_loader=UnifiedDataLoader(),
+     autologging_backends=AutologgingBackend.XGBOOST)
+def main(n_estimators: int, learning_rate: float,
+         max_depth: int, gamma: float,
+         subsample: float, min_child_weight: float):
+    np.random.seed(SEED)
+
+    X_train, X_val, y_train, y_val = \
+        UnifiedDataLoader.load_data()
+    train_data = xgb.DMatrix(X_train, label=y_train)
+    val_data = xgb.DMatrix(X_val, label=y_val)
+    params = dict(random_state=SEED,
+                  learning_rate=learning_rate,
+                  max_depth=max_depth, gamma=gamma,
+                  subsample=subsample,
+                  min_child_weight=min_child_weight,
+                  num_class=len(np.unique(y_train)),
+                  objective='multi:softmax')
+
+    trial = Trial.get_current()
+    evallist = [(val_data,'eval'),(train_data,'train')]
+    eval_result = {}
+    patience = max(10, n_estimators // 10)
+    callbacks = [
+        XGBoostPruningCallback(trial, 'eval-merror'),
+        xgb.callback.early_stop(patience, verbose=False),
+        xgb.callback.record_evaluation(eval_result)
+    ]
+
+    xgb.train(params, train_data,
+              num_boost_round=n_estimators,
+              evals=evallist,
+              callbacks=callbacks,
+              verbose_eval=False)
+
+    accuracy = 1 - eval_result['eval']['merror'][-1]
+    return {'val_accuracy': accuracy}
+
+if __name__ == '__main__':
+    main()
+```
+
+### Autoencoder V1
+
+
+| Detalle                   | Valor |
+|:-------------------------:|:-----:|
+| Nombre del experimento    | Autoencoder V1 |
+| Número de configuraciones | 100   |
+| Optuna Sampler            | TPE  |
+
+
+| Parámetro | Distribución                          |
+|-----------|---------------------------------------|
+| encoding_dim | range(1, 20) |
+| ps | uniform(0, 0.5) |
+| lr | loguniform(0.001, 0.1) |
+| activation | choice(['selu', 'relu']) |
+| tied_weights | choice([false, true]) |
+| unit_norm_constraint | choice([false, true]) |
+| weight_orthogonality | choice([false, true]) |
+
+
+### Autoencoder V2
+
+
+| Detalle                   | Valor |
+|:-------------------------:|:-----:|
+| Nombre del experimento    | Autoencoder V1 |
+| Número de configuraciones | 90   |
+| Optuna Sampler            | TPE  |
+
+
+| Parámetro | Distribución                          |
+|-----------|---------------------------------------|
+| encoding_dim | choice([[range(2, 20), range(2, 20)], ..., [range(2, 20), range(2, 20), range(2, 20), range(2, 20)]]) |
+| ps | uniform(0, 0.5) |
+| lr | loguniform(0.001, 0.1) |
+| activation | choice(['selu', 'relu']) |
+| tied_weights | choice([false, true]) |
+| one_cycle | choice([false, true]) |
+| unit_norm_constraint | choice([false, true]) |
+| weight_orthogonality | choice([false, true]) |
+
+
+
+### Autoencoder Variacional
+
+
+#### Truco de la reparametrización
+
+
+``` {#reparam_trick .python caption="Implementación del truco de la reparametrización para Keras. Fuente: Documentación oficial de Keras."}
+import keras.backend as K
+
+def sampling(args):
+    """Reparameterization trick by sampling from an isotropic unit Gaussian.
+
+    # Arguments
+        args (tensor): mean and log of variance of Q(z|X)
+
+    # Returns
+        z (tensor): sampled latent vector
+    """
+    z_mean, z_log_var = args
+    batch = K.shape(z_mean)[0]
+    dim = K.int_shape(z_mean)[1]
+    # by default, random_normal has mean = 0 and std = 1.0
+    epsilon = K.random_normal(shape=(batch, dim))
+    return z_mean + K.exp(0.5 * z_log_var) * epsilon
+```
+
+#### Función de coste
+
+``` {#cost_function_vae .python caption="Función de coste para VAE. Fuente: Documentación oficial de Keras."}
+import keras.backend as K
+
+def create_loss(input_dim, inputs, outputs, mu, sigma):
+    # VAE loss = mse_loss or xent_loss + kl_loss
+    reconstruction_loss = mse(inputs, outputs) * input_dim
+    kl_loss = 1 + sigma - K.square(mu) - K.exp(sigma)
+    kl_loss = K.sum(kl_loss, axis=-1)
+    kl_loss *= -0.5
+    return K.mean(reconstruction_loss + kl_loss)
+```
+
+
+### Construcción del modelo
+
+
+``` {#create_model_vae .python caption="Construcción del autoencoder VAE."}
+def create_model(
+        input_size: int,
+        encoding_dim: Union[List[int], int],
+        latent_dim: int,
+        ps: float,
+        lr: float,
+        activation: str = 'relu'):
+    np.random.seed(SEED)
+    decoding_dim = [input_size] + encoding_dim[:-1]
+
+    inputs = Input(shape=(input_size, ), name='encoder_input')
+    encoder = Dropout(rate=ps)(inputs)
+
+    for i, units in enumerate(encoding_dim):
+        kwargs = {'input_shape': (input_size,)} if i == 0 else {}
+        encoder = Dense(units, activation=activation, **kwargs)(encoder)
+
+    mu = Dense(latent_dim, name='mu')(encoder)
+    sigma = Dense(latent_dim, name='log_var')(encoder)
+    z = Lambda(sampling, output_shape=(latent_dim,), name='z')([mu, sigma])
+    encoder = Model(inputs, [mu, sigma, z], name='encoder')
+
+    latent_inputs = Input(shape=(latent_dim,), name='z_sampling')
+    decoder = latent_inputs
+
+    for i, units in enumerate(decoding_dim[::-1]):
+        layer_activation = 'sigmoid' if i == len(encoding_dim) - 1 else activation
+        decoder = Dense(units, activation=layer_activation)(decoder)
+
+    decoder = Model(latent_inputs, decoder, name='decoder')
+    outputs = decoder(encoder(inputs)[2])
+    autoencoder = Model(inputs, outputs, name='vae_mlp')
+    loss = create_loss(input_size, inputs, outputs, mu, sigma)
+    autoencoder.add_loss(loss)
+    autoencoder.compile(SGD(learning_rate=lr), loss='mse')
+    return autoencoder, encoder, decoder
+```
 
 ## Resultados
+
+### SVM
+
+![SVM. C vs Validation accuracy](source/results/svm_analysis/c_vs_accuracy.png){#fig:svm_c}
+
+![SVM. Kernel vs Validation accuracy](source/results/svm_analysis/kernel_accuracy.png){#fig:svm_kernel}
+
+![SVM. Gamma vs Validation accuracy](source/results/svm_analysis/gamma_vs_accuracy.png){#fig:svm_gamma}
+
+![SVM. Parameters comparison](source/results/svm_analysis/parallel_plot.png){#fig:svm_parallel}
+
+### Xgboost
+
+![Xgboost. Gamma vs Validation accuracy](source/results/xgboost_analysis/gamma_vs_accuracy.png){#fig:xgboost_gamma}
+
+![Xgboost. Number of trees vs Validation accuracy](source/results/xgboost_analysis/newplot.png){#fig:xgboost_num_trees}
+
+![Xgboost. Learning rate vs Validation accuracy](source/results/xgboost_analysis/learning_rate_vs_accuracy.png){#fig:xgboost_lr}
+
+![Xgboost. Min child weight vs Validation accuracy](source/results/xgboost_analysis/min_child_weight_vs_accuracy.png){#fig:xgboost_min_child_weight}
+
+![Xgboost. Subsample vs Validation accuracy](source/results/xgboost_analysis/subsample_vs_accuracy.png){#fig:xgboost_subsample}
+
+![Xgboost. Parameters comparison](source/results/svm_analysis/parallel_plot.png){#fig:xgboost_parallel}
+
+
+### Autoencoder v1
+
+
+![Autoencoder v1. Dimensión del código vs Validation accuracy](source/results/autoencoder_v1_analysis/encoding_dim_vs_accuracy.png){#fig:a1_encoding_dim}
+
+![Autoencoder v1. Probabilidad de descarte (dropout) vs Validation accuracy](source/results/autoencoder_v1_analysis/ps_vs_accuracy.png){#fig:a1_ps}
+
+![Autoencoder v1. Pesos ortogonales vs Validation accuracy](source/results/autoencoder_v1_analysis/weight_orthogonality_vs_accuracy.png){#fig:a1_weight_ortho}
+
+![Autoencoder v1. Ratio de aprendizaje vs Validation accuracy](source/results/autoencoder_v1_analysis/learning_rate_vs_accuracy.png){#fig:a1_lr}
+
+![Autoencoder v1. Optimizador vs Validation accuracy](source/results/autoencoder_v1_analysis/optimizer_vs_orthogonality.png){#fig:a1_optimizer}
+
+![Autoencoder v1. Parameters comparison](source/results/autoencoder_v1_analysis/parallel_plot.png){#fig:a1_parallel}
+
+
+### Autoencoder v2
+
+
+![Autoencoder v2. Número de capas vs Validation accuracy](source/results/autoencoder_v2_analysis/num_layers.png){#fig:a1_num_layers}
+
+![Autoencoder v2. Probabilidad de descarte (dropout) vs Validation accuracy](source/results/autoencoder_v2_analysis/ps.png){#fig:a2_ps}
+
+![Autoencoder v2. Pesos ortogonales vs Validation accuracy](source/results/autoencoder_v2_analysis/weight_orthogonality.png){#fig:a2_weight_ortho}
+
+![Autoencoder v2. Ratio de aprendizaje vs Validation accuracy](source/results/autoencoder_v2_analysis/learning_rate.png){#fig:a2_lr}
+
+![Autoencoder v2. Tied-weights vs Validation accuracy](source/results/autoencoder_v2_analysis/tied_weights.png){#fig:a2_tied_weights}
+
+![Autoencoder v2. One-cycle vs Validation accuracy](source/results/autoencoder_v2_analysis/one_cycle.png){#fig:a2_one_cycle}
+
+![Autoencoder v2. Parameters comparison](source/results/autoencoder_v2_analysis/parallel_plot.png){#fig:a2_parallel}
+
+
+### Autoencoder Variacional
+
+![Autoencoder Variacional. Dimensión de la capa intermedia vs Validation accuracy](source/results/vae_analysis/encoding_dim.png){#fig:vae_encoding_dim}
+
+![Autoencoder Variacional. Dimensión del espacio latente vs Validation accuracy](source/results/vae_analysis/latent_dim.png){#fig:vae_latent_dim}
+
+![Autoencoder Variacional. Ratio de aprendizaje vs Validation accuracy](source/results/vae_analysis/learning_rate.png){#fig:vae_lr}
+
+![Autoencoder Variacional. One-cycle vs Validation accuracy](source/results/vae_analysis/one_cycle.png){#fig:vae_one_cycle}
+
+![Autoencoder Variacional. One-cycle vs Validation accuracy](source/results/vae_analysis/activation.png){#fig:vae_activation}
+
+![Autoencoder Variacional. One-cycle vs Validation accuracy](source/results/vae_analysis/){#fig:vae_activation}
+
+![Autoencoder Variacional. Parameters comparison](source/results/vae_analysis/parallel_plot.png){#fig:vae_parallel}

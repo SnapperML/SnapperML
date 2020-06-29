@@ -31,6 +31,7 @@ pdf:
 	--template="$(STYLEDIR)/template.tex" \
 	--bibliography="$(BIBFILE)" 2>pandoc.log \
 	--csl="$(STYLEDIR)/ref_format.csl" \
+	--listings \
 	--highlight-style pygments \
 	-V fontsize=12pt \
 	-V papersize=a4paper \
@@ -44,9 +45,11 @@ tex:
 	-o "$(OUTPUTDIR)/thesis.tex" \
 	-H "$(STYLEDIR)/preamble.tex" \
 	--bibliography="$(BIBFILE)" \
+	-F pandoc-minted \
 	-V fontsize=12pt \
 	-V papersize=a4paper \
 	-V documentclass=report \
+	--listings \
 	-N \
 	--csl="$(STYLEDIR)/ref_format.csl" \
 	--pdf-engine=xelatex
