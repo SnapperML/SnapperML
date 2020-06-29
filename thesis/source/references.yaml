@@ -1070,6 +1070,18 @@ references:
   URL: 'http://www.sciencedirect.com/science/article/pii/S016890029700048X'
   volume: '389'
 
+- id: BuildRightAutoencoder
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  title: >-
+    Build the right Autoencoder — Tune and Optimize using PCA principles. Part
+    II
+  type: webpage
+  URL: >-
+    https://towardsdatascience.com/build-the-right-autoencoder-tune-and-optimize-using-pca-principles-part-ii-24b9cca69bd6
+
 - id: burrowsBaadeZwickySupernovae2015
   abstract: >-
     In 1934, two astronomers in two of the most prescient papers in the
