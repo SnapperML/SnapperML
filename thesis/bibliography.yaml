@@ -1396,6 +1396,43 @@ references:
   type: post-weblog
   URL: 'https://www.comet.ml/site/'
 
+- id: cortesSupportvectorNetworks1995
+  abstract: >-
+    Thesupport-vector network is a new learning machine for two-group
+    classification problems. The machine conceptually implements the following
+    idea: input vectors are non-linearly mapped to a very high-dimension feature
+    space. In this feature space a linear decision surface is constructed.
+    Special properties of the decision surface ensures high generalization
+    ability of the learning machine. The idea behind the support-vector network
+    was previously implemented for the restricted case where the training data
+    can be separated without errors. We here extend this result to non-separable
+    training data.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  author:
+    - family: Cortes
+      given: Corinna
+    - family: Vapnik
+      given: Vladimir
+  container-title: Machine Learning
+  container-title-short: Mach Learn
+  DOI: 10.1007/BF00994018
+  ISSN: 1573-0565
+  issue: '3'
+  issued:
+    - year: 1995
+      month: 9
+      day: 1
+  language: en
+  page: 273-297
+  source: Springer Link
+  title: Support-vector networks
+  type: article-journal
+  URL: 'https://doi.org/10.1007/BF00994018'
+  volume: '20'
+
 - id: DataScienceCollaboration
   abstract: >-
     Neptune is an experiment tracking tool bringing organization and
