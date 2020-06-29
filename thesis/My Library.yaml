@@ -3470,6 +3470,31 @@ references:
   URL: 'https://joss.theoj.org/papers/10.21105/joss.00107'
   volume: '1'
 
+- id: ranjanBuildRightAutoencoder2019
+  abstract: >-
+    In continuation of Part I, here we will define and implement custom
+    constraints for building a well-posed Autoencoder. A well-posed…
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  author:
+    - family: Ranjan
+      given: Chitta
+  container-title: Medium
+  issued:
+    - year: 2019
+      month: 12
+      day: 22
+  language: en
+  source: towardsdatascience.com
+  title: >-
+    Build the right Autoencoder — Tune and Optimize using PCA principles. Part
+    II
+  type: webpage
+  URL: >-
+    https://towardsdatascience.com/build-the-right-autoencoder-tune-and-optimize-using-pca-principles-part-ii-24b9cca69bd6
+
 - id: reOvertonDataSystem2019
   abstract: >-
     We describe a system called Overton, whose main design goal is to support
