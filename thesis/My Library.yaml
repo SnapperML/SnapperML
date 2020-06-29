@@ -1594,6 +1594,45 @@ references:
   URL: 'http://drops.dagstuhl.de/opus/volltexte/2016/5817'
   volume: '6'
 
+- id: friedmanGreedyFunctionApproximation2001
+  abstract: >-
+    Function estimation/approximation is viewed from the perspective of
+    numerical optimization in function space, rather than parameter space. A
+    connection is made between stagewise additive expansions and
+    steepest-descent minimization. A general gradient descent "boosting"
+    paradigm is developed for additive expansions based on any fitting
+    criterion. Specific algorithms are presented for least-squares, least
+    absolute deviation, and Huber-M loss functions for regression, and
+    multiclass logistic likelihood for classification. Special enhancements are
+    derived for the particular case where the individual additive components are
+    regression trees, and tools for interpreting such "TreeBoost" models are
+    presented. Gradient boosting of regression trees produces competitive,
+    highly robust, interpretable procedures for both regression and
+    classification, especially appropriate for mining less than clean data.
+    Connections between this approach and the boosting methods of Freund and
+    Shapire and Friedman, Hastie and Tibshirani are discussed.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  archive: JSTOR
+  author:
+    - family: Friedman
+      given: Jerome H.
+  container-title: The Annals of Statistics
+  ISSN: 0090-5364
+  issue: '5'
+  issued:
+    - year: 2001
+  page: 1189-1232
+  publisher: Institute of Mathematical Statistics
+  source: JSTOR
+  title: 'Greedy Function Approximation: A Gradient Boosting Machine'
+  title-short: Greedy Function Approximation
+  type: article-journal
+  URL: 'https://www.jstor.org/stable/2699986'
+  volume: '29'
+
 - id: geronHandsOnMachineLearning2019
   abstract: >-
     Through a series of recent breakthroughs, deep learning has boosted the
