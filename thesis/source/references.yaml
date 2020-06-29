@@ -2382,6 +2382,54 @@ references:
   type: webpage
   URL: 'https://www.kubeflow.org/'
 
+- id: ladjalPCAlikeAutoencoder2019
+  abstract: >-
+    An autoencoder is a neural network which data projects to and from a lower
+    dimensional latent space, where this data is easier to understand and model.
+    The autoencoder consists of two sub-networks, the encoder and the decoder,
+    which carry out these transformations. The neural network is trained such
+    that the output is as close to the input as possible, the data having gone
+    through an information bottleneck : the latent space. This tool bears
+    significant ressemblance to Principal Component Analysis (PCA), with two
+    main differences. Firstly, the autoencoder is a non-linear transformation,
+    contrary to PCA, which makes the autoencoder more flexible and powerful.
+    Secondly, the axes found by a PCA are orthogonal, and are ordered in terms
+    of the amount of variability which the data presents along these axes. This
+    makes the interpretability of the PCA much greater than that of the
+    autoencoder, which does not have these attributes. Ideally, then, we would
+    like an autoencoder whose latent space consists of independent components,
+    ordered by decreasing importance to the data. In this paper, we propose an
+    algorithm to create such a network. We create an iterative algorithm which
+    progressively increases the size of the latent space, learning a new
+    dimension at each step. Secondly, we propose a covariance loss term to add
+    to the standard autoencoder loss function, as well as a normalisation layer
+    just before the latent space, which encourages the latent space components
+    to be statistically independent. We demonstrate the results of this
+    autoencoder on simple geometric shapes, and find that the algorithm indeed
+    finds a meaningful representation in the latent space. This means that
+    subsequent interpolation in the latent space has meaning with respect to the
+    geometric properties of the images.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  author:
+    - family: Ladjal
+      given: Saïd
+    - family: Newson
+      given: Alasdair
+    - family: Pham
+      given: Chi-Hieu
+  container-title: 'arXiv:1904.01277 [cs]'
+  issued:
+    - year: 2019
+      month: 4
+      day: 2
+  source: arXiv.org
+  title: A PCA-like Autoencoder
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1904.01277'
+
 - id: liHyperbandNovelBanditbased2017
   abstract: >-
     Performance of machine learning algorithms depends critically on identifying
@@ -2514,6 +2562,37 @@ references:
   type: post-weblog
   URL: >-
     http://blog.shakirm.com/2015/10/machine-learning-trick-of-the-day-4-reparameterisation-tricks/
+
+- id: masonBoostingAlgorithmsGradient2000
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  author:
+    - family: Mason
+      given: Llew
+    - family: Baxter
+      given: Jonathan
+    - family: Bartlett
+      given: Peter L.
+    - family: Frean
+      given: Marcus R.
+  container-title: Advances in Neural Information Processing Systems 12
+  editor:
+    - family: Solla
+      given: S. A.
+    - family: Leen
+      given: T. K.
+    - family: Müller
+      given: K.
+  issued:
+    - year: 2000
+  page: 512–518
+  publisher: MIT Press
+  source: Neural Information Processing Systems
+  title: Boosting Algorithms as Gradient Descent
+  type: chapter
+  URL: 'http://papers.nips.cc/paper/1766-boosting-algorithms-as-gradient-descent.pdf'
 
 - id: merkel2014docker
   author:
@@ -3301,6 +3380,47 @@ references:
     Research
   type: article-journal
   URL: 'http://arxiv.org/abs/1909.06674'
+
+- id: ramachandranSearchingActivationFunctions2017
+  abstract: >-
+    The choice of activation functions in deep networks has a significant effect
+    on the training dynamics and task performance. Currently, the most
+    successful and widely-used activation function is the Rectified Linear Unit
+    (ReLU). Although various hand-designed alternatives to ReLU have been
+    proposed, none have managed to replace it due to inconsistent gains. In this
+    work, we propose to leverage automatic search techniques to discover new
+    activation functions. Using a combination of exhaustive and reinforcement
+    learning-based search, we discover multiple novel activation functions. We
+    verify the effectiveness of the searches by conducting an empirical
+    evaluation with the best discovered activation function. Our experiments
+    show that the best discovered activation function, $f(x) = x \cdot
+    \text{sigmoid}(\beta x)$, which we name Swish, tends to work better than
+    ReLU on deeper models across a number of challenging datasets. For example,
+    simply replacing ReLUs with Swish units improves top-1 classification
+    accuracy on ImageNet by 0.9\% for Mobile NASNet-A and 0.6\% for
+    Inception-ResNet-v2. The simplicity of Swish and its similarity to ReLU make
+    it easy for practitioners to replace ReLUs with Swish units in any neural
+    network.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 29
+  author:
+    - family: Ramachandran
+      given: Prajit
+    - family: Zoph
+      given: Barret
+    - family: Le
+      given: Quoc V.
+  container-title: 'arXiv:1710.05941 [cs]'
+  issued:
+    - year: 2017
+      month: 10
+      day: 27
+  source: arXiv.org
+  title: Searching for Activation Functions
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1710.05941'
 
 - id: rampinReproZipReproducibilityPacker2016
   abstract: >-
