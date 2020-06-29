@@ -190,10 +190,12 @@ class SplitDataLoader(DataLoader):
         for i, dataset in enumerate(datasets):
             dataset = dataset[:, 3:-1]
             class_vector = np.full(dataset.shape[0], i)
+
             X_train, X_val, y_train, y_val = train_test_split(
                 dataset, class_vector,
                 test_size=VALIDATION_SPLIT,
                 random_state=SEED)
+
             scaler = MinMaxScaler()
             X_train = scaler.fit_transform(X_train)
             X_val = scaler.transform(X_val)
@@ -311,6 +313,17 @@ if __name__ == '__main__':
 
 ### Xgboost
 
+El segundo modelo con el que se ha experimentado a sido XGBoost [@chenXGBoostScalableTree2016].
+XGBoost es un algoritmo *gradient boosting* [@masonBoostingAlgorithmsGradient2000] flexible, escalable, y portable. Permite *boosting*
+de arboles en paralelo (GBDT, GBM), así como definir funciones de coste propias [@masonBoostingAlgorithmsGradient2000].
+Uno de los inconvenientes a la hora de realizar HPO con XGBoost (y con los ensamblados de árboles en general), es la cantidad
+de hiperparámetros distintos que se pueden modificar. Esto hace que el espacio de hiperparámetros sea demasiado grande como para
+cubrirlo uniformemente de manera acertada. Por este motivo, es de especial importancia el uso de algoritmos de HPO más novedosos que GridSearch
+para poder explorar zonas del espacio más interesantes. En concreto, se utiliza TPE (*Tree-structured Parzen Estimator*) al igual que en el resto
+de modelos. A rasgos generales, TPE ajusta un modelo Modelo Gaussiano de Mezcla (*GMM*) $l(x)$ al conjunto de hiperparámetros asociados a los mejores valores
+de la métrica hasta el momento, y luego otro GMM $g(x)$ con el resto de valores de hiperparámetros.
+Finalmente, se coge el parámetro $x$ que maximice el ratio $l(x)/g(x)$.
+
 | Detalle                   | Valor |
 |:-------------------------:|:-----:|
 | Nombre del experimento    | XGBoost  |
@@ -326,6 +339,13 @@ if __name__ == '__main__':
 | gamma | choice([0, 0.5, 2, 10, 20]) |
 | min_child_weight | loguniform(0.01, 1) |
 | subsample | uniform(0.1, 0.9) |
+
+Además, para mejorar el rendimiento del trabajo de HPO, se hace uso de varios *callbacks* de XGBoost para *podar* configuraciones no prometedoras (ver Listing \ref{#xgboost_code}).
+De esta forma, conforme se van probando configuraciones, los modelos menos prometedores no terminan de construirse, ahorrando así cómputo.
+El primero de ellos es *XGBoostPruningCallback* de *Optuna* que permite abortar configuraciones no prometedoras según el espacio de hiperparámetros ya explorado y las métricas recogidas
+anteriormente. El segundo de ellos es un *callback* de *Early Stopping*, se utiliza para parar el entrenamiento cuando no existe mejora (o incluso empeora) en sucesivas iteraciones.
+En este caso, el número de iteraciones mínimo donde debe haber mejora es de $numero\_estimadores / 10$. Por último, se utiliza el *callback* *record_evaluation* para guardar
+los resultados del entrenamiento a lo largo de las iteraciones y evitar el cómputo de evaluar el modelo al final del entrenamiento (ya lo hace XGBoost internamente).
 
 
 ``` {#xgboost_code .python caption="Implementación del script de entrenamiento para Xgboost."}
@@ -373,12 +393,32 @@ if __name__ == '__main__':
 
 ### Autoencoder V1
 
-
 | Detalle                   | Valor |
 |:-------------------------:|:-----:|
 | Nombre del experimento    | Autoencoder V1 |
 | Número de configuraciones | 100   |
 | Optuna Sampler            | TPE  |
+| Épocas de entrenamiento   | 200  |
+
+Table: Información general sobre el experimento Autoencoder V1
+
+Para los algoritmos basados en autoencoders, se han propuesto dos experimentos por separado.
+El primero de ellos, consiste en un autoencoder *denoising* con probabilidad de descarte $p$ y con soporte
+para *Tied-weights* (ver Tabla \ref{a1_hyper}). Además, tiene las siguientes características:
+
+- Permite dos funciones de activación distintas: *RELU* y *SELU*. *SELU* es un función de activación
+moderna (2017), que junto con *Swiss* y *ELU*, suele arrojar resultados mejors en comparación con RELU.
+Aunque la mayoría de investigación al respecto está enfocada a problemas de clasificación de imágenes,
+lo cual hace realmente difícil la comparativa entre ambas aplicadas a *autoencoders*.
+
+- PCA y autoencoders (sobre todo lineales) tienen muchas similaridades, pero
+interesantes de PCA. PCA y autoencoders (sobre todo lineales) tienen muchas similaridades, pero
+no pueden ofrecer ortogonalidad, ni vectores unitarios en la base. En este trabajo se han implementado dos restricciones
+a nivel de capa, para asegurar la ortonormalidad, una restricción para ortogonalidad propia (ver Listing \ref{weight_orthogonality}),
+y una restricción para el tamaño unitario de las componentes del espacio latente utilizando *UnitNorm* de *Keras*.
+Existen además otras propiedades de PCA que se han adaptado a autoencoders [@ladjalPCAlikeAutoencoder2019],
+como por ejemplo, forzar a que los componentes del espacio latente sean estadísticamente independientes.
+Dichas características se salen del alcance de este trabajo.
 
 
 | Parámetro | Distribución                          |
@@ -391,6 +431,29 @@ if __name__ == '__main__':
 | unit_norm_constraint | choice([false, true]) |
 | weight_orthogonality | choice([false, true]) |
 
+Table: \label{a1_hyper} Espacio de hiperparámetros para el experimento Autoencoder V1
+
+
+``` {#weight_orthogonality .python caption="Implementación del la restricción para ortogonalidad en las componentes del espacio latente en autoencoders. Fuente: https://towardsdatascience.com/build-the-right-autoencoder-tune-and-optimize-using-pca-principles-part-ii-24b9cca69bd6"}
+class WeightsOrthogonalityConstraint(constraints.Constraint):
+    def __init__(self, encoding_dim, weightage=1.0, axis=0):
+        self.encoding_dim = encoding_dim
+        self.weightage = weightage
+        self.axis = axis
+
+    def weights_orthogonality(self, w):
+        if self.axis == 1:
+            w = K.transpose(w)
+        if self.encoding_dim > 1:
+            m = K.dot(K.transpose(w), w) - K.eye(self.encoding_dim)
+            return self.weightage * K.sqrt(K.sum(K.square(m)))
+        else:
+            m = K.sum(w ** 2) - 1.
+            return m
+
+    def __call__(self, w):
+        return self.weights_orthogonality(w)
+```
 
 ### Autoencoder V2
 
@@ -400,11 +463,14 @@ if __name__ == '__main__':
 | Nombre del experimento    | Autoencoder V1 |
 | Número de configuraciones | 90   |
 | Optuna Sampler            | TPE  |
+| Épocas de entrenamiento   | 200  |
+
+Table: Información general sobre el experimento Autoencoder V2
 
 
 | Parámetro | Distribución                          |
 |-----------|---------------------------------------|
-| encoding_dim | choice([[range(2, 20), range(2, 20)], ..., [range(2, 20), range(2, 20), range(2, 20), range(2, 20)]]) |
+| encoding_dim | range(2, 20) $\times$ range(2, 5)  |
 | ps | uniform(0, 0.5) |
 | lr | loguniform(0.001, 0.1) |
 | activation | choice(['selu', 'relu']) |
@@ -413,9 +479,31 @@ if __name__ == '__main__':
 | unit_norm_constraint | choice([false, true]) |
 | weight_orthogonality | choice([false, true]) |
 
+Table: \label{a2_hyper} Espacio de hiperparámetros para el experimento Autoencoder V1
 
 
 ### Autoencoder Variacional
+
+| Detalle                   | Valor |
+|:-------------------------:|:-----:|
+| Nombre del experimento    | Variational Autoencoder |
+| Número de configuraciones | 50   |
+| Optuna Sampler            | TPE  |
+| Épocas de entrenamiento   | 200  |
+
+Table: Información general sobre el experimento Autoencoder Variacional
+
+
+| Parámetro | Distribución     |
+|-----------|------------------|
+| encoding_dim | range(2, 15)  |
+| latent_dim | range(2, 5)  |
+| ps | 0 |
+| activation | choice(['selu', 'relu']) |
+| one_cycle | choice([false, true]) |
+
+Table: \label{vae_hyper} Espacio de hiperparámetros para el experimento Autoencoder Variacional
+
 
 
 #### Truco de la reparametrización
