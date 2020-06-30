@@ -3723,6 +3723,37 @@ references:
   type: article-journal
   volume: '7'
 
+- id: shiPhotodiodesCommunicationsBioSensings2011
+  abstract: >-
+    This book describes different kinds of photodiodes for applications in
+    high-speed data communication, biomedical sensing, high-speed measurement,
+    UV-light detection, and high energy physics. The photodiodes discussed are
+    composed of several different semiconductor materials, such as InP, SiC, and
+    Si, which cover an extremely wide optical wavelength regime ranging from
+    infrared light to X-ray, making the suitable for diversified applications.
+    Several interesting and unique topics were discussed including: the
+    operation of high-speed photodiodes at low-temperature for super-conducting
+    electronics, photodiodes for bio-medical imaging, single photon detection,
+    photodiodes for the applications in nuclear physics, and for UV-light
+    detection.
+  author:
+    - family: Shi
+      given: Jin-Wei
+  ISBN: 978-953-307-277-7
+  issued:
+    - year: 2011
+      month: 9
+      day: 6
+  language: en
+  number-of-pages: '298'
+  publisher: BoD – Books on Demand
+  source: Google Books
+  title: >-
+    Photodiodes: Communications, Bio-Sensings, Measurements and High-Energy
+    Physics
+  title-short: Photodiodes
+  type: book
+
 - id: smithDisciplinedApproachNeural2018
   abstract: >-
     Although deep learning has produced dazzling successes for applications of
