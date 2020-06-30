@@ -3462,6 +3462,20 @@ references:
   type: webpage
   URL: 'https://kubernetes.io/'
 
+- id: ProjectJupyter
+  abstract: >-
+    The Jupyter Notebook is a web-based interactive computing platform. The
+    notebook combines live code, equations, narrative text, visualizations,
+    interactive dashboards and other media.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 30
+  source: jupyter.org
+  title: Project Jupyter
+  type: webpage
+  URL: 'https://www.jupyter.org'
+
 - id: provost1998glossary
   author:
     - family: Provost
