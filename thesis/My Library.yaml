@@ -2542,6 +2542,47 @@ references:
   type: article-journal
   volume: '18'
 
+- id: lubsandorzhievHistoryPhotomultiplierTube2006
+  abstract: >-
+    In this very short note we review some historical aspects of photomultiplier
+    tube invention. It is our tribute to the memory of great Soviet-Russian
+    physicist and engineer Leonid Aleksandrovitch Kubetsky whose life and
+    scientific achievements are described briefly. Particular efforts are made
+    to shed light on a controversial issue of who invented the first
+    photomultiplier tube. It is asserted that if to recognize L.A. Kubetsky's
+    priority on the photomultiplier tube invention the last Beaune Conference
+    would be held on the eve of the 75th Anniversary of that great event.
+  accessed:
+    - year: 2020
+      month: 6
+      day: 21
+  author:
+    - family: Lubsandorzhiev
+      given: B. K.
+  collection-title: >-
+    Proceedings of the 4th International Conference on New Developments in
+    Photodetection
+  container-title: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  container-title-short: >-
+    Nuclear Instruments and Methods in Physics Research Section A: Accelerators,
+    Spectrometers, Detectors and Associated Equipment
+  DOI: 10.1016/j.nima.2006.05.221
+  ISSN: 0168-9002
+  issue: '1'
+  issued:
+    - year: 2006
+      month: 11
+      day: 1
+  language: en
+  page: 236-238
+  source: ScienceDirect
+  title: On the history of photomultiplier tube invention
+  type: article-journal
+  URL: 'http://www.sciencedirect.com/science/article/pii/S0168900206009260'
+  volume: '567'
+
 - id: luRecommenderSystems2012
   abstract: >-
     The ongoing rapid expansion of the Internet greatly increases the necessity
