@@ -1567,6 +1567,39 @@ references:
   URL: 'http://arxiv.org/abs/1604.05488'
   volume: '16'
 
+- id: demmelLAPACKPortableLinear1989
+  abstract: >-
+    A portable FORTRAN linear algebra library, LAPACK for efficient use on a
+    variety of high-performance computers is discussed. The library is based on
+    the widely used LINPACK and EISPACK packages for linear equation solving,
+    eigenvalue problems, and linear least squares, but it extends their
+    functionality in a number of ways. The major methodology for making the
+    algorithms run faster is to restructure them to perform block matrix
+    operations (like matrix-matrix multiplication) in their inner loops. These
+    block operations can be optimized to exploit the memory hierarchy of
+    different architectures, resulting in large speedups. Divide-and-conquer
+    algorithms are used for a variety of eigenproblems. Algorithms which are
+    much more accurate than their conventional counterparts for a variety of
+    problems are described.<>
+  author:
+    - family: Demmel
+      given: J.
+  container-title: >-
+    IEEE Control Systems Society Workshop on Computer-Aided Control System
+    Design
+  DOI: 10.1109/CACSD.1989.69824
+  event: >-
+    IEEE Control Systems Society Workshop on Computer-Aided Control System
+    Design
+  issued:
+    - year: 1989
+      month: 12
+  page: 1-7
+  source: IEEE Xplore
+  title: 'LAPACK: a portable linear algebra library for supercomputers'
+  title-short: LAPACK
+  type: paper-conference
+
 - id: DessaossAtlas2020
   abstract: 'An Open Source, Self-Hosted Platform For Applied Deep Learning Development'
   accessed:
