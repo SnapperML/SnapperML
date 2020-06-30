@@ -2515,6 +2515,26 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1904.01277'
 
+- id: lawson1979basic
+  author:
+    - family: Lawson
+      given: Chuck L
+    - family: Hanson
+      given: Richard J.
+    - family: Kincaid
+      given: David R
+    - family: Krogh
+      given: Fred T.
+  container-title: ACM Transactions on Mathematical Software (TOMS)
+  issue: '3'
+  issued:
+    - year: 1979
+  page: 308–323
+  publisher: 'ACM New York, NY, USA'
+  title: Basic linear algebra subprograms for Fortran usage
+  type: article-journal
+  volume: '5'
+
 - id: liHyperbandNovelBanditbased2017
   abstract: >-
     Performance of machine learning algorithms depends critically on identifying
