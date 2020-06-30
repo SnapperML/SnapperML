@@ -2288,6 +2288,39 @@ references:
   type: book
   URL: 'https://github.com/iterative/dvc'
 
+- id: juDeepLearningMethod2015
+  abstract: >-
+    In this paper, a novel unsupervised method for learning sparse features
+    combined with support vector machines for classification is proposed. The
+    classical SVM method has restrictions on the large-scale applications. This
+    model uses sparse auto encoder, a deep learning algorithm, to improve the
+    performance. Firstly, we use multiple layers of sparse auto encoder to learn
+    the features of the data. Secondly, we use SVM to classify. Many
+    experimental results show that compared with SVM, our proposed method can
+    improve the classification rate. In particular, it can effectively deal with
+    large-scale data sets.
+  author:
+    - family: Ju
+      given: Yao
+    - family: Guo
+      given: Jun
+    - family: Liu
+      given: Shuchun
+  container-title: >-
+    2015 International Conference on Cyber-Enabled Distributed Computing and
+    Knowledge Discovery
+  DOI: 10.1109/CyberC.2015.39
+  event: >-
+    2015 International Conference on Cyber-Enabled Distributed Computing and
+    Knowledge Discovery
+  issued:
+    - year: 2015
+      month: 9
+  page: 257-260
+  source: IEEE Xplore
+  title: A Deep Learning Method Combined Sparse Autoencoder with SVM
+  type: paper-conference
+
 - id: kearns2013machine
   author:
     - family: Kearns
@@ -4145,6 +4178,48 @@ references:
   type: webpage
   URL: >-
     /paper/Setting-the-Default-to-Reproducible-Reproducibility-Stodden-Bailey/992647adcc7e3626768841acb039d2b4a70d5c95
+
+- id: sublimeAutomaticPostDisasterDamage2019
+  abstract: >-
+    Post-disaster damage mapping is an essential task following tragic events
+    such as hurricanes, earthquakes, and tsunamis. It is also a time-consuming
+    and risky task that still often requires the sending of experts on the
+    ground to meticulously map and assess the damages. Presently, the increasing
+    number of remote-sensing satellites taking pictures of Earth on a regular
+    basis with programs such as Sentinel, ASTER, or Landsat makes it easy to
+    acquire almost in real time images from areas struck by a disaster before
+    and after it hits. While the manual study of such images is also a tedious
+    task, progress in artificial intelligence and in particular deep-learning
+    techniques makes it possible to analyze such images to quickly detect areas
+    that have been flooded or destroyed. From there, it is possible to evaluate
+    both the extent and the severity of the damages. In this paper, we present a
+    state-of-the-art deep-learning approach for change detection applied to
+    satellite images taken before and after the Tohoku tsunami of 2011. We
+    compare our approach with other machine-learning methods and show that our
+    approach is superior to existing techniques due to its unsupervised nature,
+    good performance, and relative speed of analysis.
+  author:
+    - family: Sublime
+      given: Jeremie
+    - family: Kalinicheva
+      given: Ekaterina
+  container-title: Remote Sensing
+  container-title-short: Remote Sensing
+  DOI: 10.3390/rs11091123
+  issued:
+    - year: 2019
+      month: 5
+      day: 10
+  page: '1123'
+  source: ResearchGate
+  title: >-
+    Automatic Post-Disaster Damage Mapping Using Deep-Learning Techniques for
+    Change Detection: Case Study of the Tohoku Tsunami
+  title-short: >-
+    Automatic Post-Disaster Damage Mapping Using Deep-Learning Techniques for
+    Change Detection
+  type: article-journal
+  volume: '11'
 
 - id: sutton1998introduction
   author:
