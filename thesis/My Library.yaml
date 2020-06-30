@@ -1504,6 +1504,20 @@ references:
   URL: 'https://doi.org/10.1007/BF00994018'
   volume: '20'
 
+- id: DataGripIDEMultiplataforma
+  abstract: 'Un potente IDE de JetBrains para SQL en macOS, Windows y Linux.'
+  accessed:
+    - year: 2020
+      month: 6
+      day: 30
+  container-title: JetBrains
+  language: es
+  source: www.jetbrains.com
+  title: 'DataGrip: el IDE multiplataforma para bases de datos y SQL, de JetBrains'
+  title-short: DataGrip
+  type: webpage
+  URL: 'https://www.jetbrains.com/es-es/datagrip/'
+
 - id: DataScienceCollaboration
   abstract: >-
     Neptune is an experiment tracking tool bringing organization and
