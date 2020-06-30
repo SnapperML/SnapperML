@@ -1445,6 +1445,21 @@ references:
   URL: 'https://doi.org/10.1007/BF00994018'
   volume: '20'
 
+- id: d2011new
+  author:
+    - family: D’Ascenzo
+      given: Nicola
+    - family: Saveliev
+      given: Valeri
+  container-title: >-
+    Photodiodes-Communications, Bio-Sensings, Measurements and High-Energy
+    Physics ch13 (InTech)
+  issued:
+    - year: 2011
+  page: 261–284
+  title: The new photodetectors for high energy physics and nuclear medicine
+  type: article-journal
+
 - id: DataScienceCollaboration
   abstract: >-
     Neptune is an experiment tracking tool bringing organization and
