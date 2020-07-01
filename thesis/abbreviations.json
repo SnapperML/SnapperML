@@ -1,0 +1,46 @@
+{
+  "pca": {
+    "shortform": "PCA",
+    "longform": "Análisis de Componentes Principales"
+  },
+  "wcd": {
+    "shortform": "WCD",
+    "longform": "Water Cherenkov Detector"
+  },
+  "ml": {
+    "shortform": "ML",
+    "longform": "Machine Learning"
+  },
+  "gcp": {
+    "shortform": "GCP",
+    "longform": "Google Cloud Platform"
+  },
+  "gpu": {
+    "shortform": "GPU",
+    "longform": "Unidad de Procesado Gráfico"
+  },
+  "ci": {
+    "shortform": "CI",
+    "longform": "Integración Continua"
+  },
+  "cd": {
+    "shortform": "CD",
+    "longform": "Entrega Continua"
+  },
+  "ia": {
+    "shortform": "IA",
+    "longform": "Inteligencia Artificial"
+  },
+  "cli": {
+    "shortform": "CLI",
+    "longform": "Interfaz de Linea de Comandos"
+  },
+  "svm": {
+    "shortform": "SVM",
+    "longform": "Support Vector Machine"
+  },
+  "hpo": {
+    "shortform": "HPO",
+    "longform": "Optimización de Hiperparámetros"
+  }
+}

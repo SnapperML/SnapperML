@@ -61,7 +61,7 @@ desplegar una aplicación o entorno particular. Los contenedores pueden ser ento
 puede ser aplicaciones enteras - contenedor de NodeJS-Ubuntu por ejemplo.
 
 - Optuna [@akibaOptunaNextgenerationHyperparameter2019]: Opt una es un framework para optimización de hiperparámetros automatizada,
-diseñado especialmente para ML. La característica principal que diferencia a esta herramienta de otras como Hyperopt, sk-opt, etc,
+diseñado especialmente para [!ml]. La característica principal que diferencia a esta herramienta de otras como Hyperopt, sk-opt, etc,
 es la API *define-by-run*, la cuál es una API imperativa con la que se pueden construir espacios de búsqueda de hiperparámetros de
 manera dinámica. Además, soporta diferentes algoritmos de optimización:
 TPE, Hyperband, GridSearch, etc [@bergstraAlgorithmsHyperParameterOptimization2011].

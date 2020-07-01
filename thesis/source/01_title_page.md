@@ -23,7 +23,7 @@
         
         \normalsize
         Supervisado por:\\
-        Alberto Guillén
+        Alberto Guillén Perales
 
         \vspace{0.8cm}
 
