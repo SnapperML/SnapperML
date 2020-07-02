@@ -3157,6 +3157,15 @@ references:
   type: article-journal
   volume: '72'
 
+- id: NumPy
+  accessed:
+    - year: 2020
+      month: 7
+      day: 2
+  title: NumPy
+  type: webpage
+  URL: 'https://numpy.org/'
+
 - id: nwankpaActivationFunctionsComparison2018
   abstract: >-
     Deep neural networks have been successfully used in diverse emerging domains
