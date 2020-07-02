@@ -1695,6 +1695,29 @@ references:
   type: book
   URL: 'https://github.com/dessa-oss/atlas'
 
+- id: domenechAntoniomdkSeminarsTalks2020
+  abstract: Example code and slides from seminars and other technical talks I've given
+  accessed:
+    - year: 2020
+      month: 7
+      day: 2
+  author:
+    - family: Domenech
+      given: Antonio Molner
+  genre: JavaScript
+  issued:
+    - year: 2020
+      month: 4
+      day: 23
+  original-date:
+    - year: 2020
+      month: 4
+      day: 19
+  source: GitHub
+  title: antoniomdk/seminars_and_talks
+  type: book
+  URL: 'https://github.com/antoniomdk/seminars_and_talks'
+
 - id: EdgeOrg
   accessed:
     - year: 2020

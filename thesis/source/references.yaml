@@ -1553,6 +1553,31 @@ references:
   URL: 'https://doi.org/10.1007/BF00994018'
   volume: '20'
 
+- id: CUDAToolkit2013
+  abstract: >-
+    CUDA Toolkit Develop, Optimize and Deploy GPU-Accelerated Apps The NVIDIA®
+    CUDA® Toolkit provides a development environment for creating high
+    performance GPU-accelerated applications. With the CUDA Toolkit, you can
+    develop, optimize, and deploy your applications on GPU-accelerated embedded
+    systems, desktop workstations, enterprise data centers, cloud-based
+    platforms and HPC supercomputers. The toolkit includes GPU-accelerated
+    libraries, debugging and optimization tools, a C/C++ compiler, and a runtime
+    library to deploy your application.
+  accessed:
+    - year: 2020
+      month: 7
+      day: 2
+  container-title: NVIDIA Developer
+  issued:
+    - year: 2013
+      month: 7
+      day: 2
+  language: en
+  source: developer.nvidia.com
+  title: CUDA Toolkit
+  type: webpage
+  URL: 'https://developer.nvidia.com/cuda-toolkit'
+
 - id: DataGripIDEMultiplataforma
   abstract: 'Un potente IDE de JetBrains para SQL en macOS, Windows y Linux.'
   accessed:
@@ -1669,6 +1694,29 @@ references:
   title: dessa-oss/atlas
   type: book
   URL: 'https://github.com/dessa-oss/atlas'
+
+- id: domenechAntoniomdkSeminarsTalks2020
+  abstract: Example code and slides from seminars and other technical talks I've given
+  accessed:
+    - year: 2020
+      month: 7
+      day: 2
+  author:
+    - family: Domenech
+      given: Antonio Molner
+  genre: JavaScript
+  issued:
+    - year: 2020
+      month: 4
+      day: 23
+  original-date:
+    - year: 2020
+      month: 4
+      day: 19
+  source: GitHub
+  title: antoniomdk/seminars_and_talks
+  type: book
+  URL: 'https://github.com/antoniomdk/seminars_and_talks'
 
 - id: EdgeOrg
   accessed:
