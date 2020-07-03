@@ -1,1 +1,0 @@
-# Anexo: Manual de Usuario
