@@ -15,7 +15,7 @@ atención a los *autoencoders*. Finalmente, se hace un repaso del estado del art
 
 ## Nomenclatura
 
-El area de la ciencia de datos, *Machine Learning* y *MLOps*, se hace uso de una terminología concreta
+El área de la ciencia de datos, *Machine Learning* y *MLOps*, se hace uso de una terminología concreta
 [@wardenBigDataGlossary2011; @hutsonAIGlossaryArtificial2017; @provost1998glossary],
 basada principalmente en la terminología de *Aprendizaje estadístico*, *Desarrollo Software*, y 
 *DevOps* en el caso de *MLOps*. En esta sección se desarrollan algunos de los términos más utilizados:
@@ -63,36 +63,6 @@ Alguno de los entornos objetivos más comunes son:
     Útil para dispositivos con conectividad limitada, IoT, etc.
     - Parte de un sistema de predicción por lotes.
 
-### Acrónimos
-
-- **ML**: Machine Learning
-
-- **DL**: Deep Learning
-
-- **PCA**: Análisis de Componentes Principales
-
-- **WCD**: Water Cherenkov Detector
-
-- **GCP**: Google Cloud Platform
-
-- **GPU**: Unidad de Procesado Gráfico
-
-- **CI**: Integración Continua
-
-- **CD**: Entrega Continua
-
-- **IA**: Inteligencia Artificial
-
-- **CLI**: Interfaz de Linea de Comandos
-
-- **VAE**: Autoencoder variacional
-
-- **SVM**: Máquina de Soporte Vectorial
-
-- **TPE**: Tree-structured Parzen Estimator
-
-- **HPO**: Optimización de Hiperparámetros
-
 
 ## Reproducibilidad
 
@@ -110,7 +80,7 @@ algoritmos, etc) entre otros. Para aumentar la accesibilidad de los estudios, lo
 de ofrecer esta información además de las gráficas y tablas.
 
 La verificación independiente tiene como objetivo la confirmación de credibilidad y la extensión del conocimiento
-en un area. La investigación relativa al *Machine Learning* o a otras areas donde se haga uso del mismo, no
+en un área. La investigación relativa al *Machine Learning* o a otras areas donde se haga uso del mismo, no
 está exenta de este requisito de la investigación científica. Por tanto, adoptando un flujo de trabajo reproducible, estamos
 ofreciendo a la audiencia las herramientas necesarias que demuestran las decisiones tomadas y que permiten validar nuestros resultados.
 Por otro lado, para que un estudio computacional pueda  ser reproducido correctamente por un investigador independiente
@@ -125,7 +95,7 @@ En los últimos años nos hemos encontrado con muchos casos de publicaciones cie
 muestran resultados difíciles o incluso imposibles de reproducir. Este fenómeno se conoce como
 la crisis de la reproducibilidad, donde incluso estudios prominentes no se pueden reproducir
 [@pengReproducibilityCrisisScience2015; @baker500ScientistsLift2016] .
-Este fenómeno ha estudiado de manera extensiva en otros campos, pero en el area del *Machine Learning*
+Este fenómeno ha estudiado de manera extensiva en otros campos, pero en el área del *Machine Learning*
 está tomando últimamente mucha importancia. Esto es debido a que tradicionalmente, los experimentos
 científicos se deben describir de tal forma que cualquiera pueda replicarlos, sin embargo, los experimentos
 computacionales tienes varias complicaciones que los hacen particularmente difíciles de replicar: versiones
@@ -195,7 +165,7 @@ También debe permitir extender los resultados o aplicar el método desarrollado
 
 Una vez hemos definido los diferentes niveles de reproducibilidad, vamos a definir los aspectos que consideramos
 críticos para lograr una investigación *abierta o reproducible*
-[@collbergMeasuringReproducibilityComputer; @olorisadeReproducibilityMachineLearningBased2017; @pengReproducibleResearchComputational2011; @sandveTenSimpleRules2013;
+[@moraila2014measuring; @olorisadeReproducibilityMachineLearningBased2017; @pengReproducibleResearchComputational2011; @sandveTenSimpleRules2013;
 @stoddenSettingDefaultReproducible2013; @wilsonGoodEnoughPractices2017].
 
 - **Conjunto de datos**: La información sobre la localización y el proceso de extracción de los datos. Este factor
@@ -227,7 +197,7 @@ mínima que se debe proporcionar es:
 - **Evaluación del modelo**: Información sobre como se evalúa un modelo entrenado. Información similar al punto anterior
 se aplica aquí.
 
-- **Control de la estocásticidad**: La mayoría de operaciones en *Machine Learning* tienen un factor de aleatoriedad.
+- **Control de la estocasticidad**: La mayoría de operaciones en *Machine Learning* tienen un factor de aleatoriedad.
 Por tanto, es esencial establecer los valores de las semilla que controlar dichos procesos.
 La mayoría de herramientas de cálculo científico ofrecen algún método para establecer la semilla del
 generador de números aleatorios.
@@ -486,7 +456,7 @@ de sistemas. Además, existen ciertos requisitos que solamente se conocen una ve
 se monitoriza. Como pueden ser el *desfase de datos*, sesgo inherente o fallos del sistema.
 
 Para responder a estos desafíos de manera exitosa, los equipos de [!ml] deben implementar las
-siguientes prácticas [@collinsDeliveringVisionMLOps].
+siguientes prácticas [@mcknightDeliveringVisionMLOps2020].
 
 - **Reproducibilidad**: Como se ha explicado en al principio del capítulo, este aspecto
 es fundamental y es uno de los objetivos de *MLOps*. Cuando se automatizan los diferentes
@@ -509,7 +479,7 @@ colaborar y asegurar que las iniciativas de [!ml] están alineadas con el resto 
 así como con el negocio en general.
 
 ![Tabla que resume los aspectos claves de la adopción de MLOps en la industria a diferentes niveles según el
-modelo de madurez descrito en esta sección. Fuente: [@collinsDeliveringVisionMLOps]](source/figures/mlops_levels.jpg){#fig:mlops_levels}
+modelo de madurez descrito en esta sección. Fuente: [@mcknightDeliveringVisionMLOps2020]](source/figures/mlops_levels.jpg){#fig:mlops_levels}
 
 Las prácticas anteriores son un indicador de la madurez del equipo de ciencia de datos, así como de las relaciones
 con el resto de equipos de desarrollo, y la compañía. Cada compañía puede implementar estas prácticas a diferentes
@@ -530,7 +500,7 @@ Para poder implementar correctamente las buenas prácticas de *MLOps*, es necesa
 proceso sea lo más reproducible y determinista posible. Esto es un requisito necesario para poder
 implementar las prácticas de integración y entrega continua, ya que se fundamentan en la automatización.
 Por tanto, las prácticas descritas en la sección de *Reproducibilidad* sobre el control de las particiones
-de datos, estocásticidad, parámetros del experimento, etc. deben ser aplicados también para el desarrollo
+de datos, estocasticidad, parámetros del experimento, etc. deben ser aplicados también para el desarrollo
 de sistemas de [!ml] en la industria.
 
 Por la razón anterior, la mayoría de software y plataformas orientadas a *MLOps* ofrecen herramientas para
@@ -951,7 +921,7 @@ Donde $\odot$ corresponde al producto elemento a elemento.
 
 El truco de la reparametrización funciona también para otro tipo de distribuciones, no solo la Gaussiana.
 En el caso de la Gaussiana multivariable, se hace posible entrenar el modelo aprendiendo la media y la varianza
-de la distribución. $\mu$ y $\sigma$, usando explícitamente este truco, mientras que la estocásticidad permanece
+de la distribución. $\mu$ y $\sigma$, usando explícitamente este truco, mientras que la estocasticidad permanece
 en la variable aleatoria $\boldsymbol{\epsilon} \sim \mathcal{N}(0, \boldsymbol{I})$.
 
 ### Autoencoders apilados

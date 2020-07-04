@@ -530,6 +530,16 @@ references:
   type: webpage
   URL: 'https://aws.amazon.com/es/sagemaker/'
 
+- id: anderson2010kanban
+  author:
+    - family: Anderson
+      given: David J
+  issued:
+    - year: 2010
+  publisher: Blue Hole Press
+  title: 'Kanban: successful evolutionary change for your technology business'
+  type: book
+
 - id: argiroOfflineSoftwareFramework2007
   abstract: >-
     The Pierre Auger Observatory is designed to unveil the nature and the
@@ -1494,6 +1504,22 @@ references:
   source: Zotero
   title: Measuring Reproducibility in Computer Systems Research
   type: article-journal
+
+- id: collbergMeasuringReproducibilityComputer2014
+  abstract: >-
+    We describe a study into the willingness of Computer Systems researchers to
+    share their code and data. We nd that . . . . We also propose a novel
+    sharing specication scheme that will require researchers to specify the
+    level of reproducibility that reviewers and readers can assume from a paper
+    either submitted for publication, or published.
+  author:
+    - family: Collberg
+      given: Christian S.
+  issued:
+    - year: 2014
+  source: Semantic Scholar
+  title: Measuring Reproducibility in Computer Systems Research
+  type: paper-conference
 
 - id: collinsDeliveringVisionMLOps
   author:
@@ -2903,6 +2929,29 @@ references:
   type: chapter
   URL: 'http://papers.nips.cc/paper/1766-boosting-algorithms-as-gradient-descent.pdf'
 
+- id: mcknightDeliveringVisionMLOps2020
+  abstract: >-
+    This report is targeted at Business and IT decision-makers as they look to
+    implement MLOps, which is an approach to deliver Machine…
+  accessed:
+    - year: 2020
+      month: 7
+      day: 3
+  author:
+    - family: McKnight
+      given: William
+  issued:
+    - year: 2020
+      month: 1
+      day: 21
+  language: en-US
+  note: 'Last Modified: 2020-06-11'
+  publisher: Gigaom
+  source: gigaom.com
+  title: Delivering on the Vision of MLOps
+  type: webpage
+  URL: 'https://gigaom.com/report/delivering-on-the-vision-of-mlops/'
+
 - id: merkel2014docker
   author:
     - family: Merkel
@@ -2977,6 +3026,22 @@ references:
   type: webpage
   URL: >-
     https://cloud.google.com/solutions/machine-learning/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning
+
+- id: moraila2014measuring
+  author:
+    - family: Moraila
+      given: Gina
+    - family: Shankaran
+      given: Akash
+    - family: Shi
+      given: Zuoming
+    - family: Warren
+      given: Alex M
+  issued:
+    - year: 2014
+  publisher: 'Technical report, University of Arizona'
+  title: Measuring reproducibility in computer systems research
+  type: report
 
 - id: moritzRayDistributedFramework2018
   abstract: >-
@@ -3191,6 +3256,47 @@ references:
     Tensor Computations Approach
   type: article-journal
 
+- id: newcombeIntervalEstimationDifference1998
+  abstract: >-
+    Several existing unconditional methods for setting confidence intervals for
+    the difference between binomial proportions are evaluated. Computationally
+    simpler methods are prone to a variety of aberrations and poor coverage
+    properties. The closely interrelated methods of Mee and Miettinen and
+    Nurminen perform well but require a computer program. Two new approaches
+    which also avoid aberrations are developed and evaluated. A tail area
+    profile likelihood based method produces the best coverage properties, but
+    is difficult to calculate for large denominators. A method combining Wilson
+    score intervals for the two proportions to be compared also performs well,
+    and is readily implemented irrespective of sample size. © 1998 John Wiley &
+    Sons, Ltd.
+  accessed:
+    - year: 2020
+      month: 7
+      day: 4
+  author:
+    - family: Newcombe
+      given: Robert G.
+  container-title: Statistics in Medicine
+  DOI: '10.1002/(SICI)1097-0258(19980430)17:8<873::AID-SIM779>3.0.CO;2-I'
+  ISSN: 1097-0258
+  issue: '8'
+  issued:
+    - year: 1998
+  language: en
+  note: >-
+    _eprint:
+    https://onlinelibrary.wiley.com/doi/pdf/10.1002/%28SICI%291097-0258%2819980430%2917%3A8%3C873%3A%3AAID-SIM779%3E3.0.CO%3B2-I
+  page: 873-890
+  source: Wiley Online Library
+  title: >-
+    Interval estimation for the difference between independent proportions:
+    comparison of eleven methods
+  title-short: Interval estimation for the difference between independent proportions
+  type: article-journal
+  URL: >-
+    https://www.onlinelibrary.wiley.com/doi/abs/10.1002/%28SICI%291097-0258%2819980430%2917%3A8%3C873%3A%3AAID-SIM779%3E3.0.CO%3B2-I
+  volume: '17'
+
 - id: ng2011sparse
   author:
     - family: Ng
@@ -3285,12 +3391,42 @@ references:
       given: Pearl
     - family: Andras
       given: Peter
+  event: >-
+    Reproducibility in ML Workshop at the 34th International Conference on
+    Machine Learning
   issued:
     - year: 2017
+  publisher: ICML
   source: Semantic Scholar
   title: 'Reproducibility in Machine Learning-Based Studies: An Example of Text Mining'
   title-short: Reproducibility in Machine Learning-Based Studies
   type: paper-conference
+
+- id: olorisadeReproducibilityMachineLearningBased2017a
+  abstract: >-
+    Reproducibility is an essential requirement for computational studies
+    including those based on machine learning techniques. However, many machine
+    learning studies are either not reproducible or are...
+  accessed:
+    - year: 2020
+      month: 7
+      day: 3
+  author:
+    - family: Olorisade
+      given: Babatunde K.
+    - family: Brereton
+      given: Pearl
+    - family: Andras
+      given: Peter
+  issued:
+    - year: 2017
+      month: 6
+      day: 16
+  source: openreview.net
+  title: 'Reproducibility in Machine Learning-Based Studies: An Example of Text Mining'
+  title-short: Reproducibility in Machine Learning-Based Studies
+  type: article-journal
+  URL: 'https://openreview.net/forum?id=By4l2PbQ-'
 
 - id: OnnxOnnx2020
   abstract: Open standard for machine learning interoperability
@@ -4292,6 +4428,884 @@ references:
   type: book
   volume: '135'
 
+- id: thepierreaugercollaborationInferencesMassComposition2017
+  abstract: >-
+    We present a new method for probing the hadronic interaction models at
+    ultra-high energy and extracting details about mass composition. This is
+    done using the time profiles of the signals recorded with the
+    water-Cherenkov detectors of the Pierre Auger Observatory. The profiles
+    arise from a mix of the muon and electromagnetic components of air-showers.
+    Using the risetimes of the recorded signals we define a new parameter, which
+    we use to compare our observations with predictions from simulations. We
+    find, firstly, inconsistencies between our data and predictions over a
+    greater energy range and with substantially more events than in previous
+    studies. Secondly, by calibrating the new parameter with fluorescence
+    measurements from observations made at the Auger Observatory, we can infer
+    the depth of shower maximum for a sample of over 81,000 events extending
+    from 0.3 EeV to over 100 EeV. Above 30 EeV, the sample is nearly fourteen
+    times larger than currently available from fluorescence measurements and
+    extending the covered energy range by half a decade. The energy dependence
+    of the average depth of shower maximum is compared to simulations and
+    interpreted in terms of the mean of the logarithmic mass. We find good
+    agreement with previous work and extend the measurement of the mean depth of
+    shower maximum to greater energies than before, reducing significantly the
+    statistical uncertainty associated with the inferences about mass
+    composition.
+  accessed:
+    - year: 2020
+      month: 7
+      day: 4
+  author:
+    - family: The Pierre Auger Collaboration
+      given: ''
+    - family: Aab
+      given: A.
+    - family: Abreu
+      given: P.
+    - family: Aglietta
+      given: M.
+    - family: Samarai
+      given: I. Al
+    - family: Albuquerque
+      given: I. F. M.
+    - family: Allekotte
+      given: I.
+    - family: Almela
+      given: A.
+    - family: Castillo
+      given: J. Alvarez
+    - family: Alvarez-Muñiz
+      given: J.
+    - family: Anastasi
+      given: G. A.
+    - family: Anchordoqui
+      given: L.
+    - family: Andrada
+      given: B.
+    - family: Andringa
+      given: S.
+    - family: Aramo
+      given: C.
+    - family: Arqueros
+      given: F.
+    - family: Arsene
+      given: N.
+    - family: Asorey
+      given: H.
+    - family: Assis
+      given: P.
+    - family: Aublin
+      given: J.
+    - family: Avila
+      given: G.
+    - family: Badescu
+      given: A. M.
+    - family: Balaceanu
+      given: A.
+    - family: Barbato
+      given: F.
+    - family: Luz
+      given: R. J. Barreira
+    - family: Beatty
+      given: J. J.
+    - family: Becker
+      given: K. H.
+    - family: Bellido
+      given: J. A.
+    - family: Berat
+      given: C.
+    - family: Bertaina
+      given: M. E.
+    - family: Bertou
+      given: X.
+    - family: Biermann
+      given: P. L.
+    - family: Biteau
+      given: J.
+    - family: Blaess
+      given: S. G.
+    - family: Blanco
+      given: A.
+    - family: Blazek
+      given: J.
+    - family: Bleve
+      given: C.
+    - family: Boháčová
+      given: M.
+    - family: Boncioli
+      given: D.
+    - family: Bonifazi
+      given: C.
+    - family: Borodai
+      given: N.
+    - family: Botti
+      given: A. M.
+    - family: Brack
+      given: J.
+    - family: Brancus
+      given: I.
+    - family: Bretz
+      given: T.
+    - family: Bridgeman
+      given: A.
+    - family: Briechle
+      given: F. L.
+    - family: Buchholz
+      given: P.
+    - family: Bueno
+      given: A.
+    - family: Buitink
+      given: S.
+    - family: Buscemi
+      given: M.
+    - family: Caballero-Mora
+      given: K. S.
+    - family: Caccianiga
+      given: L.
+    - family: Cancio
+      given: A.
+    - family: Canfora
+      given: F.
+    - family: Caramete
+      given: L.
+    - family: Caruso
+      given: R.
+    - family: Castellina
+      given: A.
+    - family: Catalani
+      given: F.
+    - family: Cataldi
+      given: G.
+    - family: Cazon
+      given: L.
+    - family: Chavez
+      given: A. G.
+    - family: Chinellato
+      given: J. A.
+    - family: Chudoba
+      given: J.
+    - family: Clay
+      given: R. W.
+    - family: Cobos
+      given: A.
+    - family: Colalillo
+      given: R.
+    - family: Coleman
+      given: A.
+    - family: Collica
+      given: L.
+    - family: Coluccia
+      given: M. R.
+    - family: Conceição
+      given: R.
+    - family: Consolati
+      given: G.
+    - family: Contreras
+      given: F.
+    - family: Cooper
+      given: M. J.
+    - family: Coutu
+      given: S.
+    - family: Covault
+      given: C. E.
+    - family: Cronin
+      given: J.
+    - family: D'Amico
+      given: S.
+    - family: Daniel
+      given: B.
+    - family: Dasso
+      given: S.
+    - family: Daumiller
+      given: K.
+    - family: Dawson
+      given: B. R.
+    - family: Almeida
+      given: R. M.
+      non-dropping-particle: de
+    - family: Jong
+      given: S. J.
+      non-dropping-particle: de
+    - family: De Mauro
+      given: G.
+    - family: Neto
+      given: J. R. T. de Mello
+    - family: De Mitri
+      given: I.
+    - family: Oliveira
+      given: J.
+      non-dropping-particle: de
+    - family: Souza
+      given: V.
+      non-dropping-particle: de
+    - family: Debatin
+      given: J.
+    - family: Deligny
+      given: O.
+    - family: Castro
+      given: M. L. Díaz
+    - family: Diogo
+      given: F.
+    - family: Dobrigkeit
+      given: C.
+    - family: D'Olivo
+      given: J. C.
+    - family: Dorosti
+      given: Q.
+    - family: Anjos
+      given: R. C.
+      dropping-particle: dos
+    - family: Dova
+      given: M. T.
+    - family: Dundovic
+      given: A.
+    - family: Ebr
+      given: J.
+    - family: Engel
+      given: R.
+    - family: Erdmann
+      given: M.
+    - family: Erfani
+      given: M.
+    - family: Escobar
+      given: C. O.
+    - family: Espadanal
+      given: J.
+    - family: Etchegoyen
+      given: A.
+    - family: Falcke
+      given: H.
+    - family: Farmer
+      given: J.
+    - family: Farrar
+      given: G.
+    - family: Fauth
+      given: A. C.
+    - family: Fazzini
+      given: N.
+    - family: Fenu
+      given: F.
+    - family: Fick
+      given: B.
+    - family: Figueira
+      given: J. M.
+    - family: Filipčič
+      given: A.
+    - family: Fratu
+      given: O.
+    - family: Freire
+      given: M. M.
+    - family: Fujii
+      given: T.
+    - family: Fuster
+      given: A.
+    - family: Gaior
+      given: R.
+    - family: García
+      given: B.
+    - family: Garcia-Pinto
+      given: D.
+    - family: Gaté
+      given: F.
+    - family: Gemmeke
+      given: H.
+    - family: Gherghel-Lascu
+      given: A.
+    - family: Ghia
+      given: P. L.
+    - family: Giaccari
+      given: U.
+    - family: Giammarchi
+      given: M.
+    - family: Giller
+      given: M.
+    - family: Głas
+      given: D.
+    - family: Glaser
+      given: C.
+    - family: Golup
+      given: G.
+    - family: Berisso
+      given: M. Gómez
+    - family: Vitale
+      given: P. F. Gómez
+    - family: González
+      given: N.
+    - family: Gorgi
+      given: A.
+    - family: Gorham
+      given: P.
+    - family: Grillo
+      given: A. F.
+    - family: Grubb
+      given: T. D.
+    - family: Guarino
+      given: F.
+    - family: Guedes
+      given: G. P.
+    - family: Halliday
+      given: R.
+    - family: Hampel
+      given: M. R.
+    - family: Hansen
+      given: P.
+    - family: Harari
+      given: D.
+    - family: Harrison
+      given: T. A.
+    - family: Harton
+      given: J. L.
+    - family: Haungs
+      given: A.
+    - family: Hebbeker
+      given: T.
+    - family: Heck
+      given: D.
+    - family: Heimann
+      given: P.
+    - family: Herve
+      given: A. E.
+    - family: Hill
+      given: G. C.
+    - family: Hojvat
+      given: C.
+    - family: Holt
+      given: E.
+    - family: Homola
+      given: P.
+    - family: Hörandel
+      given: J. R.
+    - family: Horvath
+      given: P.
+    - family: Hrabovský
+      given: M.
+    - family: Huege
+      given: T.
+    - family: Hulsman
+      given: J.
+    - family: Insolia
+      given: A.
+    - family: Isar
+      given: P. G.
+    - family: Jandt
+      given: I.
+    - family: Johnsen
+      given: J. A.
+    - family: Josebachuili
+      given: M.
+    - family: Jurysek
+      given: J.
+    - family: Kääpä
+      given: A.
+    - family: Kambeitz
+      given: O.
+    - family: Kampert
+      given: K. H.
+    - family: Keilhauer
+      given: B.
+    - family: Kemmerich
+      given: N.
+    - family: Kemp
+      given: E.
+    - family: Kemp
+      given: J.
+    - family: Kieckhafer
+      given: R. M.
+    - family: Klages
+      given: H. O.
+    - family: Kleifges
+      given: M.
+    - family: Kleinfeller
+      given: J.
+    - family: Krause
+      given: R.
+    - family: Krohm
+      given: N.
+    - family: Kuempel
+      given: D.
+    - family: Mezek
+      given: G. Kukec
+    - family: Kunka
+      given: N.
+    - family: Awad
+      given: A. Kuotb
+    - family: Lago
+      given: B. L.
+    - family: LaHurd
+      given: D.
+    - family: Lang
+      given: R. G.
+    - family: Lauscher
+      given: M.
+    - family: Legumina
+      given: R.
+    - family: Oliveira
+      given: M. A. Leigui
+      non-dropping-particle: de
+    - family: Letessier-Selvon
+      given: A.
+    - family: Lhenry-Yvon
+      given: I.
+    - family: Link
+      given: K.
+    - family: Presti
+      given: D. Lo
+    - family: Lopes
+      given: L.
+    - family: López
+      given: R.
+    - family: Casado
+      given: A. López
+    - family: Lorek
+      given: R.
+    - family: Luce
+      given: Q.
+    - family: Lucero
+      given: A.
+    - family: Malacari
+      given: M.
+    - family: Mallamaci
+      given: M.
+    - family: Mandat
+      given: D.
+    - family: Mantsch
+      given: P.
+    - family: Mariazzi
+      given: A. G.
+    - family: Mariş
+      given: I. C.
+    - family: Marsella
+      given: G.
+    - family: Martello
+      given: D.
+    - family: Martinez
+      given: H.
+    - family: Bravo
+      given: O. Martínez
+    - family: Meza
+      given: J. J. Masías
+    - family: Mathes
+      given: H. J.
+    - family: Mathys
+      given: S.
+    - family: Matthews
+      given: J.
+    - family: Matthews
+      given: J. A. J.
+    - family: Matthiae
+      given: G.
+    - family: Mayotte
+      given: E.
+    - family: Mazur
+      given: P. O.
+    - family: Medina
+      given: C.
+    - family: Medina-Tanco
+      given: G.
+    - family: Melo
+      given: D.
+    - family: Menshikov
+      given: A.
+    - family: Merenda
+      given: K.-D.
+    - family: Michal
+      given: S.
+    - family: Micheletti
+      given: M. I.
+    - family: Middendorf
+      given: L.
+    - family: Miramonti
+      given: L.
+    - family: Mitrica
+      given: B.
+    - family: Mockler
+      given: D.
+    - family: Mollerach
+      given: S.
+    - family: Montanet
+      given: F.
+    - family: Morello
+      given: C.
+    - family: Mostafá
+      given: M.
+    - family: Müller
+      given: A. L.
+    - family: Müller
+      given: G.
+    - family: Muller
+      given: M. A.
+    - family: Müller
+      given: S.
+    - family: Mussa
+      given: R.
+    - family: Naranjo
+      given: I.
+    - family: Nellen
+      given: L.
+    - family: Nguyen
+      given: P. H.
+    - family: Niculescu-Oglinzanu
+      given: M.
+    - family: Niechciol
+      given: M.
+    - family: Niemietz
+      given: L.
+    - family: Niggemann
+      given: T.
+    - family: Nitz
+      given: D.
+    - family: Nosek
+      given: D.
+    - family: Novotny
+      given: V.
+    - family: Nožka
+      given: L.
+    - family: Núñez
+      given: L. A.
+    - family: Ochilo
+      given: L.
+    - family: Oikonomou
+      given: F.
+    - family: Olinto
+      given: A.
+    - family: Palatka
+      given: M.
+    - family: Pallotta
+      given: J.
+    - family: Papenbreer
+      given: P.
+    - family: Parente
+      given: G.
+    - family: Parra
+      given: A.
+    - family: Paul
+      given: T.
+    - family: Pech
+      given: M.
+    - family: Pedreira
+      given: F.
+    - family: Pękala
+      given: J.
+    - family: Pelayo
+      given: R.
+    - family: Peña-Rodriguez
+      given: J.
+    - family: Pereira
+      given: L. A. S.
+    - family: Perlin
+      given: M.
+    - family: Perrone
+      given: L.
+    - family: Peters
+      given: C.
+    - family: Petrera
+      given: S.
+    - family: Phuntsok
+      given: J.
+    - family: Piegaia
+      given: R.
+    - family: Pierog
+      given: T.
+    - family: Pimenta
+      given: M.
+    - family: Pirronello
+      given: V.
+    - family: Platino
+      given: M.
+    - family: Plum
+      given: M.
+    - family: Porowski
+      given: C.
+    - family: Prado
+      given: R. R.
+    - family: Privitera
+      given: P.
+    - family: Prouza
+      given: M.
+    - family: Quel
+      given: E. J.
+    - family: Querchfeld
+      given: S.
+    - family: Quinn
+      given: S.
+    - family: Ramos-Pollan
+      given: R.
+    - family: Rautenberg
+      given: J.
+    - family: Ravignani
+      given: D.
+    - family: Ridky
+      given: J.
+    - family: Riehn
+      given: F.
+    - family: Risse
+      given: M.
+    - family: Ristori
+      given: P.
+    - family: Rizi
+      given: V.
+    - family: Carvalho
+      given: W. Rodrigues
+      non-dropping-particle: de
+    - family: Fernandez
+      given: G. Rodriguez
+    - family: Rojo
+      given: J. Rodriguez
+    - family: Rogozin
+      given: D.
+    - family: Roncoroni
+      given: M. J.
+    - family: Roth
+      given: M.
+    - family: Roulet
+      given: E.
+    - family: Rovero
+      given: A. C.
+    - family: Ruehl
+      given: P.
+    - family: Saffi
+      given: S. J.
+    - family: Saftoiu
+      given: A.
+    - family: Salamida
+      given: F.
+    - family: Salazar
+      given: H.
+    - family: Saleh
+      given: A.
+    - family: Greus
+      given: F. Salesa
+    - family: Salina
+      given: G.
+    - family: Sánchez
+      given: F.
+    - family: Sanchez-Lucas
+      given: P.
+    - family: Santos
+      given: E. M.
+    - family: Santos
+      given: E.
+    - family: Sarazin
+      given: F.
+    - family: Sarmento
+      given: R.
+    - family: Sarmiento-Cano
+      given: C.
+    - family: Sato
+      given: R.
+    - family: Schauer
+      given: M.
+    - family: Scherini
+      given: V.
+    - family: Schieler
+      given: H.
+    - family: Schimp
+      given: M.
+    - family: Schmidt
+      given: D.
+    - family: Scholten
+      given: O.
+    - family: Schovánek
+      given: P.
+    - family: Schröder
+      given: F. G.
+    - family: Schröder
+      given: S.
+    - family: Schulz
+      given: A.
+    - family: Schumacher
+      given: J.
+    - family: Sciutto
+      given: S. J.
+    - family: Segreto
+      given: A.
+    - family: Shadkam
+      given: A.
+    - family: Shellard
+      given: R. C.
+    - family: Sigl
+      given: G.
+    - family: Silli
+      given: G.
+    - family: Sima
+      given: O.
+    - family: Śmiałkowski
+      given: A.
+    - family: Šmída
+      given: R.
+    - family: Snow
+      given: G. R.
+    - family: Sommers
+      given: P.
+    - family: Sonntag
+      given: S.
+    - family: Squartini
+      given: R.
+    - family: Stanca
+      given: D.
+    - family: Stanič
+      given: S.
+    - family: Stasielak
+      given: J.
+    - family: Stassi
+      given: P.
+    - family: Stolpovskiy
+      given: M.
+    - family: Strafella
+      given: F.
+    - family: Streich
+      given: A.
+    - family: Suarez
+      given: F.
+    - family: Durán
+      given: M. Suarez
+    - family: Sudholz
+      given: T.
+    - family: Suomijärvi
+      given: T.
+    - family: Supanitsky
+      given: A. D.
+    - family: Šupík
+      given: J.
+    - family: Swain
+      given: J.
+    - family: Szadkowski
+      given: Z.
+    - family: Taboada
+      given: A.
+    - family: Taborda
+      given: O. A.
+    - family: Theodoro
+      given: V. M.
+    - family: Timmermans
+      given: C.
+    - family: Peixoto
+      given: C. J. Todero
+    - family: Tomankova
+      given: L.
+    - family: Tomé
+      given: B.
+    - family: Elipe
+      given: G. Torralba
+    - family: Travnicek
+      given: P.
+    - family: Trini
+      given: M.
+    - family: Ulrich
+      given: R.
+    - family: Unger
+      given: M.
+    - family: Urban
+      given: M.
+    - family: Galicia
+      given: J. F. Valdés
+    - family: Valiño
+      given: I.
+    - family: Valore
+      given: L.
+    - family: Aar
+      given: G.
+      non-dropping-particle: van
+    - family: Bodegom
+      given: P.
+      non-dropping-particle: van
+    - family: Berg
+      given: A. M.
+      dropping-particle: van den
+    - family: Vliet
+      given: A.
+      non-dropping-particle: van
+    - family: Varela
+      given: E.
+    - family: Cárdenas
+      given: B. Vargas
+    - family: Varner
+      given: G.
+    - family: Vázquez
+      given: R. A.
+    - family: Veberič
+      given: D.
+    - family: Ventura
+      given: C.
+    - family: Quispe
+      given: I. D. Vergara
+    - family: Verzi
+      given: V.
+    - family: Vicha
+      given: J.
+    - family: Villaseñor
+      given: L.
+    - family: Vorobiov
+      given: S.
+    - family: Wahlberg
+      given: H.
+    - family: Wainberg
+      given: O.
+    - family: Walz
+      given: D.
+    - family: Watson
+      given: A. A.
+    - family: Weber
+      given: M.
+    - family: Weindl
+      given: A.
+    - family: Wiencke
+      given: L.
+    - family: Wilczyński
+      given: H.
+    - family: Wirtz
+      given: M.
+    - family: Wittkowski
+      given: D.
+    - family: Wundheiler
+      given: B.
+    - family: Yang
+      given: L.
+    - family: Yushkov
+      given: A.
+    - family: Zas
+      given: E.
+    - family: Zavrtanik
+      given: D.
+    - family: Zavrtanik
+      given: M.
+    - family: Zepeda
+      given: A.
+    - family: Zimmermann
+      given: B.
+    - family: Ziolkowski
+      given: M.
+    - family: Zong
+      given: Z.
+    - family: Zuccarello
+      given: F.
+  container-title: 'arXiv:1710.07249 [astro-ph]'
+  issued:
+    - year: 2017
+      month: 10
+      day: 19
+  source: arXiv.org
+  title: >-
+    Inferences on Mass Composition and Tests of Hadronic Interactions from 0.3
+    to 100 EeV using the water-Cherenkov Detectors of the Pierre Auger
+    Observatory
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1710.07249'
+
+- id: Trello
+  abstract: >-
+    Infinitamente flexible. Increíblemente fácil de utilizar. Aplicaciones
+    móviles excelentes. Es gratis. Trello registra todo, desde el proyecto
+    general hasta el más minucioso detalle.
+  accessed:
+    - year: 2020
+      month: 7
+      day: 4
+  source: trello.com
+  title: Trello
+  type: webpage
+  URL: 'https://trello.com'
+
 - id: trippiArtificialIntelligenceFinance1995
   abstract: >-
     From the Publisher: In Artificial Intelligence in Finance and Investing,
@@ -4532,6 +5546,40 @@ references:
   URL: >-
     https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510
   volume: '13'
+
+- id: wuFeatureRescalingSupport2011
+  abstract: >-
+    Support vector machines (SVMs) have widespread use in various classification
+    problems. Although SVMs are often used as an off-the-shelf tool, there are
+    still some important issues which require improvement, such as feature
+    rescaling. Standardization is the most commonly used feature rescaling
+    method. However, standardization does not always improve classification
+    accuracy. This paper describes two feature rescaling methods: multiple
+    kernel learning-based rescaling (MKL-SVM) and kernel-target alignment-based
+    rescaling (KTA-SVM). MKL-SVM makes use of the framework of multiple kernel
+    learning (MKL) and KTA-SVM is built upon the concept of kernel alignment,
+    which measures the similarity between kernels. The proposed methods were
+    compared with three other methods: an SVM method without rescaling, an SVM
+    method with standardization, and SCADSVM. Test results demonstrate that
+    different rescaling methods apply to different situations and that the
+    proposed methods outperform the others in general.
+  author:
+    - family: Wu
+      given: Zhengpeng
+    - family: Zhang
+      given: Xuegong
+  container-title: Tsinghua Science and Technology
+  DOI: 10.1016/S1007-0214(11)70060-8
+  ISSN: 1007-0214
+  issue: '4'
+  issued:
+    - year: 2011
+      month: 8
+  page: 414-421
+  source: IEEE Xplore
+  title: Feature rescaling of support vector machines
+  type: article-journal
+  volume: '16'
 
 - id: zahariaAcceleratingMachineLearning2018
   abstract: >-

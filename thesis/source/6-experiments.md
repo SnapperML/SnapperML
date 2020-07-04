@@ -1,6 +1,6 @@
 # Experimentos
 
-En este último capitulo de la tesis se recogen los experimentos llevados a cabo para la resolución
+En este último capítulo de la tesis se recogen los experimentos llevados a cabo para la resolución
 del problema (Objetivo 2). Primeramente, se describe detalladamente el problema: origen, tipo y estructura
 de los datos, tipo de problema, asunciones y/o restricciones, etc. Posteriormente, se detallan los diferentes
 algoritmos y arquitecturas de ML/DL empleados - se especifican los parámetros, biblioteca empleada,
@@ -11,11 +11,10 @@ para cada tipo de modelo, y algunos trabajos a posteriori que pueden ser interes
 
 ### Historia
 
-Los rayos cósmicos son fragmentos de átomos (electrones, protones, y núcleos atómicos) que bombardean la tierra desde
-todas direcciones. La mayoría de fragmentos corresponden a núcleos atómicos o electrones. Las partículas de rayos cósmicos
+Los rayos cósmicos son partículas que bombardean la tierra a gran velocidad y que provienen del espacio exterior.
+La partículas de rayos cósmicos son protones (90%) y núcleos pesados en su mayoría. Las partículas de rayos cósmicos
 viajan a prácticamente la velocidad de la luz, lo que significa que tienen una gran energía. Algunas de ellas incluso
-contienen más energía que cualquier otra partícula observada en la naturaleza. Los rayos cósmicos de mayor energía
-contiene cientos millones de veces más energía que la partícula con mayor energía hoyada en la naturaleza.
+contienen más energía que cualquier otra partícula observada en la naturaleza.
 
 Este fenómeno de la Física fue descubierto en 1912 por Hess y Kohlhorster [@stanevOverview2010], y algunas de sus propiedades
 siguen siendo un misterio después de más de un siglo. Un ejemplo es el origen de los rayos, la mayoría de los científicos sospechan
@@ -64,7 +63,7 @@ Los experimentos recogidos en este trabajo están basados en datos de simulacion
 reales. En concreto, se componen diferentes herramientas para la simulación de *cascadas atmosférica extensas*.
 El flujo de generación de los datos se muestra en la figura \ref{fig:simulation_flow}. CORSIKA [@heckCORSIKAMonteCarlo1998]
 se utilizada para la simulación detallada de como se desarrolla la *cascada atmosférica extensa* en la atmósfera.
-Las interacciones hadrónicas se modelan utilizando QGSJET-II [@ostapchenkoQGSJETIIReliableDescription2006]
+Las interacciones hadrónicas se modelan utilizando los paquetes *software* QGSJET-II [@ostapchenkoQGSJETIIReliableDescription2006]
 o EPOS-LHC [@pierogEPOSLHCTest2015]. La señales de los [!+wcd] producidas por las partículas se generan utilizando
 el software *offline* de Auger [@argiroOfflineSoftwareFramework2007]. Finalmente, los datos de las simulaciones
 se almacenan en formato ROOT [@brunROOTObjectOriented1997] para su procesamiento.
@@ -93,8 +92,7 @@ cada fotomultiplicador. Para poder atajar este problema con ML/DL es necesario
 encontrar un representación del problema tal que nos permita utilizar las señales
 de muónicas capturadas por los [!+pmt] para clasificar entre primarios.
 Una representación utilizada en trabajos previos, consiste en integrar la señal muónica,
-obteniendo un único valor real para cada [!pmt]. Disponiendo así de un vector con N valores reales,
-tantos como [!+pmt] haya en el [!wcd].
+obteniendo un único valor real para cada [!pmt]. 
 
 La representación que se propone en este trabajo consiste en utilizar la media de las señales de los [!+pmt].
 Utilizando la media de las tres señales podemos profundizar en la información recogida en la señal, en lugar
@@ -122,14 +120,14 @@ un conjunto más pequeño de variables que se describen a continuación:
 **Variables generadas mediante ingeniería de atributos:**
 
 - Ángulo Azimuth $\zeta$: medido en radianes.
-- Tiempo de subida $t_{1 / 2}$: medido en nanosegundos.
+- Tiempo de subida $t_{1 / 2}$: medido en nanosegundos [@thepierreaugercollaborationInferencesMassComposition2017].
 - Tiempo de caída: Tiempo en el que la señal empieza a descender.
 - Area sobre el punto máximo de la señal: Suma de todas las señales en cada traza dividida por el máximo valor en cada traza.
 
-Estas son las variables utilizadas para todos los experimentos llevados a cabo en este capitulo.
+Estas son las variables utilizadas para todos los experimentos llevados a cabo en este capítulo.
 
 
-## Procedimiento
+## Metodología
 
 Para el desarrollo de los diferentes experimentos se utilizado el framework *ml-experiment* descrito en el capítulo anterior.
 Para cada algoritmo de ML o arquitectura de DL se ha implementado un script de entrenamiento y un fichero
@@ -148,10 +146,11 @@ de entrenamiento utilizando las *DataLoader* (ver Manual). En concreto, se ha de
 Para los autoencoders, se genera una pareja de entrenamiento-validación para cada tipo de primario (ver Listing \ref{split_data_loader}).
 Para los modelos de aprendizaje supervisado, los datos de entrenamiento de todos los primarios se unifican en un solo conjunto de datos 
 y posteriormente se extrae el conjunto de validación (ver Listing \ref{unified_data_loader}).
-Finalmente, tanto para el conjunto unificado como para los conjuntos separados, se aplica un *reescalado* mediante *estandarización* (z-score).
+Finalmente, tanto para conjunto unificado se aplica un *reescalado* *Min-Max*, y para los conjuntos separados 
+*estandarización* (mediante *z-score*).
 
 Por otro lado, las semillas para la partición, procesado, y entrenamiento de modelos se establecen y
-quedan almacenadas como metadatos en cada experimento. Esto nos asegura que todos los modelos son entrenados y validados
+quedan almacenadas como metadatos en cada experimento. Ésto nos asegura que todos los modelos son entrenados y validados
 con los mismos datos, así como facilita la *replicabilidad* del experimento. Además, los parámetros, métricas y artefactos de
 cada experimento están almacenados en el servidor de *MLFlow* (ver figura \ref{fig:mlflow_experiments}), permitiendo visualizar
 y comparar entre las modelos y entre las diferentes configuraciones de hiperparámetros para cada algoritmo. Finalmente,
@@ -235,7 +234,7 @@ class UnifiedDataLoader(DataLoader):
 
 ## Modelos considerados
 
-Entro los algoritmos candidatos, se han empleado [!svm], Xgboost, y Autoencoder (simple, profundo, y variacional).
+Entre los algoritmos candidatos, se han empleado [!svm], Xgboost, y Autoencoder (simple, profundo, y variacional).
 Como se ha comentado anteriormente, para cada tipo de modelo se utiliza un espacio de hiperparámetros y se ejecuta
 un grupo de experimentos (entre 50-100 configuraciones distintas). En las siguientes secciones se especifican el
 el espacio de hiperparámetros, detalles de implementación, así como otra información relativa a cada experimento.
@@ -252,7 +251,7 @@ Para la aproximación del kernel se utiliza el método de Nystroem, el cual es u
 bajo rango de kernels. A rasgos generales, Nystroem muestrea un número limitado
 de ejemplos de entrenamiento (100 por defecto en el caso de *sklearn*) y les aplica el kernel real.
 Con esos ejemplos transformados construye una matriz de transformación de bajo rango que aproxima el kernel aplicado 
-[@williamsUsingNystromMethod2001]. Esto permite poder entrenar [!+svm] de manera más eficiente, incluso utilizar *online learning*,
+[@williamsUsingNystromMethod2001]. Ésto permite poder entrenar [!+svm] de manera más eficiente, incluso utilizar *online learning*,
 en nuestro caso, nos permite aumentar el número de configuraciones distintas para la optimización de hiperparámetros.
 Los detalles del experimento y de la configuración de hiperparámetros son las siguientes:
 
@@ -321,7 +320,7 @@ El segundo modelo con el que se ha experimentado a sido XGBoost [@chenXGBoostSca
 XGBoost es un algoritmo *gradient boosting* [@masonBoostingAlgorithmsGradient2000] flexible, escalable, y portable. Permite *boosting*
 de arboles en paralelo, así como definir funciones de coste propias [@masonBoostingAlgorithmsGradient2000].
 Uno de los inconvenientes a la hora de realizar [!hpo] con XGBoost (y con los ensamblados de árboles en general), es la cantidad
-de hiperparámetros distintos que se pueden modificar. Esto hace que el espacio de hiperparámetros sea demasiado grande como para
+de hiperparámetros distintos que se pueden modificar. Ésto hace que el espacio de hiperparámetros sea demasiado grande como para
 cubrirlo uniformemente de manera acertada. Por este motivo, es de especial importancia el uso de algoritmos de [!hpo] más novedosos que GridSearch
 para poder explorar zonas del espacio más interesantes. En concreto, se utiliza TPE (*Tree-structured Parzen Estimator*) al igual que en el resto
 de modelos. A rasgos generales, TPE ajusta un modelo Modelo Gaussiano de Mezcla (*GMM*) $l(x)$ al conjunto de hiperparámetros asociados a los mejores valores
@@ -421,10 +420,11 @@ moderna (2017), que junto con *Swish* y *ELU*, suele arrojar resultados mejores 
 Aunque la mayoría de investigación al respecto está enfocada a problemas de clasificación de imágenes,
 lo cual hace realmente difícil la comparativa entre ambas aplicadas a *autoencoders*.
 
-- [!pca] y autoencoders (sobre todo lineales) tienen muchas similaridades, pero
-interesantes de [!pca]. [!pca] y autoencoders (sobre todo lineales) tienen muchas similaridades, pero
-no pueden ofrecer ortogonalidad, ni vectores unitarios en la base. En este trabajo se han implementado dos restricciones
-a nivel de capa, para asegurar la ortonormalidad, una restricción para ortogonalidad propia (ver Listing \ref{weight_orthogonality}),
+- [!pca] y autoencoders (sobre todo lineales) tienen muchas similaridades, al fin y al cabo, ambos permiten proyectar
+vectores a espacio de dimensión inferior. Los autoencoders por su parte, no pueden ofrecer algunas características interesantes
+de [!PCA] como la ortonormalidad, es decir, vectores ortogonales y unitarios en la base del espacio del código.
+En este trabajo se han implementado dos restricciones a nivel de capa para asegurar la ortonormalidad,
+una restricción para ortogonalidad propia (ver Listing \ref{weight_orthogonality}),
 y una restricción para el tamaño unitario de las componentes del espacio latente utilizando *UnitNorm* de *Keras*.
 Existen además otras propiedades de [!pca] que se han adaptado a autoencoders [@ladjalPCAlikeAutoencoder2019],
 como por ejemplo, forzar a que los componentes del espacio latente sean estadísticamente independientes.
@@ -586,7 +586,7 @@ def sampling(args):
 #### Función de coste
 
 Por otro lado, hay que cambiar la función de coste para este tipo de autoencoder, la cuál debe incluir el término de divergencia KL (Kullback–Leibler).
-Para ello, se hace uso de una función de conste personalizada para Keras (ver Listing \ref{cost_function_vae}).
+Para ello, se hace uso de una función de coste personalizada para Keras (ver Listing \ref{cost_function_vae}).
 
 ``` {#cost_function_vae .python caption="Función de coste para VAE. Fuente: Documentación oficial de Keras."}
 import keras.backend as K
@@ -671,22 +671,22 @@ En cada subsección aparecen recogidas las gráficas que relacionan los diferent
 con la métrica de validación. Además, en la tabla \ref{results_table} se muestran los resultados de
 el mejor modelo para cada algoritmo.
 
--------------------------------------------------------------------
-  Algoritmo                    Parámetros                 Métrica
---------------       --------------------------------    --------- 
-   SVM                    C: 1e-4 \                       0.64036
+---------------------------------------------------------------------------------
+  Algoritmo                    Parámetros                        Métrica
+--------------       --------------------------------    -------------------------
+   SVM                    C: 1e-4 \                       $0.64036 \pm 0.0043678$
                           degree: no aplica \
                           gamma: auto \
                           kernel: lineal \
 
-  XGBoost                 gamma: 0 \                      0.88519
+  XGBoost                 gamma: 0 \                      $0.88519 \pm 0.0029017$
                           learning_rate: 0.42 \
                           max_depth: 5 \
                           min_child_weight: 0.4133 \
                           n_estimators: 4500 \
                           subsample: 0.9924 \
 
-Autoencoder V1            activation: selu \              0.69825
+Autoencoder V1            activation: selu \              $0.69825 \pm 0.0041778$
                           encoding_dim: 10 \
                           learning_rate: 0.001 \
                           optimizer_name: Adam \
@@ -695,7 +695,7 @@ Autoencoder V1            activation: selu \              0.69825
                           unit_norm_constraint: False \
                           weight_orthogonality: False \
 
-Autoencoder V2            activation: selu \              0.56267
+Autoencoder V2            activation: selu \             $0.56267 \pm 0.0045149$
                           encoding_dim: [9, 9, 7] \
                           learning_rate: 0.00338 \
                           optimizer_name: SGD \
@@ -705,7 +705,7 @@ Autoencoder V2            activation: selu \              0.56267
                           unit_norm_constraint: True \
                           weight_orthogonality: False \
 
-VAE                       activation: selu \              0.38315
+VAE                       activation: selu \             $0.38315 \pm 0.0044247$
                           encoding_dim: 13 \
                           latent_dim: 3 \
                           learning_rate: 1e-04 \
@@ -713,26 +713,27 @@ VAE                       activation: selu \              0.38315
                           ony_cycle: True
 -----------------------------------------------------------------------
 
-Table: \label{results_table} Resultados para los mejores modelos de cada tipo sobre el conjunto de test. (Las métricas están redondeadas a 5 decimales).
+Table: \label{results_table} Resultados para los mejores modelos de cada tipo sobre el conjunto de test. Las métricas están redondeadas a 5 decimales
+e incluyen intervalos a un 99% de confianza. Los intervalos de confianza se han calculado utilizando el *score* de *Wilson* 
+[@newcombeIntervalEstimationDifference1998].
 
 
 ### SVM
-
 
 En general, el rendimiento de [!svm] para este problema es pobre. Exceptuando una configuración sin transformación de datos (kernel lineal),
 y con un parámetro de regularización $C$ muy bajo, el cual fuerza al clasificador a tener margen entre clases grande. En cuanto al parámetro
 $C$, se ve claramente como los valores bajos ofrecen los mejores resultados. En cuanto al resto de parámetros, no se ve una tendencia clara
 sobre si un *kernel* o *gamma* determinado ofrece mejores resultados que el resto. De hecho, la configuración con mejor rendimiento se podría
-considerar un *outlier*. Esto no implica que el modelo no sea correcto, significa que deberíamos probar un número más alto de configuraciones
+considerar un *outlier*. Ésto no implica que el modelo no sea correcto, significa que deberíamos probar un número más alto de configuraciones
 para poder sacar conclusiones más exactas.
 
-![SVM. C vs Validation accuracy](source/results/svm_analysis/c_vs_accuracy.png){#fig:svm_c width=75%}
+![SVM. C vs Precisión en validación](source/results/svm_analysis/c_vs_accuracy.png){#fig:svm_c width=75%}
 
-![SVM. Kernel vs Validation accuracy](source/results/svm_analysis/kernel_accuracy.png){#fig:svm_kernel width=75%}
+![SVM. Kernel vs Precisión en validación](source/results/svm_analysis/kernel_accuracy.png){#fig:svm_kernel width=75%}
 
-![SVM. Gamma vs Validation accuracy](source/results/svm_analysis/gamma_vs_accuracy.png){#fig:svm_gamma width=70%}
+![SVM. Gamma vs Precisión en validación](source/results/svm_analysis/gamma_vs_accuracy.png){#fig:svm_gamma width=70%}
 
-![SVM. Parameters comparison](source/results/svm_analysis/parallel_plot.png){#fig:svm_parallel}
+![SVM. Comparación de parámetros](source/results/svm_analysis/parallel_plot.png){#fig:svm_parallel}
 
 ### Xgboost
 
@@ -746,22 +747,22 @@ se puede apreciar que valores muy bajos deterioran el rendimiento, mientras que 
 El motivo por el que en el parámetro *gamma*, por ejemplo,
 los puntos no están uniformemente distribuidos entre cada valor del espacio de hiperparámetros, es que al aplicar el algoritmo de optimización
 probabilístico TPE, el espacio de hiperparámetros se explora siguiendo las regiones más prometedoras, en lugar de explorarse uniformemente.
-Esto mismo ocurre con el parámetro *max_depth* (Figura \ref{fig:xgboost_max_depth}), donde el valor de 5 ofrece los mejores resultados
+Ésto mismo ocurre con el parámetro *max_depth* (Figura \ref{fig:xgboost_max_depth}), donde el valor de 5 ofrece los mejores resultados
 y es por eso que hay más configuraciones con ese valor que con otras.
 
-![Xgboost. Gamma vs Validation accuracy](source/results/xgboost_analysis/gamma_vs_accuracy.png){#fig:xgboost_gamma}
+![Xgboost. Gamma vs Precisión en validación](source/results/xgboost_analysis/gamma_vs_accuracy.png){#fig:xgboost_gamma}
 
-![Xgboost. Number of trees vs Validation accuracy](source/results/xgboost_analysis/newplot.png){#fig:xgboost_num_trees}
+![Xgboost. Number of trees vs Precisión en validación](source/results/xgboost_analysis/newplot.png){#fig:xgboost_num_trees}
 
-![Xgboost. Learning rate vs Validation accuracy](source/results/xgboost_analysis/learning_rate_vs_accuracy.png){#fig:xgboost_lr}
+![Xgboost. Learning rate vs Precisión en validación](source/results/xgboost_analysis/learning_rate_vs_accuracy.png){#fig:xgboost_lr}
 
-![Xgboost. Min child weight vs Validation accuracy](source/results/xgboost_analysis/min_child_weight_vs_accuracy.png){#fig:xgboost_min_child_weight}
+![Xgboost. Min child weight vs Precisión en validación](source/results/xgboost_analysis/min_child_weight_vs_accuracy.png){#fig:xgboost_min_child_weight}
 
-![Xgboost. Max depth vs Validation accuracy](source/results/xgboost_analysis/max_depth_vs_accuracy.png){#fig:xgboost_max_depth}
+![Xgboost. Max depth vs Precisión en validación](source/results/xgboost_analysis/max_depth_vs_accuracy.png){#fig:xgboost_max_depth}
 
-![Xgboost. Subsample vs Validation accuracy](source/results/xgboost_analysis/subsample_vs_accuracy.png){#fig:xgboost_subsample}
+![Xgboost. Subsample vs Precisión en validación](source/results/xgboost_analysis/subsample_vs_accuracy.png){#fig:xgboost_subsample}
 
-![Xgboost. Parameters comparison](source/results/xgboost_analysis/parallel_plot.png){#fig:xgboost_parallel}
+![Xgboost. Comparación de parámetros](source/results/xgboost_analysis/parallel_plot.png){#fig:xgboost_parallel}
 
 
 ### Autoencoder v1
@@ -775,21 +776,21 @@ Por otro lado, emplear la técnica de *Tied-weights* parece mejorar el rendimien
 Finalmente, la dimensión del código óptima se encuentra entre 10 y 12, que coincide prácticamente con la dimensión de los datos de entrada
 (Figura \ref{fig:a1_encoding_dim}).
 
-![Autoencoder v1. Dimensión del código vs Validation accuracy](source/results/autoencoder_v1_analysis/encoding_dim_vs_accuracy.png){#fig:a1_encoding_dim}
+![Autoencoder v1. Dimensión del código vs Precisión en validación](source/results/autoencoder_v1_analysis/encoding_dim_vs_accuracy.png){#fig:a1_encoding_dim}
 
-![Autoencoder v1. Tied-weights vs Validation accuracy](source/results/autoencoder_v1_analysis/tied_weights.png){#fig:a1_tied_weights}
+![Autoencoder v1. Tied-weights vs Precisión en validación](source/results/autoencoder_v1_analysis/tied_weights.png){#fig:a1_tied_weights}
 
-![Autoencoder v1. Probabilidad de descarte (dropout) vs Validation accuracy](source/results/autoencoder_v1_analysis/ps_vs_accuracy.png){#fig:a1_ps}
+![Autoencoder v1. Probabilidad de descarte (dropout) vs Precisión en validación](source/results/autoencoder_v1_analysis/ps_vs_accuracy.png){#fig:a1_ps}
 
-![Autoencoder v1. Restricción de ortogonalidad vs Validation accuracy](source/results/autoencoder_v1_analysis/weight_orthogonality_vs_accuracy.png){#fig:a1_weight_ortho}
+![Autoencoder v1. Restricción de ortogonalidad vs Precisión en validación](source/results/autoencoder_v1_analysis/weight_orthogonality_vs_accuracy.png){#fig:a1_weight_ortho}
 
-![Autoencoder v1. Restricción UnitNorm vs Validation accuracy](source/results/autoencoder_v1_analysis/unit_norm_vs_accuracy.png){#fig:a1_unit_norm}
+![Autoencoder v1. Restricción UnitNorm vs Precisión en validación](source/results/autoencoder_v1_analysis/unit_norm_vs_accuracy.png){#fig:a1_unit_norm}
 
-![Autoencoder v1. Ratio de aprendizaje vs Validation accuracy](source/results/autoencoder_v1_analysis/learning_rate_vs_accuracy.png){#fig:a1_lr}
+![Autoencoder v1. Ratio de aprendizaje vs Precisión en validación](source/results/autoencoder_v1_analysis/learning_rate_vs_accuracy.png){#fig:a1_lr}
 
-![Autoencoder v1. OneCycle vs Validation accuracy](source/results/autoencoder_v1_analysis/onecycle_vs_accuracy.png){#fig:a1_optimizer}
+![Autoencoder v1. OneCycle vs Precisión en validación](source/results/autoencoder_v1_analysis/onecycle_vs_accuracy.png){#fig:a1_optimizer}
 
-![Autoencoder v1. Parameters comparison](source/results/autoencoder_v1_analysis/parallel_plot.png){#fig:a1_parallel}
+![Autoencoder v1. Comparación de parámetros](source/results/autoencoder_v1_analysis/parallel_plot.png){#fig:a1_parallel}
 
 
 ### Autoencoder v2
@@ -798,27 +799,27 @@ Para la segunda versión de autoencoder, la restricción de ortogonalidad no mej
 pero la restricción de pesos unitarios si
 que mejora ligeramente (Figura \ref{fig:a2_unit_norm}). También, podemos ver que tanto Tied-weight  como OneCycle mejoran
 considerablemente el rendimiento (Figuras \ref{fig:a2_tied_weights} \ref{fig:a2_one_cycle}).
-Esto puede ser debido a que al incrementar la complejidad de la arquitectura, ambas técnicas permitan mantener
+Ésto puede ser debido a que al incrementar la complejidad de la arquitectura, ambas técnicas permitan mantener
 el sobreajuste bajo mientras se aumenta el poder de predicción. Por otro lado, tanto el porcentaje de ruido como
 el ratio de aprendizaje parecen ser óptimos en niveles muy bajos (Figuras \ref{fig:a2_ps} \ref{fig:a2_lr}).
 Por último, se puede ver como tres capas por delante y por detrás de la capa del código es el número óptimo para esta arquitectura (Figura \ref{fig:a2_encoding_dim}).
 A la luz de estos datos, podríamos argumentar que las arquitecturas menos profundas funcionan mejor para este problema en concreto (véase *Autoencoder V1*).
 
-![Autoencoder v2. Dimensión del código vs Validation accuracy](source/results/autoencoder_v2_analysis/encoding_dim.png){#fig:a2_encoding_dim}
+![Autoencoder v2. Dimensión del código vs Precisión en validación](source/results/autoencoder_v2_analysis/encoding_dim.png){#fig:a2_encoding_dim}
 
-![Autoencoder v2. Probabilidad de descarte (dropout) vs Validation accuracy](source/results/autoencoder_v2_analysis/ps.png){#fig:a2_ps}
+![Autoencoder v2. Probabilidad de descarte (dropout) vs Precisión en validación](source/results/autoencoder_v2_analysis/ps.png){#fig:a2_ps}
 
-![Autoencoder v2. Pesos ortogonales vs Validation accuracy](source/results/autoencoder_v2_analysis/weight_orthogonality.png){#fig:a2_weight_ortho}
+![Autoencoder v2. Pesos ortogonales vs Precisión en validación](source/results/autoencoder_v2_analysis/weight_orthogonality.png){#fig:a2_weight_ortho}
 
-![Autoencoder v2. Restricción UnitNorm vs Validation accuracy](source/results/autoencoder_v2_analysis/unit_norm_constraint.png){#fig:a2_unit_norm}
+![Autoencoder v2. Restricción UnitNorm vs Precisión en validación](source/results/autoencoder_v2_analysis/unit_norm_constraint.png){#fig:a2_unit_norm}
 
-![Autoencoder v2. Ratio de aprendizaje vs Validation accuracy](source/results/autoencoder_v2_analysis/learning_rate.png){#fig:a2_lr}
+![Autoencoder v2. Ratio de aprendizaje vs Precisión en validación](source/results/autoencoder_v2_analysis/learning_rate.png){#fig:a2_lr}
 
-![Autoencoder v2. Tied-weights vs Validation accuracy](source/results/autoencoder_v2_analysis/tied_weights.png){#fig:a2_tied_weights}
+![Autoencoder v2. Tied-weights vs Precisión en validación](source/results/autoencoder_v2_analysis/tied_weights.png){#fig:a2_tied_weights}
 
-![Autoencoder v2. One-cycle vs Validation accuracy](source/results/autoencoder_v2_analysis/one_cycle.png){#fig:a2_one_cycle}
+![Autoencoder v2. One-cycle vs Precisión en validación](source/results/autoencoder_v2_analysis/one_cycle.png){#fig:a2_one_cycle}
 
-![Autoencoder v2. Parameters comparison](source/results/autoencoder_v2_analysis/parallel_plot.png){#fig:a2_parallel}
+![Autoencoder v2. Comparación de parámetros](source/results/autoencoder_v2_analysis/parallel_plot.png){#fig:a2_parallel}
 
 
 ### Autoencoder Variacional
@@ -830,14 +831,14 @@ ligeramente mejores que un clasificador aleatorio ^[Un clasificador aleatorio te
 no podemos destacar ningún patrón en la precisión (ver Figuras \ref{fig:vae_encoding_dim} \ref{fig:vae_activation} \ref{fig:vae_latent_dim}).
 
 
-![Autoencoder Variacional. Dimensión de la capa intermedia vs Validation accuracy](source/results/vae_analysis/encoding_dim.png){#fig:vae_encoding_dim}
+![Autoencoder Variacional. Dimensión de la capa intermedia vs Precisión en validación](source/results/vae_analysis/encoding_dim.png){#fig:vae_encoding_dim}
 
-![Autoencoder Variacional. Dimensión del espacio latente vs Validation accuracy](source/results/vae_analysis/latent_dim.png){#fig:vae_latent_dim}
+![Autoencoder Variacional. Dimensión del espacio latente vs Precisión en validación](source/results/vae_analysis/latent_dim.png){#fig:vae_latent_dim}
 
-![Autoencoder Variacional. Ratio de aprendizaje vs Validation accuracy](source/results/vae_analysis/learning_rate.png){#fig:vae_lr}
+![Autoencoder Variacional. Ratio de aprendizaje vs Precisión en validación](source/results/vae_analysis/learning_rate.png){#fig:vae_lr}
 
-![Autoencoder Variacional. One-cycle vs Validation accuracy](source/results/vae_analysis/one_cycle.png){#fig:vae_one_cycle}
+![Autoencoder Variacional. One-cycle vs Precisión en validación](source/results/vae_analysis/one_cycle.png){#fig:vae_one_cycle}
 
-![Autoencoder Variacional. Activation vs Validation accuracy](source/results/vae_analysis/activation.png){#fig:vae_activation}
+![Autoencoder Variacional. Activation vs Precisión en validación](source/results/vae_analysis/activation.png){#fig:vae_activation}
 
-![Autoencoder Variacional. Parameters comparison](source/results/vae_analysis/parallel_plot.png){#fig:vae_parallel}
+![Autoencoder Variacional. Comparación de parámetros](source/results/vae_analysis/parallel_plot.png){#fig:vae_parallel}

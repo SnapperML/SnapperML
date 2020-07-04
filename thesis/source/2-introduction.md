@@ -20,8 +20,8 @@ Por otro parte, se ofrece un soporte de primera clase para el entrenamiento de m
 distribuidos. Todas estas características se hacen accesibles al usuario por medio de un paquete de Python con el que instrumentalizar
 el código existente, y un [!cli] con el que empaquetas y ejecutar trabajos.
 
-La reproducibilidad es un reto en la investigación moderna y produce bastante debate [@ArtificialIntelligenceFacesA;
-@collbergMeasuringReproducibilityComputer; @freireReproducibilityDataOrientedExperiments2016; @freireComputationalReproducibilityStateoftheart2012].
+La reproducibilidad es un reto en la investigación moderna y produce bastante debate [
+@moraila2014measuring; @freireReproducibilityDataOrientedExperiments2016; @freireComputationalReproducibilityStateoftheart2012].
 Entre los diferentes tipos de trabajos reproducibles, este trabajo se centra en trabajos computacionales, desarrollando
 un flujo de trabajo específico bastado en los principios de Control de Versiones, Automatización, Tracking y Aislamiento
 del entorno .

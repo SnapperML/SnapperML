@@ -7,6 +7,10 @@
     "shortform": "WCD",
     "longform": "Water Cherenkov Detector"
   },
+  "pmt": {
+    "shortform": "WCD",
+    "longform": "fotomultiplicador"
+  },
   "ml": {
     "shortform": "ML",
     "longform": "Machine Learning"
