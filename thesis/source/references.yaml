@@ -919,6 +919,17 @@ references:
   URL: 'http://www.sciencedirect.com/science/article/pii/S0065245808606075'
   volume: '1'
 
+- id: BasesNormativaOTRI
+  accessed:
+    - year: 2020
+      month: 7
+      day: 5
+  title: >-
+    Bases y normativa OTRI - El portal web de la transferencia del conocimiento
+    de la Universidad de Granada
+  type: webpage
+  URL: 'https://otri.ugr.es/contratacion_personal/cms/menu/normativa-y-bases/'
+
 - id: bengioDeepLearning2017a
   abstract: >-
     An introduction to a broad range of topics in deep learning, covering
