@@ -6,7 +6,8 @@ import xgboost as xgb
 from xgboost.callback import print_evaluation
 
 
-@job(data_loader=UnifiedDataLoader, autologging_backends=AutologgingBackend.XGBOOST)
+@job(data_loader=UnifiedDataLoader(),
+     autologging_backends=AutologgingBackend.XGBOOST)
 def main(n_estimators: int,
          learning_rate: float,
          max_depth: int,
