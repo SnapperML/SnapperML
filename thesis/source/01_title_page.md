@@ -6,7 +6,7 @@
         \vspace*{2.5cm}
         
         \huge
-        Título
+        Diseño e implementación de ml-experiment: framework para MLOps. Aplicación a rayos cósmicos de ultra alta energía
         
         \vspace{1.5cm}
         
@@ -36,3 +36,9 @@
 
     \end{center}
 \end{titlepage}
+
+Yo, Antonio Molner Domenech, alumno de la titulación Grado en Ingeniería Informática
+de la Escuela Técnica Superior de Ingenierías Informática y de Telecomunicación de la Universidad de Granada, con DNI 77766814L,
+autorizo la ubicación de la siguiente copia de mi Trabajo Fin de Grado en la biblioteca del centro para que pueda ser consultada por las personas que lo deseen.
+
+\pagebreak

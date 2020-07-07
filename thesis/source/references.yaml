@@ -512,6 +512,243 @@ references:
   type: article-journal
   URL: 'http://arxiv.org/abs/1902.08429'
 
+- id: albertScienceCaseWide2019a
+  abstract: >-
+    We outline the science motivation for SGSO, the Southern Gamma-Ray Survey
+    Observatory. SGSO will be a next-generation wide field-of-view gamma-ray
+    survey instrument, sensitive to gamma-rays in the energy range from 100 GeV
+    to hundreds of TeV. Its science topics include unveiling galactic and
+    extragalactic particle accelerators, monitoring the transient sky at very
+    high energies, probing particle physics beyond the Standard Model, and the
+    characterization of the cosmic ray flux. SGSO will consist of an air shower
+    detector array, located in South America. Due to its location and large
+    field of view, SGSO will be complementary to other current and planned
+    gamma-ray observatories such as HAWC, LHAASO, and CTA.
+  accessed:
+    - year: 2020
+      month: 7
+      day: 5
+  author:
+    - family: Albert
+      given: A.
+    - family: Alfaro
+      given: R.
+    - family: Ashkar
+      given: H.
+    - family: Alvarez
+      given: C.
+    - family: Álvarez
+      given: J.
+    - family: Arteaga-Velázquez
+      given: J. C.
+    - family: Solares
+      given: H. A. Ayala
+    - family: Arceo
+      given: R.
+    - family: Bellido
+      given: J. A.
+    - family: BenZvi
+      given: S.
+    - family: Bretz
+      given: T.
+    - family: Brisbois
+      given: C. A.
+    - family: Brown
+      given: A. M.
+    - family: Brun
+      given: F.
+    - family: Caballero-Mora
+      given: K. S.
+    - family: Carosi
+      given: A.
+    - family: Carramiñana
+      given: A.
+    - family: Casanova
+      given: S.
+    - family: Chadwick
+      given: P. M.
+    - family: Cotter
+      given: G.
+    - family: De León
+      given: S. Coutiño
+    - family: Cristofari
+      given: P.
+    - family: Dasso
+      given: S.
+    - family: Fuente
+      given: E.
+      non-dropping-particle: de la
+    - family: Dingus
+      given: B. L.
+    - family: Desiati
+      given: P.
+    - family: Salles
+      given: F. de O.
+    - family: Souza
+      given: V.
+      non-dropping-particle: de
+    - family: Dorner
+      given: D.
+    - family: Díaz-Vélez
+      given: J. C.
+    - family: García-González
+      given: J. A.
+    - family: DuVernois
+      given: M. A.
+    - family: Di Sciascio
+      given: G.
+    - family: Engel
+      given: K.
+    - family: Fleischhack
+      given: H.
+    - family: Fraija
+      given: N.
+    - family: Funk
+      given: S.
+    - family: Glicenstein
+      given: J.-F.
+    - family: Gonzalez
+      given: J.
+    - family: González
+      given: M. M.
+    - family: Goodman
+      given: J. A.
+    - family: Harding
+      given: J. P.
+    - family: Haungs
+      given: A.
+    - family: Hinton
+      given: J.
+    - family: Hona
+      given: B.
+    - family: Hoyos
+      given: D.
+    - family: Huentemeyer
+      given: P.
+    - family: Iriarte
+      given: A.
+    - family: Jardin-Blicq
+      given: A.
+    - family: Joshi
+      given: V.
+    - family: Kaufmann
+      given: S.
+    - family: Kawata
+      given: K.
+    - family: Kunwar
+      given: S.
+    - family: Lefaucheur
+      given: J.
+    - family: Lenain
+      given: J.-P.
+    - family: Link
+      given: K.
+    - family: López-Coto
+      given: R.
+    - family: Marandon
+      given: V.
+    - family: Mariotti
+      given: M.
+    - family: Martínez-Castro
+      given: J.
+    - family: Martínez-Huerta
+      given: H.
+    - family: Mostafá
+      given: M.
+    - family: Nayerhoda
+      given: A.
+    - family: Nellen
+      given: L.
+    - family: Wilhelmi
+      given: E. de Oña
+    - family: Parsons
+      given: R. D.
+    - family: Patricelli
+      given: B.
+    - family: Pichel
+      given: A.
+    - family: Piel
+      given: Q.
+    - family: Prandini
+      given: E.
+    - family: Pueschel
+      given: E.
+    - family: Procureur
+      given: S.
+    - family: Reisenegger
+      given: A.
+    - family: Rivière
+      given: C.
+    - family: Rodriguez
+      given: J.
+    - family: Rovero
+      given: A. C.
+    - family: Rowell
+      given: G.
+    - family: Ruiz-Velasco
+      given: E. L.
+    - family: Sandoval
+      given: A.
+    - family: Santander
+      given: M.
+    - family: Sako
+      given: T.
+    - family: Sako
+      given: T. K.
+    - family: Satalecka
+      given: K.
+    - family: Schoorlemmer
+      given: H.
+    - family: Schüssler
+      given: F.
+    - family: Seglar-Arroyo
+      given: M.
+    - family: Smith
+      given: A. J.
+    - family: Spencer
+      given: S.
+    - family: Surajbali
+      given: P.
+    - family: Tabachnick
+      given: E.
+    - family: Taylor
+      given: A. M.
+    - family: Tibolla
+      given: O.
+    - family: Torres
+      given: I.
+    - family: Vallage
+      given: B.
+    - family: Viana
+      given: A.
+    - family: Watson
+      given: J. J.
+    - family: Weisgarber
+      given: T.
+    - family: Werner
+      given: F.
+    - family: White
+      given: R.
+    - family: Wischnewski
+      given: R.
+    - family: Yang
+      given: R.
+    - family: Zepeda
+      given: A.
+    - family: Zhou
+      given: H.
+  container-title: 'arXiv:1902.08429 [astro-ph]'
+  issued:
+    - year: 2019
+      month: 2
+      day: 22
+  source: arXiv.org
+  title: >-
+    Science Case for a Wide Field-of-View Very-High-Energy Gamma-Ray Observatory
+    in the Southern Hemisphere
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1902.08429'
+
 - id: AmazonSageMaker
   abstract: >-
     Amazon SageMaker es un servicio completamente administrado que brinda a

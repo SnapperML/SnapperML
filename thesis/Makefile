@@ -32,7 +32,7 @@ pdf:
 	--filter pandoc-acronyms \
 	--template="$(STYLEDIR)/template.tex" \
 	--bibliography="$(BIBFILE)" 2>pandoc.log \
-	--csl="$(STYLEDIR)/ref_format.csl" \
+	--csl="$(STYLEDIR)/ieee-with-url.csl" \
 	--listings \
 	--highlight-style pygments \
 	-V fontsize=12pt \

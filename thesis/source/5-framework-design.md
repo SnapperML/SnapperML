@@ -11,7 +11,26 @@ como optimización de hiperparámetros *out-of-the-box*, o bien, son complejas d
 En cuanto a las herramientas exclusivas de reproducibilidad, tanto *Sacred* como *Reprozip* son buenas soluciones
 cuando se realizan análisis en local, pero carecen de soporte para la gestión de trabajos en la nube o en un *cluster* remoto.
 
-INSERTAR TABLA COMPARATIVA
+\tiny
+
+\setlength\extrarowheight{10pt}
+
+| | ml-experiment | MLFlow | Reprozip | Polyaxon | Sacred | CometML | Sagemaker | Google AI | Azure ML | Neptune |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Seguimiento de experimentos | Si | Si | Si | Si | Si | Si | Si | Si | Si | Si |
+| Registro de detalles de hardware | Si | No | No | No | No | No | Parcial | Parcial | Parcial | Si |
+| Control de estocasticidad automatico | Si | No | No | No | Si | No | No | No | No | No |
+| Registro de dependencias | Si | Si | Si | Si | No | Si | Si | Si | Si | Si |
+| Soporte nativo para HPO | Si | No | No | Si | No | Si | Si | Si | Si | Si |
+| Empaquetado del proyecto | Si | Si | Si | Si | No | Parcial | Parcial | Si | Si | No |
+| Ejecucion en la nube o cluster propio | Si | Si | No | Si | No | Si | No | Si | No | Si |
+| Codigo libre | Si | Si | Si | Hibrido | Si | No | No | No | No | Si |
+
+Table: Comparativa de las características principales de *ml-experiment* con respecto al resto de tecnologías estudiadas
+en *Fundamentos*. *Kubeflow* se ha descartado por no ser una herramienta orientada a la reproducibilidad de experimentos
+o al flujo completo de un proyecto ML.
+
+\normalsize
 
 El objetivo de nuestra herramienta es el de ofrecer un marco de trabajo completo, que incluya las características esenciales
 de MLOps, pero con un enfoque especial en la reproducibilidad. Como objetivo secundario, la herramienta está pensado para
@@ -81,7 +100,7 @@ nodos de manera sencilla.
 
 ## Estructura general
 
-![Diagrama de la estructura general de *ml-experiment*](source/figures/ml_experiment_overview.png){#fig:framework_overview}
+![Diagrama de la estructura general de *ml-experiment*.](source/figures/ml_experiment_overview.png){#fig:framework_overview}
 
 El núcleo principal de *ml-experiment* está divido en 4 módulos (ver Figura \ref{fig:framework_overview}) con los que el usuario interacciona
 indirecta o directamente a través de una [!cli] y de una biblioteca de *Python*. El módulo *JobRunner* es el encargado de ejecutar un
@@ -125,16 +144,19 @@ ejecutar este código es necesario utilizar las [!cli] de *ml-experiment* (ver *
 Existen tres formas diferentes de ejecutar el código con la [!cli]. La forma principal, la cuál recomienda encarecidamente, es mediante un fichero
 de configuración YAML o JSON (ver *YAML/JSON Specification* en *Manual de Usuario*). En Listing \ref{yaml_example} se muestra un ejemplo
 de fichero de configuración. En ese mismo fichero de configuración se definen el nombre, parámetros, y el script a ejecutar. Además,
-se puede definir en el la configuración de *Docker* o *Ray* en caso de querer ejecutar en un contenedor o cluster. Una vez definido
-ese fichero, para ejecutar el código mediante la [!cli] se utiliza el siguiente comando ^[El directorio donde se ejecuta el comando debe tener
+se puede definir en el la configuración de *Docker* o *Ray* en caso de querer ejecutar en un contenedor o cluster (ver Figura \ref{fig:uml_overview}).
+Una vez definido ese fichero, para ejecutar el código mediante la [!cli] se utiliza el siguiente comando ^[El directorio donde se ejecuta el comando debe tener
 acceso al script. Es decir, la ruta definida en el campo *run* del fichero de configuración debe ser una ruta absoluta o una ruta
 relativa al directorio donde se ejecuta el comando.]:
 
-``` {#yaml_example .yaml caption="Ejemplo de comando para la ejecución del código definido en Listing \ref{instrumented_code} usando el fichero de configuración de Listing \ref{yaml_example}"}
+![Diagrama de clases UML que muestra la jerarquía de clases para le definición de trabajos en *ml-experiment*. La jerarquía representada es la que se utiliza
+para la validación de los ficheros de configuración.](source/figures/uml_overview.png){#fig:uml_overview}
+
+``` {#yaml_example .yaml caption="Ejemplo de comando para la ejecución del código definido en Listing \ref{instrumented_code} usando el fichero de configuración de Listing \ref{yaml_example}."}
 ml-experiment --config_file=my_experiment.yaml 
 ````
 
-``` {#yaml_example .yaml caption="Ejemplo de fichero de configuración para Listing \ref{instrumented_code}"}
+``` {#yaml_example .yaml caption="Ejemplo de fichero de configuración para Listing \ref{instrumented_code}."}
 name: My Experiment
 
 params:
@@ -152,7 +174,7 @@ para poder replicar los experimentos es necesario o bien compartir el comando ej
 en la [!cli], o compartir los parámetros con los que se ha ejecutado manualmente, sin disfrutar de las ventajas del control de versiones
 por ejemplo. En Listing \ref{cli_example} se muestra un ejemplo de ejecución de experimentos manualmente.
 
-``` {#cli_example .yaml caption="Ejemplo de comando para la ejecución del código definido en Listing \ref{instrumented_code} usando el fichero de configuración de Listing \ref{yaml_example}"}
+``` {#cli_example .yaml caption="Ejemplo de comando para la ejecución del código definido en Listing \ref{instrumented_code} usando el fichero de configuración de Listing \ref{yaml_example}."}
 ml-experiment \
     --name="My experiment" \
     --params="{'param1': 'hello', 'param2': 'world', 'param3': 1}"
@@ -172,19 +194,13 @@ ml-experiment \
 ````
 
 
-### Ejecución de experimentos en Docker o Ray
-
-
-
-
-
 ## Tracking de experimentos
 
 El registro y seguimiento de experimentos es un aspecto fundamental de la reproducibilidad, y uno de los pilares de *MLOps* (ver *Fundamentos*).
 *MLFlow* ofrece un potente interfaz para el "logging" de parámetros, métricas, y artefactos. La forma de registrar métricas en un experimento
 con MLFlow es la siguiente:
 
-```python
+```{.python caption="Ejemplo de uso de MLFlow."}
 with mlflow.start_run():
     mlflow.log_metric(key="quality", value=)
 ```
@@ -240,7 +256,7 @@ A nivel de ejecución, el campo *ray_config* permite añadir la dirección del c
 o utilizar "localhost", *ml-experiment* crea un cluster de Ray en local ^[Un cluster de Ray en local implica que se levantan varios procesos (num_cpus), y la
 los experimentos se divide entre cada proceso (num_trials / num_cpus).].
 
-A la hora de definir trabajos de HPO, el término utilizado en el framework es el de **grupo**. Un grupo es un tipo de trabajo en el que se
+A la hora de definir trabajos de HPO, el término utilizado en el framework es el de **grupo** (ver Figura \ref{uml_overview}). Un grupo es un tipo de trabajo en el que se
 ejecutan varios experimentos a la vez. Para poder definir un *grupo* utilizando la especificación YAML/JSON, es necesario añadir el campo
 *kind* e igualarlo a "group". De este forma, *ml-experiment* reconoce que el trabajo corresponde a un grupo y configura la infraestructura
 correspondiente. El objetivo de un trabajo de HPO (grupo) es el de optimizar un métrica específica, ya sea minimización o minimización,
@@ -257,7 +273,7 @@ de un experimento a partir de un espacio de hiperparámetros. Ese espacio de hip
 *ml-experiment* soporte varias distribuciones de parámetros que cubren la mayoría de necesidades de un experimento de ML
 (ver *YAML/JSON Specification* en *Manual de Usuario*). Además, *ml-experiment* soporta todos los *samplers* y *pruners* de *Optuna*.
 
-``` {#yaml_example .yaml caption="Ejemplo de fichero de configuración para un grupo de experimentos sobre Listing \ref{instrumented_code}"}
+``` {#yaml_example .yaml caption="Ejemplo de fichero de configuración para un grupo de experimentos sobre Listing \ref{instrumented_code}."}
 name: My Experiment
 kind: group
 num_trials: 12
@@ -306,7 +322,7 @@ si queremos utilizar un parámetro del experimento para controlar si los datos s
 la lógica de la carga de datos se implementa dentro de un *DataLoader*, pero la transformación mediante normalización
 o *MinMax* se debe hacer dentro de la función *main*, o en un método que se llame desde ella.
 
-``` {#data_loader_example .python caption="Ejemplo de uso de *DataLoaders*. (Los tipos son opcionales)"}
+``` {#data_loader_example .python caption="Ejemplo de uso de *DataLoaders*. (Los tipos son opcionales)."}
 from ml_experiment import job, DataLoader
 
 class MyDataLoader(DataLoader):
@@ -329,12 +345,14 @@ if __name__ == '__main__':
 ## Sistema de notificaciones y callbacks
 
 La biblioteca de Python de *ml-experiment* pone a disposición del usuario un sistema de callbacks y notificaciones
-(ver *Running your first experiment* en *Manual de Usuario*). El sistema de callbacks permite al usuario subscribirse
+(ver *Running your first experiment* en *Manual de Usuario* y Figura \ref{fig:uml_callbacks}). El sistema de callbacks permite al usuario subscribirse
 a diferentes eventos del ciclo de vida del experimento. El usuario puede subscribirse a los eventos de inicio de experimento,
 fin de experimento, entre otros. Además, se ofrece un conjunto de callbacks predefinidos para notificaciones.
 El paquete *ml_experiment.callbacks.notifiers* contiene callbacks para notificar cuando un experimento se inicia y termina
 via Slack, Email, Telegram, etc. Un ejemplo de uso se muestra en Listing \ref{callbacks_example}, donde se lanza una notificación
 de escritorio cuando se inicia y termina la ejecución (ver Figura \ref{fig:desktop_notifier}).
+
+![Diagrama UML que muestra la jerarquía de clases para el sistema de callbacks.](source/figures/uml_callbacks.png){#fig:uml_callbacks}
 
 ``` {#instrumented_code_with_return .python caption="Ejemplo de uso del sistema de callbacks, en concreto, de los notificadores."}
 from ml_experiment import job
@@ -348,7 +366,7 @@ if __name__ == '__main__':
     main()
 ```
 
-![Ejemplo de notificaciones de escritorio en OS X](source/figures/desktop_notifier.png){#fig:desktop_notifier}
+![Ejemplo de notificaciones de escritorio en OS X.](source/figures/desktop_notifier.png){#fig:desktop_notifier}
 
 
 ## Desarrollo del framework
@@ -371,5 +389,3 @@ Otro aspecto importante en el desarrollo ha sido la calidad de código. Siendo c
 de ML, pero además la que se genera en el desarrollo software en genera, se ha considerado de gran importancia mantener la calidad del
 código. El desarrollo se ha llevado a cabo aplicando el conocimiento sobre calidad del código, deuda técnica, *code smells*, etc. adquirido en
 en la industria.
-
-## Futuro desarrollo

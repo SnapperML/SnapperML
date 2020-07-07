@@ -1,9 +1,7 @@
 \tableofcontents
 
-\newpage
-
-
-# Acrónimos
+\chapter*{Acrónimos}
+\addcontentsline{toc}{chapter}{Acrónimos}
 
 - **ML**: Machine Learning
 
@@ -12,6 +10,8 @@
 - **PCA**: Análisis de Componentes Principales
 
 - **WCD**: Water Cherenkov Detector
+
+- **PMT**: fotomultiplicador
 
 - **GCP**: Google Cloud Platform
 

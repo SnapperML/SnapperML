@@ -1,7 +1,9 @@
-# Anexo 1. APSAC Paper
+\chapter*{APSAC Paper}
+\addcontentsline{toc}{chapter}{APSAC Paper}
 
 \includepdf[pages=-]{source/APSAC_Framework.pdf}
 
-# Anexo 2. Manual de Usuario
+\chapter*{Manual de Usuario}
+\addcontentsline{toc}{chapter}{Manual de Usuario}
 
 \includepdf[pages=-]{source/user_manual.pdf}

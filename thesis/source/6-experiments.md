@@ -26,7 +26,7 @@ de los rayos conforme llegan a la tierra. Los rayos cósmicos de baja energía s
 situados por encima de la atmósfera terrestre, mientras que para los rayos cósmicos de alta energía,
 es más eficiente medirlos indirectamente observado la cascada de partículas que produce.
 
-![Cascada atmosférica extensa. (Observatorio Pierre Auger)](source/figures/comic_air_shower.jpg){#fig:shower}
+![Cascada atmosférica extensa. Fuente: Observatorio Pierre Auger](source/figures/comic_air_shower.jpg){#fig:shower}
 
 Una *cascada atmosférica extensa* [@stanevHighEnergyCosmic2010] se produce cuando un rayo cósmico de alta energía
 (y de alta velocidad) penetra en la atmósfera. Cuando una partícula colisiona violentamente con las moléculas de aire,
@@ -36,7 +36,7 @@ se dispersa entre millones de partículas que caen hacia la tierra (ver figura \
 Al estudiar las *cascadas atmosféricas*, los científicos pueden medir algunas propiedades de las partículas
 originales que llegaron a la atmósfera, también llamadas *primarios*.
 
-![Mapa del observatorio de Pierre Auger. Cada punto negro representa un detector [!wcd]](source/figures/observatory_map.pbm){#fig:observatory}
+![Mapa del observatorio de Pierre Auger. Cada punto negro representa un detector [!wcd].](source/figures/observatory_map.pbm){#fig:observatory}
 
 El Observatorio de Pierre Auger [@PierreAugerCosmic2015] se propuso para descubrir y entender la fuentes de los rayos
 cósmicos de energía más altas. El observatorio, situado en la ciudad de Malargüe, en la provincia de Mendoza, Argentina,
@@ -139,7 +139,7 @@ aprovechando todos los núcleos de la CPU. Por otra parte, el proyecto de experi
 teniendo en cuenta los aspectos críticos de la reproducibilidad descritos en *Fundamentos*,
 y aplicando las buenas prácticas de MLOps.
 
-![Todos los experimentos ejecutados con sus parámetros, métricas, artefactos, y otros metadatos, se almacenan en un servidor de MLFlow en local](source/figures/mlflow_experiments.png){#fig:mlflow_experiments}
+![Todos los experimentos ejecutados con sus parámetros, métricas, artefactos, y otros metadatos, se almacenan en un servidor de MLFlow en local.](source/figures/mlflow_experiments.png){#fig:mlflow_experiments}
 
 Por una parte, el procedimiento de partición y procesado de los datos se realiza desde una interfaz compartida por todos los scripts
 de entrenamiento utilizando las *DataLoader* (ver Manual). En concreto, se ha definido dos *DataLoaders* uno para los autoencoders y otro para el resto de algoritmos.
@@ -518,7 +518,7 @@ de PCA, etc. Además, se ha utilizado una arquitectura sencilla para evitar el s
 (ver Figura \ref{fig:vae_arch}).
 
 
-![Arquitectura del autoencoder variacional implementado. Fuente propia](source/figures/vae_arch.png){#fig:vae_arch}
+![Arquitectura del autoencoder variacional implementado. Fuente propia.](source/figures/vae_arch.png){#fig:vae_arch}
 
 
 La arquitectura es siempre simétrica, es decir, las capas a un lado y a otro del código coinciden.
