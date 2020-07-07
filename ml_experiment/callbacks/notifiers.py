@@ -120,10 +120,7 @@ class NotifierBase(Callback, metaclass=ABCMeta):
     To create a new type of notifier, you'll need to inherit from this class, and implement one
     or more methods as required for your purposes. Specifically, the send_message method should be override.
     Arguably the easiest way to get started is to look at the source code for some of the pre-defined ones.
-
-    :param send_message_for_trials: If true, messages will be send for trial-related events.
     """
-    send_message_for_trials: bool
 
     def __post_init__(self):
         self.job_timer: Optional[TicToc] = None
@@ -149,9 +146,6 @@ class NotifierBase(Callback, metaclass=ABCMeta):
         self.send_message(message)
 
     def on_trial_start(self, config, trial, sampled_params, **kwargs):
-        if not self.send_message_for_trials:
-            return
-
         if not self.study:
             self.study = trial.study
         timer = TicToc()

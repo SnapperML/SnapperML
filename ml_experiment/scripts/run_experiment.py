@@ -306,7 +306,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
             lambda x: str(x) if isinstance(x, Callable) else x, result.param_space)
 
     fp = tempfile.NamedTemporaryFile(mode='w+', suffix='.json')
-    file_content = result.json(exclude_defaults=True)
+    file_content = result.json(exclude_defaults=False)
     fp.write(file_content)
     fp.flush()
     os.fsync(fp.fileno())

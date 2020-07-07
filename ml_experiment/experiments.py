@@ -56,6 +56,7 @@ class Trial(object):
     """
     @classmethod
     def get_current(cls) -> optuna.Trial:
+        # TODO: Replace by Trial exception
         raise DataNotLoaded()
 
 
@@ -259,14 +260,14 @@ def _run_experiment(func: Callable,
     with MlflowRunWithErrorHandling(callbacks_handler, delete_if_failed=delete_if_failed):
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         mlflow.set_tag('mlflow.source.name', getfile(func))
-        results, all_params = _run_job(func, config)
+        results = _run_job(func, config)
         if not results:
             return
         results = results if isgeneratorfunction(func) else [results]
         for result in results:
             if result:
                 metrics, artifacts = _extract_metrics_and_artifacts(result)
-                log_experiment_results(all_params, metrics, artifacts)
+                log_experiment_results(config.params, metrics, artifacts)
                 callbacks_handler.on_info_logged(metrics=metrics, artifacts=artifacts)
 
 

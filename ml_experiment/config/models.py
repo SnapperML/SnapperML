@@ -40,7 +40,7 @@ class Metric(BaseModel):
 
 class WorkerResourcesConfig(BaseModel):
     cpu: PositiveFloat = 1.0
-    gpu: PositiveFloat = 0.0
+    gpu: float = 0.0
 
 
 class DockerConfig(BaseModel):
@@ -116,7 +116,7 @@ SamplerEnum = Enum('SamplerEnum', zip(SAMPLERS.keys(), SAMPLERS.keys()), module=
 
 
 class GroupConfig(JobConfig):
-    kind = JobTypes.JOB
+    kind = JobTypes.GROUP
     sampler: Optional[SamplerEnum]
     pruner: Optional[PrunerEnum]
     num_trials: PositiveInt
