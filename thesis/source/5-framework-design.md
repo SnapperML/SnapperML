@@ -2,7 +2,8 @@
 
 El diseño y desarrollo de un framework orientado a la reproducibilidad es el objetivo principal
 de este trabajo. Un framework abierto que soporte cualquier biblioteca de Machine Learning o Deep Learning,
-y que se fundamente en los principios de reproducibilidad detallados en *Fundamentos*.
+y que se fundamente en los principios de reproducibilidad detallados en *Fundamentos*. El proyecto
+se puede encontrar en Github [@AguillenATCMlexperiment].
 
 Aunque existen bastantes herramientas de MLOps que cubren en mayor o menor medida la reproducibilidad,
 muchas de ellas son privadas (*Amazon Sagemaker, Google AI Platform, CometML*, etc). Y las que son de

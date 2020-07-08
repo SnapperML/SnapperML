@@ -206,6 +206,22 @@ references:
   type: report
   URL: 'https://www.osti.gov/biblio/15020240'
 
+- id: AguillenATCMlexperiment
+  abstract: >-
+    ml-experiment is a framework for machine learning. It has many
+    functionalities including scalability through docker instances and
+    reproducibility. - aguillenATC/ml-experiment
+  accessed:
+    - year: 2020
+      month: 7
+      day: 7
+  container-title: GitHub
+  language: en
+  source: github.com
+  title: aguillenATC/ml-experiment
+  type: webpage
+  URL: 'https://github.com/aguillenATC/ml-experiment'
+
 - id: AIPlatform
   abstract: >-
     A development platform to build AI applications that run on GCP and
