@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='ml-experiment',
-    version="0.0.1",
+    version="0.1",
     author="Antonio Molner Domenech",
     author_email="antonio.molner@correo.ugr.es",
-    description="A tool for reproducible ML experiments",
+    description="A framework for reproducible ML experiments",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/aguillenATC/TFG-AntonioMolner",
@@ -40,6 +40,7 @@ setuptools.setup(
         'pystache',
         'shellingham',
         'colorama',
-        'numpy>=1.17.4',
-    ]
+        'numpy>=2.17.4',
+    ],
+    dependency_links=['https://github.com/antoniomdk/knockknock.git@master#egg=knockknock']
 )

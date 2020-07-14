@@ -672,7 +672,7 @@ con la métrica de validación. Además, en la tabla \ref{results_table} se mues
 el mejor modelo para cada algoritmo.
 
 ---------------------------------------------------------------------------------
-  Algoritmo                    Parámetros                        Métrica
+  Algoritmo                    Parámetros                        Precisión
 --------------       --------------------------------    -------------------------
    SVM                    C: 1e-4 \                       $0.64036 \pm 0.0043678$
                           degree: no aplica \

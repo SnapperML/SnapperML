@@ -225,7 +225,8 @@ def _run_group_remote(func: Callable,
             metrics = {}
 
             if results is None:
-                raise ExperimentError('Group main functions should always return something!')
+                raise ExperimentError(
+                    'Group main functions should always return a metric and/or an artifacts dictionary')
 
             if is_generator:
                 for i, result in enumerate(results):
