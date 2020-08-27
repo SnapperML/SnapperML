@@ -42,10 +42,9 @@ def create_job_finish_message(config: JobConfig,
                               study: Optional[Study],
                               duration_seconds: float) -> str:
     host_name = socket.gethostname()
-
     delta = timedelta(seconds=duration_seconds)
-    crash_title = f'Crashed job {config.name} in {sys.argv[0]} ❌'
-    finish_title = f'Finished job {config.name} in {sys.argv[0]} 🎉'
+    crash_title = f'Crashed job - {config.name} ❌'
+    finish_title = f'Finished job  - {config.name} 🎉'
 
     contents = f"""
         {crash_title if exception else finish_title}
@@ -72,8 +71,7 @@ def create_trial_start_message(config: JobConfig,
                                start_time: datetime):
     run_id = trial.user_attrs.get('mlflow_run_id')
     contents = f"""
-        Starting trial {trial.number} in {sys.argv[0]} 🎬
-        Job name: {config.name}
+        Starting trial {trial.number} for {config.name} 🎬
         Run id: {run_id}
         Starting date: {start_time.strftime(DATE_FORMAT)}
         Fixed parameters: {PRETTY_PRINTER.pformat(config.params)} 
@@ -90,13 +88,12 @@ def create_trial_finish_message(config: JobConfig,
                                 sampled_params: dict,
                                 duration_seconds: float):
     delta = timedelta(seconds=duration_seconds)
-    crash_title = f'Crashed trial {trial.number} in {sys.argv[0]} ❌'
-    finish_title = f'Finished trial {trial.number} in {sys.argv[0]} 🎉'
+    crash_title = f'Crashed trial {trial.number} for {config.name} ❌'
+    finish_title = f'Finished trial {trial.number} for {config.name} 🎉'
     run_id = trial.user_attrs.get('mlflow_run_id')
 
     contents = f"""
         {crash_title if exception else finish_title}
-        Job name: {config.name}
         Run id: {run_id}
         
         Finish date: {finish_date.strftime(DATE_FORMAT)}
