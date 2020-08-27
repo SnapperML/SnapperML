@@ -11,3 +11,8 @@ class ExperimentError(Exception):
 class DataNotLoaded(Exception):
     def __str__(self):
         return 'Trying to access not loaded data. Please, add data_loader parameter to @experiment decorator'
+
+
+class TrialNotAvailable(Exception):
+    def __str__(self):
+        return 'optuna.Trial instance is not available for non-group jobs.'

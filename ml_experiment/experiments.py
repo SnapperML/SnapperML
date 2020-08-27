@@ -21,7 +21,7 @@ from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam, log_text_file
 from .optuna import create_optuna_study, optimize_optuna_study, sample_params_from_distributions
-from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded
+from .exceptions import NoMetricSpecified, ExperimentError, DataNotLoaded, TrialNotAvailable
 
 
 class DataLoader(object):
@@ -56,8 +56,7 @@ class Trial(object):
     """
     @classmethod
     def get_current(cls) -> optuna.Trial:
-        # TODO: Replace by Trial exception
-        raise DataNotLoaded()
+        raise TrialNotAvailable()
 
 
 class MlflowRunWithErrorHandling:
@@ -129,7 +128,7 @@ def _extract_metrics_and_artifacts(result):
 
 def _run_group(func: Callable,
                config: GroupConfig,
-               data_loader: Optional[DataLoader],
+               data_loader_func: Optional[Callable[[], Any]],
                callbacks_handler: CallbacksHandler,
                **kwargs):
     optimize_metric = config.metric
@@ -141,15 +140,13 @@ def _run_group(func: Callable,
     gpu = config.resources_per_worker.gpu
     concurrent_workers = _calculate_concurrent_workers(cpu, gpu, config.num_trials)
     data_object_id = None
-    data_loader_class = None
     futures = []
 
     callbacks_handler.on_job_start()
 
-    if data_loader:
-        data = data_loader.load_data()
+    if data_loader_func:
+        data = data_loader_func()
         data_object_id = ray.put(data)
-        data_loader_class = data_loader.__class__
 
     remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
 
@@ -167,7 +164,6 @@ def _run_group(func: Callable,
                                        optimize_metric=optimize_metric,
                                        group_config=new_group_config,
                                        data=data_object_id,
-                                       data_loader_class=data_loader_class,
                                        callbacks_handler=callbacks_handler,
                                        **kwargs)
         futures.append(object_id)
@@ -186,7 +182,6 @@ def _run_group_remote(func: Callable,
                       optimize_metric: Optional[Metric],
                       group_config: GroupConfig,
                       data: Optional[Any],
-                      data_loader_class: Optional[Type],
                       autologging_backends: AutologgingBackendParam,
                       callbacks_handler: CallbacksHandler,
                       log_seeds: bool,
@@ -197,7 +192,7 @@ def _run_group_remote(func: Callable,
     mlflow.set_experiment(group_config.name)
 
     if data:
-        data_loader_class.load_data = lambda: data
+        DataLoader.load_data = lambda: data
 
     def objective(trial: optuna.Trial):
         with MlflowRunWithErrorHandling(callbacks_handler=callbacks_handler,
@@ -293,7 +288,7 @@ def job(func: Optional[Callable] = None, *,
         callbacks: Optional[Iterable[Callback]] = None,
         autologging_backends: AutologgingBackendParam = None,
         optimization_metric: Union[Metric, str, None] = None,
-        data_loader: Optional[DataLoader] = None,
+        data_loader_func: Optional[Callable[[], Any]] = None,
         log_seeds: bool = True,
         log_system_info: bool = True,
         delete_if_failed: bool = False,
@@ -318,7 +313,7 @@ def job(func: Optional[Callable] = None, *,
     :param optimization_metric: Metric to optimize. It is mandatory when running a group job, and it will be
            ignored when running a single experiment. The name of the metric should be the same as one of the
            keys that the experiment function returns.
-    :param data_loader: Custom data loader class (not instance). It is necessary to specify this argument
+    :param data_loader_func: Custom data loader class (not instance). It is necessary to specify this argument
            when using a DataLoader to share data across multiples processes.
     :param log_seeds: If true, it will log the seed of Numpy, Pytorch, or Python random's generator
            when the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
@@ -332,7 +327,7 @@ def job(func: Optional[Callable] = None, *,
                        callbacks=callbacks,
                        autologging_backends=autologging_backends,
                        optimize_metric=optimization_metric,
-                       data_loader=data_loader,
+                       data_loader_func=data_loader_func,
                        log_seeds=log_seeds,
                        log_system_info=log_system_info,
                        delete_if_failed=delete_if_failed,
@@ -379,7 +374,7 @@ def job(func: Optional[Callable] = None, *,
                                delete_if_failed=delete_if_failed,
                                log_system_info=log_system_info)
             if config.kind == JobTypes.GROUP:
-                _run_group(data_loader=data_loader, **call_params)
+                _run_group(data_loader_func=data_loader_func, **call_params)
             else:
                 _job_runner(_run_experiment, config.ray_config, **call_params)
 
