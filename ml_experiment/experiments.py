@@ -73,6 +73,16 @@ class MlflowRunWithErrorHandling:
         self.run = None
         self.finish_callback_params = {}
 
+    def handle_exception(self, exception):
+        mlflow.set_tag('Status', 'Failed')
+        if self.delete_if_failed:
+            mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
+            mlflow.delete_run(self.run.info.run_id)
+        else:
+            log_text_file('traceback.txt', traceback.format_exc())
+            mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
+            logger.exception(exception)
+
     def __enter__(self):
         self.run = mlflow.start_run(*self.args, **self.kwargs)
         if not self.trial:
@@ -80,7 +90,7 @@ class MlflowRunWithErrorHandling:
         return self.run, self.finish_callback_params
 
     def __exit__(self, exception_type, exception_value, _):
-        is_pruned_exception = exception_type != optuna.exceptions.TrialPruned
+        is_pruned_exception = exception_type == optuna.exceptions.TrialPruned
         exception_value = None if is_pruned_exception else exception_value
 
         if self.trial:
@@ -91,15 +101,8 @@ class MlflowRunWithErrorHandling:
             self.callbacks_handler.on_job_end(exception=exception_value,
                                               **self.finish_callback_params)
 
-        if exception_type and is_pruned_exception:
-            mlflow.set_tag('Status', 'Failed')
-            if self.delete_if_failed:
-                mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
-                mlflow.delete_run(self.run.info.run_id)
-            else:
-                log_text_file('traceback.txt', traceback.format_exc())
-                mlflow.end_run(RunStatus.to_string(RunStatus.FAILED))
-                logger.exception(exception_value)
+        if exception_type and not is_pruned_exception:
+            self.handle_exception(exception_value)
         else:
             mlflow.end_run(RunStatus.to_string(RunStatus.FINISHED))
 

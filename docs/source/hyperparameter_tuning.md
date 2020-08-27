@@ -88,7 +88,7 @@ class MyDataLoader(DataLoader):
         return X_train, X_val, y_train, y_val
 
 
-@job(data_loader=MyDataLoader)
+@job(data_loader_func=MyDataLoader)
 def main(C = 1.0, kernel = 'rbf', degree = 3, gamma = 'scale'):
     X_train, X_val, y_train, y_val = MyDataLoader.load_data()
     model = SVC(C=C, gamma=gamma, kernel=kernel, degree=degree)
