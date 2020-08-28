@@ -1,12 +1,12 @@
-from modelling.utils.data import UnifiedDataLoader, SEED
+from modelling.utils.data import load_unified_data, SEED
 import numpy as np
-from ml_experiment import job, AutologgingBackend, Trial
+from ml_experiment import job, AutologgingBackend, Trial, DataLoader
 from ml_experiment.integrations import XGBoostPruningCallback
 import xgboost as xgb
 from xgboost.callback import print_evaluation
 
 
-@job(data_loader=UnifiedDataLoader(),
+@job(data_loader_func=load_unified_data,
      autologging_backends=AutologgingBackend.XGBOOST)
 def main(n_estimators: int,
          learning_rate: float,
@@ -16,7 +16,7 @@ def main(n_estimators: int,
          min_child_weight: float):
     np.random.seed(SEED)
 
-    X_train, X_val, y_train, y_val = UnifiedDataLoader.load_data()
+    X_train, X_val, y_train, y_val = DataLoader.load_data()
     train_data = xgb.DMatrix(X_train, label=y_train)
     val_data = xgb.DMatrix(X_val, label=y_val)
 

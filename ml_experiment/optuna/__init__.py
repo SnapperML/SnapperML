@@ -21,6 +21,7 @@ SAMPLERS = {
 
 
 def _get_storage_uri() -> str:
+    # TODO: Make this generic for any relational DB
     user = os.getenv('POSTGRES_USER')
     password = os.getenv('POSTGRES_PASSWORD')
     db = os.getenv('POSTGRES_DB')

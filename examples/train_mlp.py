@@ -31,7 +31,7 @@ def create_model(output_size, layers, ps, optimizer, activation, use_bn) -> Mode
     return model
 
 
-@job(autologging_backends=AutologgingBackend.KERAS, data_loader=UnifiedDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS, data_loader_func=UnifiedDataLoader)
 def main(layers: List[int],
          epochs: int,
          batch_size: int = 128,

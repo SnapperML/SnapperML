@@ -40,7 +40,7 @@ setuptools.setup(
         'pystache',
         'shellingham',
         'colorama',
-        'numpy>=2.17.4',
+        'numpy>=1.18.1',
     ],
     dependency_links=['https://github.com/antoniomdk/knockknock.git@master#egg=knockknock']
 )

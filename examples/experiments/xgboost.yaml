@@ -1,10 +1,10 @@
 name: "XGBoost"
 kind: 'group'
-num_trials: 100
+num_trials: 5
 sampler: tpe
 
 param_space:
-  n_estimators: choice([10, 100, 250, 500, 1000, 2500])
+  n_estimators: choice([10, 100, 250, 500, 1000])
   learning_rate: loguniform(0.0001, 1)
   max_depth: range(2, 15)
   gamma: choice([0, 0.5, 2, 10, 20])

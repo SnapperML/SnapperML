@@ -77,7 +77,7 @@ def create_model(
     return autoencoder, encoder, decoder
 
 
-@job(autologging_backends=AutologgingBackend.KERAS, data_loader=SplitDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS, data_loader_func=SplitDataLoader)
 def main(encoding_dim: Union[int, List[int]],
          epochs: int,
          latent_dim: int,

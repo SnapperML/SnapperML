@@ -128,7 +128,7 @@ def create_model(input_size: int, encoding_dim: List[int], lr: float,
     return autoencoder
 
 
-@job(autologging_backends=AutologgingBackend.KERAS, data_loader=SplitDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS, data_loader_func=SplitDataLoader)
 def main(encoding_dim: Union[int, List[int]],
          epochs: int,
          batch_size: int = 128,

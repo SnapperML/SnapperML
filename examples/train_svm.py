@@ -7,7 +7,7 @@ from sklearn.svm import LinearSVC
 from sklearn.kernel_approximation import Nystroem
 
 
-@job(data_loader=UnifiedDataLoader(), callbacks=[DesktopNotifier()])
+@job(data_loader_func=UnifiedDataLoader(), callbacks=[DesktopNotifier()])
 def main(C: float = 1.0, kernel: str = 'rbf', degree: int = 4, gamma: Any = 'scale'):
     np.random.seed(SEED)
     X_train, X_val, y_train, y_val = UnifiedDataLoader.load_data()
