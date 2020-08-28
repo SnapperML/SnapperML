@@ -17,7 +17,7 @@ from .callbacks.core import Callback, CallbacksHandler
 from .logging import logger, setup_logging
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
-    JobConfig, Metric, RayConfig
+    JobConfig, Metric, RayConfig, Settings
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam, log_text_file
 from .optuna import create_optuna_study, optimize_optuna_study, sample_params_from_distributions
@@ -133,6 +133,7 @@ def _run_group(func: Callable,
                config: GroupConfig,
                data_loader_func: Optional[Callable[[], Any]],
                callbacks_handler: CallbacksHandler,
+               settings: Settings,
                **kwargs):
     optimize_metric = config.metric
 
@@ -153,7 +154,7 @@ def _run_group(func: Callable,
 
     remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
 
-    study = create_optuna_study(config)
+    study = create_optuna_study(config, settings)
 
     for i in range(concurrent_workers):
         num_trials = config.num_trials // concurrent_workers
@@ -287,11 +288,19 @@ def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, *
         return remote_func(*args, **kwargs)
 
 
+def _validate_settings(config: JobConfig, settings: Settings):
+    settings = settings or Settings()
+    if config.kind == JobTypes.GROUP and not settings.OPTUNA_STORAGE_URI:
+        raise Exception('OPTUNA_STORAGE_URI not specified. Please, create or update your .env file.')
+    return settings
+
+
 def job(func: Optional[Callable] = None, *,
         callbacks: Optional[Iterable[Callback]] = None,
         autologging_backends: AutologgingBackendParam = None,
         optimization_metric: Union[Metric, str, None] = None,
         data_loader_func: Optional[Callable[[], Any]] = None,
+        settings: Optional[Settings] = None,
         log_seeds: bool = True,
         log_system_info: bool = True,
         delete_if_failed: bool = False,
@@ -318,6 +327,7 @@ def job(func: Optional[Callable] = None, *,
            keys that the experiment function returns.
     :param data_loader_func: Custom data loader class (not instance). It is necessary to specify this argument
            when using a DataLoader to share data across multiples processes.
+    :param settings: Custom object that overrides environment variables.
     :param log_seeds: If true, it will log the seed of Numpy, Pytorch, or Python random's generator
            when the corresponding function to set the seed is called. Eg. when calling numpy.random.sed(...)
     :param log_system_info: Whether or not the system information, CPU, GPU, installed packages..., etc,
@@ -332,6 +342,7 @@ def job(func: Optional[Callable] = None, *,
                        optimize_metric=optimization_metric,
                        data_loader_func=data_loader_func,
                        log_seeds=log_seeds,
+                       settings=settings,
                        log_system_info=log_system_info,
                        delete_if_failed=delete_if_failed,
                        **kwargs)
@@ -365,10 +376,12 @@ def job(func: Optional[Callable] = None, *,
         t = TicToc()
         t.tic()
 
+        safe_settings = _validate_settings(config, settings)
+
         if config.kind == JobTypes.JOB:
             _job_runner(_run_job, config.ray_config, func=func, config=config)
         else:
-            create_mlflow_experiment(experiment_name=config.name)
+            create_mlflow_experiment(experiment_name=config.name, settings=safe_settings)
             call_params = dict(func=func,
                                config=config,
                                autologging_backends=autologging_backends,
@@ -377,7 +390,7 @@ def job(func: Optional[Callable] = None, *,
                                delete_if_failed=delete_if_failed,
                                log_system_info=log_system_info)
             if config.kind == JobTypes.GROUP:
-                _run_group(data_loader_func=data_loader_func, **call_params)
+                _run_group(data_loader_func=data_loader_func, settings=safe_settings, **call_params)
             else:
                 _job_runner(_run_experiment, config.ray_config, **call_params)
 

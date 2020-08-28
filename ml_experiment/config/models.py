@@ -3,9 +3,15 @@ from enum import Enum
 from inspect import getfullargspec
 from typing import *
 from pydantic import BaseModel, PositiveFloat, DirectoryPath, \
-    root_validator, PositiveInt, validator, FilePath, create_model, BaseConfig
+    root_validator, PositiveInt, validator, FilePath, create_model, \
+    BaseConfig, BaseSettings, AnyUrl
 from ..optuna import SAMPLERS, PRUNERS
 from ..optuna.types import ParamDistributionBase, ParamDistribution
+
+
+class Settings(BaseSettings):
+    MLFLOW_TRACKING_URI: AnyUrl
+    OPTUNA_STORAGE_URI: Optional[AnyUrl]
 
 
 class JobTypes(Enum):

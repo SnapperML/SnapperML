@@ -12,6 +12,7 @@ from cpuinfo import get_cpu_info
 
 from .logging import logger
 from .utils import monkey_patch_imported_function
+from .config.models import Settings
 
 
 class AutologgingBackend(Enum):
@@ -25,15 +26,17 @@ class AutologgingBackend(Enum):
 AutologgingBackendParam = Union[List[AutologgingBackend], AutologgingBackend, None]
 
 
-def create_mlflow_experiment(experiment_name: str):
+def create_mlflow_experiment(experiment_name: str, settings: Settings):
     """
     Try to create an experiment if it doesn't exist
     Args:
         experiment_name (str): experiment name
+        settings(str): Config object
     Returns:
         None
     """
     try:
+        mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
         exp = mlflow.create_experiment(experiment_name)
         logger.info(f"mlflow - Created new experiment id: {exp}")
     except Exception:
