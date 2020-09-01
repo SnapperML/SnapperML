@@ -35,7 +35,7 @@ def get_validation_model(config: dict) -> Type[JobConfig]:
     kind = config.get('kind')
     if kind == JobTypes.GROUP.value:
         return GroupConfig
-    if kind == JobTypes.EXPERIMENT.value:
-        return ExperimentConfig
-    else:
+    if kind == JobTypes.JOB.value:
         return JobConfig
+    else:
+        return ExperimentConfig
