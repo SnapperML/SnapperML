@@ -113,13 +113,15 @@ def _parse_experiment_arguments() -> JobConfig:
     return parse_config(sys.argv[1], get_validation_model)
 
 
-def _calculate_concurrent_workers(cpu: float, gpu: float, num_trials: int) -> int:
+def _calculate_concurrent_workers(config: GroupConfig) -> int:
+    cpu = config.resources_per_worker.cpu
+    gpu = config.resources_per_worker.gpu
     available_resources = ray.available_resources()
-    available_gpus = available_resources.get('GPU', 0)
-    available_cpus = available_resources.get('CPU', 1)
+    available_cpus = (config.ray_config and config.ray_config.num_cpus) or available_resources.get('CPU', 1)
+    available_gpus = (config.ray_config and config.ray_config.num_gpus) or available_resources.get('GPU', 0)
     concurrent_workers_by_cpu = available_cpus / cpu
     concurrent_workers_by_gpu = available_gpus / gpu if gpu else np.inf
-    return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, num_trials]))
+    return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, config.num_trials]))
 
 
 def _extract_metrics_and_artifacts(result):
@@ -140,9 +142,7 @@ def _run_group(func: Callable,
     if not optimize_metric:
         raise NoMetricSpecified()
 
-    cpu = config.resources_per_worker.cpu
-    gpu = config.resources_per_worker.gpu
-    concurrent_workers = _calculate_concurrent_workers(cpu, gpu, config.num_trials)
+    concurrent_workers = _calculate_concurrent_workers(config)
     data_object_id = None
     futures = []
 
@@ -152,7 +152,8 @@ def _run_group(func: Callable,
         data = data_loader_func()
         data_object_id = ray.put(data)
 
-    remote_func = ray.remote(num_cpus=cpu, num_gpus=gpu)(_run_group_remote)
+    remote_func = ray.remote(num_cpus=config.resources_per_worker.cpu,
+                             num_gpus=config.resources_per_worker.gpu)(_run_group_remote)
 
     study = create_optuna_study(config, settings)
 
