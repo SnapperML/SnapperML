@@ -254,6 +254,7 @@ def _run_experiment(func: Callable,
                     config: ExperimentConfig,
                     autologging_backends: AutologgingBackendParam,
                     callbacks_handler: CallbacksHandler,
+                    data_loader_func: Optional[Callable[[], Any]],
                     log_seeds: bool,
                     log_system_info: bool,
                     delete_if_failed: bool):
@@ -261,6 +262,10 @@ def _run_experiment(func: Callable,
     with MlflowRunWithErrorHandling(callbacks_handler, delete_if_failed=delete_if_failed):
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         mlflow.set_tag('mlflow.source.name', getfile(func))
+
+        if data_loader_func:
+            DataLoader.load_data = data_loader_func
+
         results = _run_job(func, config)
         if not results:
             return
@@ -389,9 +394,10 @@ def job(func: Optional[Callable] = None, *,
                                log_seeds=log_seeds,
                                callbacks_handler=callbacks_handler,
                                delete_if_failed=delete_if_failed,
+                               data_loader_func=data_loader_func,
                                log_system_info=log_system_info)
             if config.kind == JobTypes.GROUP:
-                _run_group(data_loader_func=data_loader_func, settings=safe_settings, **call_params)
+                _run_group(settings=safe_settings, **call_params)
             else:
                 _job_runner(_run_experiment, config.ray_config, **call_params)
 
