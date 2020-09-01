@@ -8,10 +8,10 @@ setuptools.setup(
     version="0.1",
     author="Antonio Molner Domenech",
     author_email="antonio.molner@correo.ugr.es",
-    description="A framework for reproducible ML experiments",
+    description="A framework for reproducible machine learning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/aguillenATC/TFG-AntonioMolner",
+    url="https://github.com/aguillenATC/ml-experiment",
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': ['ml-experiment=ml_experiment.scripts.run_experiment:app'],
@@ -40,7 +40,7 @@ setuptools.setup(
         'pystache',
         'shellingham',
         'colorama',
-        'numpy>=1.18.1',
+        'numpy'
     ],
     dependency_links=['https://github.com/antoniomdk/knockknock.git@master#egg=knockknock']
 )
