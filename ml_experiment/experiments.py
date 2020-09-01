@@ -294,7 +294,7 @@ def _job_runner(remote_func: Callable, ray_config: Optional[RayConfig], *args, *
         return remote_func(*args, **kwargs)
 
 
-def _validate_settings(config: JobConfig, settings: Settings):
+def _validate_project_settings(config: JobConfig, settings: Settings):
     settings = settings or Settings()
     if config.kind == JobTypes.GROUP and not settings.OPTUNA_STORAGE_URI:
         raise Exception('OPTUNA_STORAGE_URI not specified. Please, create or update your .env file.')
@@ -382,24 +382,23 @@ def job(func: Optional[Callable] = None, *,
         t = TicToc()
         t.tic()
 
-        safe_settings = _validate_settings(config, settings)
+        safe_project_settings = _validate_project_settings(config, settings)
 
-        if config.kind == JobTypes.JOB:
-            _job_runner(_run_job, config.ray_config, func=func, config=config)
+        create_mlflow_experiment(experiment_name=config.name, settings=safe_project_settings)
+
+        call_params = dict(func=func,
+                           config=config,
+                           autologging_backends=autologging_backends,
+                           log_seeds=log_seeds,
+                           callbacks_handler=callbacks_handler,
+                           delete_if_failed=delete_if_failed,
+                           data_loader_func=data_loader_func,
+                           log_system_info=log_system_info)
+
+        if config.kind == JobTypes.GROUP:
+            _run_group(settings=safe_project_settings, **call_params)
         else:
-            create_mlflow_experiment(experiment_name=config.name, settings=safe_settings)
-            call_params = dict(func=func,
-                               config=config,
-                               autologging_backends=autologging_backends,
-                               log_seeds=log_seeds,
-                               callbacks_handler=callbacks_handler,
-                               delete_if_failed=delete_if_failed,
-                               data_loader_func=data_loader_func,
-                               log_system_info=log_system_info)
-            if config.kind == JobTypes.GROUP:
-                _run_group(settings=safe_settings, **call_params)
-            else:
-                _job_runner(_run_experiment, config.ray_config, **call_params)
+            _job_runner(_run_experiment, config.ray_config, **call_params)
 
         elapsed_time = timedelta(seconds=ceil(t.tocvalue()))
         logger.info(f"Finished job {config.name} in {elapsed_time}")

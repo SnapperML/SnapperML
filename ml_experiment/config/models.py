@@ -88,6 +88,12 @@ class JobConfig(BaseModel):
         return values
 
     @root_validator()
+    def check_ray_for_jobs(cls, values):
+        if values.get('ray_config') and values['kind'] == JobTypes.JOB:
+            raise ValueError('Ray as an execution environment is only supported for experiments and groups.')
+        return values
+
+    @root_validator()
     def check_run_commands(cls, values):
         for cmd in values['run']:
             command = cmd.command
