@@ -2828,6 +2828,42 @@ references:
   URL: 'http://arxiv.org/abs/1906.02691'
   volume: '12'
 
+- id: kingmaSemiSupervisedLearningDeep2014
+  abstract: >-
+    The ever-increasing size of modern data sets combined with the difficulty of
+    obtaining label information has made semi-supervised learning one of the
+    problems of significant practical importance in modern data analysis. We
+    revisit the approach to semi-supervised learning with generative models and
+    develop new models that allow for effective generalisation from small
+    labelled data sets to large unlabelled ones. Generative approaches have thus
+    far been either inflexible, inefficient or non-scalable. We show that deep
+    generative models and approximate Bayesian inference exploiting recent
+    advances in variational methods can be used to provide significant
+    improvements, making generative approaches highly competitive for
+    semi-supervised learning.
+  accessed:
+    - year: 2020
+      month: 9
+      day: 9
+  author:
+    - family: Kingma
+      given: Diederik P.
+    - family: Rezende
+      given: Danilo J.
+    - family: Mohamed
+      given: Shakir
+    - family: Welling
+      given: Max
+  container-title: 'arXiv:1406.5298 [cs, stat]'
+  issued:
+    - year: 2014
+      month: 10
+      day: 31
+  source: arXiv.org
+  title: Semi-Supervised Learning with Deep Generative Models
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1406.5298'
+
 - id: kraghQuantumGenerationsHistory2002
   abstract: >-
     At the end of the nineteenth century, some physicists believed that the
@@ -3713,6 +3749,132 @@ references:
   type: book
   URL: 'https://github.com/onnx/onnx'
 
+- id: oordConditionalImageGeneration2016
+  abstract: >-
+    This work explores conditional image generation with a new image density
+    model based on the PixelCNN architecture. The model can be conditioned on
+    any vector, including descriptive labels or tags, or latent embeddings
+    created by other networks. When conditioned on class labels from the
+    ImageNet database, the model is able to generate diverse, realistic scenes
+    representing distinct animals, objects, landscapes and structures. When
+    conditioned on an embedding produced by a convolutional network given a
+    single image of an unseen face, it generates a variety of new portraits of
+    the same person with different facial expressions, poses and lighting
+    conditions. We also show that conditional PixelCNN can serve as a powerful
+    decoder in an image autoencoder. Additionally, the gated convolutional
+    layers in the proposed model improve the log-likelihood of PixelCNN to match
+    the state-of-the-art performance of PixelRNN on ImageNet, with greatly
+    reduced computational cost.
+  accessed:
+    - year: 2020
+      month: 9
+      day: 9
+  author:
+    - family: Oord
+      given: Aaron
+      dropping-particle: van den
+    - family: Kalchbrenner
+      given: Nal
+    - family: Vinyals
+      given: Oriol
+    - family: Espeholt
+      given: Lasse
+    - family: Graves
+      given: Alex
+    - family: Kavukcuoglu
+      given: Koray
+  container-title: 'arXiv:1606.05328 [cs]'
+  issued:
+    - year: 2016
+      month: 6
+      day: 18
+  source: arXiv.org
+  title: Conditional Image Generation with PixelCNN Decoders
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1606.05328'
+
+- id: oordPixelRecurrentNeural2016
+  abstract: >-
+    Modeling the distribution of natural images is a landmark problem in
+    unsupervised learning. This task requires an image model that is at once
+    expressive, tractable and scalable. We present a deep n...
+  accessed:
+    - year: 2020
+      month: 9
+      day: 9
+  author:
+    - family: Oord
+      given: Aaron Van
+    - family: Kalchbrenner
+      given: Nal
+    - family: Kavukcuoglu
+      given: Koray
+  container-title: International Conference on Machine Learning
+  event: International Conference on Machine Learning
+  ISSN: 1938-7228
+  issued:
+    - year: 2016
+      month: 6
+      day: 11
+  language: en
+  page: 1747-1756
+  publisher: PMLR
+  source: proceedings.mlr.press
+  title: Pixel Recurrent Neural Networks
+  type: paper-conference
+  URL: 'http://proceedings.mlr.press/v48/oord16.html'
+
+- id: oordWaveNetGenerativeModel2016
+  abstract: >-
+    This paper introduces WaveNet, a deep neural network for generating raw
+    audio waveforms. The model is fully probabilistic and autoregressive, with
+    the predictive distribution for each audio sample conditioned on all
+    previous ones; nonetheless we show that it can be efficiently trained on
+    data with tens of thousands of samples per second of audio. When applied to
+    text-to-speech, it yields state-of-the-art performance, with human listeners
+    rating it as significantly more natural sounding than the best parametric
+    and concatenative systems for both English and Mandarin. A single WaveNet
+    can capture the characteristics of many different speakers with equal
+    fidelity, and can switch between them by conditioning on the speaker
+    identity. When trained to model music, we find that it generates novel and
+    often highly realistic musical fragments. We also show that it can be
+    employed as a discriminative model, returning promising results for phoneme
+    recognition.
+  accessed:
+    - year: 2020
+      month: 9
+      day: 9
+  author:
+    - family: Oord
+      given: Aaron
+      dropping-particle: van den
+    - family: Dieleman
+      given: Sander
+    - family: Zen
+      given: Heiga
+    - family: Simonyan
+      given: Karen
+    - family: Vinyals
+      given: Oriol
+    - family: Graves
+      given: Alex
+    - family: Kalchbrenner
+      given: Nal
+    - family: Senior
+      given: Andrew
+    - family: Kavukcuoglu
+      given: Koray
+  container-title: 'arXiv:1609.03499 [cs]'
+  issued:
+    - year: 2016
+      month: 9
+      day: 19
+  source: arXiv.org
+  title: 'WaveNet: A Generative Model for Raw Audio'
+  title-short: WaveNet
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1609.03499'
+
 - id: ostapchenkoQGSJETIIReliableDescription2006
   abstract: >-
     Since a number of years the QGSJET model has been successfully used by
@@ -4230,6 +4392,47 @@ references:
   title-short: Overton
   type: article-journal
   URL: 'http://arxiv.org/abs/1909.05372'
+
+- id: salimansPixelCNNImprovingPixelCNN2017
+  abstract: >-
+    PixelCNNs are a recently proposed class of powerful generative models with
+    tractable likelihood. Here we discuss our implementation of PixelCNNs which
+    we make available at https://github.com/openai/pixel-cnn. Our implementation
+    contains a number of modifications to the original model that both simplify
+    its structure and improve its performance. 1) We use a discretized logistic
+    mixture likelihood on the pixels, rather than a 256-way softmax, which we
+    find to speed up training. 2) We condition on whole pixels, rather than
+    R/G/B sub-pixels, simplifying the model structure. 3) We use downsampling to
+    efficiently capture structure at multiple resolutions. 4) We introduce
+    additional short-cut connections to further speed up optimization. 5) We
+    regularize the model using dropout. Finally, we present state-of-the-art log
+    likelihood results on CIFAR-10 to demonstrate the usefulness of these
+    modifications.
+  accessed:
+    - year: 2020
+      month: 9
+      day: 9
+  author:
+    - family: Salimans
+      given: Tim
+    - family: Karpathy
+      given: Andrej
+    - family: Chen
+      given: Xi
+    - family: Kingma
+      given: Diederik P.
+  container-title: 'arXiv:1701.05517 [cs, stat]'
+  issued:
+    - year: 2017
+      month: 1
+      day: 19
+  source: arXiv.org
+  title: >-
+    PixelCNN++: Improving the PixelCNN with Discretized Logistic Mixture
+    Likelihood and Other Modifications
+  title-short: PixelCNN++
+  type: article-journal
+  URL: 'http://arxiv.org/abs/1701.05517'
 
 - id: sandveTenSimpleRules2013
   accessed:
