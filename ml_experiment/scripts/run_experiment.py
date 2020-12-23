@@ -6,6 +6,7 @@ from typing import *
 from dotenv import find_dotenv, load_dotenv
 import docker
 import typer
+import click
 from pydantic import ValidationError
 import pystache
 
@@ -236,7 +237,13 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         ray_config: str = FileOrDict({}, '--ray_config', help=RAY_CONFIG_HELP)):
     load_dotenv(find_dotenv())
 
+    if not scripts and not config_file:
+        ctx = click.get_current_context()
+        click.echo(ctx.get_help())
+        ctx.exit()
+
     if config_file:
+        # TODO: Fix parse when file does not exist
         config = parse_config(config_file, get_validation_model)
         kind = kind or config.kind
         name = name or config.name
