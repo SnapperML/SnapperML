@@ -9,7 +9,7 @@ from ..optuna.types import ParamDistribution
 
 class Settings(BaseSettings):
     MLFLOW_TRACKING_URI: AnyUrl
-    OPTUNA_STORAGE_URI: Optional[AnyUrl]
+    OPTUNA_STORAGE_URI: Optional[str]
 
 
 class JobTypes(Enum):
