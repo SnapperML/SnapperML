@@ -49,7 +49,7 @@ def build_image(client: docker.APIClient, context: Path, dockerfile: Path, build
     return logs_str[-1].strip().split(' ')[-1]
 
 
-def run_docker_container(image: str, command):
+def run_docker_container(image: str, command, env={}):
     client = docker.from_env()
     container = client.containers.run(
         image,
@@ -59,6 +59,7 @@ def run_docker_container(image: str, command):
         volumes={os.getcwd(): {'bind': '/mnt/', 'mode': 'rw'}},
         working_dir='/mnt/',
         detach=True,
+        environment=env
     )
     logs = container.attach(stdout=True, stderr=True, stream=True, logs=True)
     for chunk in logs:
@@ -66,7 +67,7 @@ def run_docker_container(image: str, command):
     logger.info('Finished job!')
 
 
-def process_docker(config: DockerConfig, command: Union[List[str], str]):
+def process_docker(config: DockerConfig, command: Union[List[str], str], env={}):
     client = create_low_level_docker_client()
     commands = command if isinstance(command, list) else [command]
     command_single_expression = " && ".join(commands)
@@ -76,10 +77,10 @@ def process_docker(config: DockerConfig, command: Union[List[str], str]):
         image = build_image(client, config.context, config.dockerfile, config.args)
     if image:
         logger.info('Running job on docker container...')
-        run_docker_container(image, command_single_expression)
+        run_docker_container(image, command_single_expression, env)
 
 
-def run_job(job: JobConfig, config_file: str):
+def run_job(job: JobConfig, config_file: str, env: Dict):
     run_commands: List[Run] = job.run if isinstance(job.run, list) else [job.run]
 
     if isinstance(job, ExperimentConfig) or isinstance(job, GroupConfig):
@@ -89,10 +90,10 @@ def run_job(job: JobConfig, config_file: str):
                          for cmd in run_commands]
 
     if job.docker_config:
-        process_docker(job.docker_config, bash_commands)
+        process_docker(job.docker_config, bash_commands, env)
     else:
         for commands in bash_commands:
-            subprocess.run(commands, shell=True)
+            subprocess.run(commands, shell=True, env={**os.environ, **env})
 
 
 def validate_dict(value: str) -> dict:
@@ -221,6 +222,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         config_file: Path = ExistentFileOption(SUPPORTED_EXTENSIONS, None, '--config_file'),
         name: str = typer.Option(None, help=NAME_HELP),
         kind: JobTypes = typer.Option(None, help=KIND_HELP),
+        env: str = FileOrDict({}),
         params: str = FileOrDict({}, help=PARAMS_HELP),
         param_space: str = FileOrDict({}, '--param_space', help=PARAM_SPACE_HELP),
         num_trials: int = typer.Option(None, '--num_trials', min=0, metavar='POSITIVE_INT', help=NUM_TRIALS_HELP),
@@ -249,25 +251,24 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         name = name or config.name
         scripts = scripts or config.run
         params = {**config.params, **params}
+
         if config.ray_config:
             ray_config = {**config.ray_config.dict(), **ray_config}
+
         if config.docker_config:
             docker_image = docker_image or config.docker_config.dockerfile
             dockerfile = dockerfile or config.docker_config.dockerfile
             docker_context = docker_context or config.docker_config.context
             docker_build_args = {**docker_build_args, **config.docker_config.args}
+
         config = config.dict(exclude_defaults=True)
     else:
         config = {}
 
-    if metric_key:
-        metric = Metric(name=metric_key, metric_direction=metric_direction)
-    else:
-        metric = None
+    metric = Metric(name=metric_key, metric_direction=metric_direction) if metric_key else None
 
     # Job type inference based on input parameters
-    if param_space and not kind:
-        kind = JobTypes.GROUP
+    kind = JobTypes.GROUP if param_space else kind
 
     job_config = {
         'params': params,
@@ -317,5 +318,5 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
     fp.write(file_content)
     fp.flush()
     os.fsync(fp.fileno())
-    run_job(result, fp.name)
+    run_job(result, fp.name, env)
     fp.close()
