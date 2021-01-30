@@ -1,4 +1,4 @@
-Welcome to ml-experiment's documentation!
+Welcome to snapper-ml's documentation!
 =========================================
 
 .. toctree::

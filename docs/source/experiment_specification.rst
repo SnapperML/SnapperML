@@ -48,7 +48,7 @@ Group Definition
 .. code-block:: yaml
 
     name: str   # Required.
-    kind: group # Required. This line should be specified for ml-experiment CLI to know what type of job is this
+    kind: group # Required. This line should be specified for snapper-ml CLI to know what type of job is this
     sampler: str # Optional.
     pruner: str  # Optional.
     timeout_per_trial: positive float # Optional
@@ -136,53 +136,53 @@ Models Reference
 .. _models:
 
 
-.. autoclass:: ml_experiment.config.models.ExperimentConfig
+.. autoclass:: snapper_ml.config.models.ExperimentConfig
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.GroupConfig
+.. autoclass:: snapper_ml.config.models.GroupConfig
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.RayConfig
+.. autoclass:: snapper_ml.config.models.RayConfig
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.JobTypes
+.. autoclass:: snapper_ml.config.models.JobTypes
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.Metric
+.. autoclass:: snapper_ml.config.models.Metric
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.DockerConfig
+.. autoclass:: snapper_ml.config.models.DockerConfig
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.WorkerResourcesConfig
+.. autoclass:: snapper_ml.config.models.WorkerResourcesConfig
    :show-inheritance:
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.PrunerEnum
+.. autoclass:: snapper_ml.config.models.PrunerEnum
    :undoc-members:
    :members:
 
 
-.. autoclass:: ml_experiment.config.models.SamplerEnum
+.. autoclass:: snapper_ml.config.models.SamplerEnum
    :undoc-members:
    :members:

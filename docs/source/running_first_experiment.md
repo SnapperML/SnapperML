@@ -5,7 +5,7 @@
 ### 1. Instrumenting a python script
 
 ```python
-from ml_experiment import job
+from snapper_ml import job
 
 import numpy as np
 from sklearn.svm import SVC
@@ -14,8 +14,9 @@ from sklearn.datasets import load_iris
 
 SEED = 1234
 
-@job # ADD THIS DECORATOR
-def main(C = 1.0, kernel = 'rbf', degree = 3, gamma = 'scale'):
+
+@job  # ADD THIS DECORATOR
+def main(C=1.0, kernel='rbf', degree=3, gamma='scale'):
     np.random.seed(SEED)
     iris = load_iris()
     X_train, X_val, y_train, y_val = train_test_split(iris.data, iris.target, random_state=SEED)
@@ -52,7 +53,7 @@ run:
 Finally, once we have an instrumented Python script and a config file, we can execute the job as follows:
 
 ```bash
-ml-experiment --config_file examples/experiments/svm.yaml
+snapper-ml --config_file examples/experiments/svm.yaml
 ```
 
 
@@ -76,19 +77,18 @@ docker_config:
 Callbacks are an important aspect in almost any ML/DL framework.
 Callbacks allow one to hook into the process and react to some event happening.
 
-ml-experiment offers a simple callback system based on the class
+snapper-ml offers a simple callback system based on the class
 [Callback][]. In order to implement a custom callback, all it takes is implementing that
 abstract class.
 
 Once we've implemented a custom callback class, we can add an instance of it
 as *callbacks* argument of [job][]
 
-The module [notifiers][] contains some predefined callbacks for notifications. It 
-
+The module [notifiers][] contains some predefined callbacks for notifications. It
 
 ```python
-from ml_experiment import job
-from ml_experiment.callbacks.notifiers import DesktopNotifier
+from snapper_ml import job
+from snapper_ml.callbacks.notifiers import DesktopNotifier
 
 import numpy as np
 from sklearn.svm import SVC
@@ -97,9 +97,10 @@ from sklearn.datasets import load_iris
 
 SEED = 1234
 
+
 # ADD THIS
 @job(callbacks=[DesktopNotifier()])
-def main(C = 1.0, kernel = 'rbf', degree = 3, gamma = 'scale'):
+def main(C=1.0, kernel='rbf', degree=3, gamma='scale'):
     np.random.seed(SEED)
     iris = load_iris()
     X_train, X_val, y_train, y_val = train_test_split(iris.data, iris.target, random_state=SEED)
@@ -113,6 +114,6 @@ if __name__ == '__main__':
     main()
 ```
 
-[notifiers]: <package_reference.html#ml_experiment.callbacks.notifiers.NotifierBase>
-[job]: <package_reference.html#ml_experiment.job>
-[Callback]: <package_reference.html#ml_experiment.callbacks.Callback>
+[notifiers]: <package_reference.html#snapper_ml.callbacks.notifiers.NotifierBase>
+[job]: <package_reference.html#snapper_ml.job>
+[Callback]: <package_reference.html#snapper_ml.callbacks.Callback>

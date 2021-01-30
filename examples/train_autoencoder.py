@@ -1,6 +1,6 @@
 from typing import *
 import numpy as np
-from ml_experiment import job, AutologgingBackend
+from snapper_ml import job, AutologgingBackend
 
 from keras.layers import Dense, Dropout, Input
 from keras.models import Sequential, Model

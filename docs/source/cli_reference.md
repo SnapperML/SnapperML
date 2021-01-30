@@ -1,11 +1,11 @@
 # CLI Reference
 
-ml-experiment CLI allows you to execute jobs from a configuration file. It can also be used to run a job without having to create a configuration file. And ultimately, it can be used to execute jobs combining input arguments with a configuration file, so those config files can work as a template. 
+snapper-ml CLI allows you to execute jobs from a configuration file. It can also be used to run a job without having to create a configuration file. And ultimately, it can be used to execute jobs combining input arguments with a configuration file, so those config files can work as a template. 
 
 **Usage**:
 
 ```console
-$ ml-experiment [OPTIONS] [SCRIPTS]...
+$ snapper-ml [OPTIONS] [SCRIPTS]...
 ```
 
 **Options**:

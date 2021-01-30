@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='ml-experiment',
+    name='snapper-ml',
     version="0.1",
     author="Antonio Molner Domenech",
     author_email="antonio.molner@correo.ugr.es",
@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/aguillenATC/ml-experiment",
     packages=setuptools.find_packages(),
     entry_points={
-        'console_scripts': ['ml-experiment=ml_experiment.scripts.run_experiment:app'],
+        'console_scripts': ['snapper-ml=snapper_ml.scripts.run_experiment:app'],
     },
     classifiers=[
         "Programming Language :: Python :: 3",

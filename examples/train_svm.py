@@ -1,8 +1,8 @@
 from typing import *
 from modelling.utils.data import UnifiedDataLoader, SEED
-from ml_experiment.callbacks.notifiers import DesktopNotifier
+from snapper_ml.callbacks.notifiers import DesktopNotifier
 import numpy as np
-from ml_experiment import job
+from snapper_ml import job
 from sklearn.svm import LinearSVC
 from sklearn.kernel_approximation import Nystroem
 

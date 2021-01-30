@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'ml-experiment'
+project = 'snapper-ml'
 copyright = '2020, Antonio Molner, Alberto Guillen'
 author = 'Antonio Molner, Alberto Guillen'
 

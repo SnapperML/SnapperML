@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, Dict, Any, List
-from ml_experiment.config import JobConfig
+from snapper_ml.config import JobConfig
 from optuna import Trial
 
 

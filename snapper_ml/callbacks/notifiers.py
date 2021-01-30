@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from abc import ABCMeta, abstractmethod
 from typing import *
-from ml_experiment.config import JobConfig, GroupConfig
+from snapper_ml.config import JobConfig, GroupConfig
 from optuna import Trial, Study
 from datetime import datetime, timedelta
 import pprint

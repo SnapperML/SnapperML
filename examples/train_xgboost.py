@@ -1,7 +1,7 @@
 from modelling.utils.data import load_unified_data, SEED
 import numpy as np
-from ml_experiment import job, AutologgingBackend, Trial, DataLoader
-from ml_experiment.integrations import XGBoostPruningCallback
+from snapper_ml import job, AutologgingBackend, Trial, DataLoader
+from snapper_ml.integrations import XGBoostPruningCallback
 import xgboost as xgb
 from xgboost.callback import print_evaluation
 
