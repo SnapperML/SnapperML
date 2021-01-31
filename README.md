@@ -1,6 +1,6 @@
-# ml-experiment
+# SnapperML
 
-ML-Experiment is a framework for experiment tracking and machine learning operationalization that combines existent and well-supported technologies. These technologies include Docker, [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), among others.
+SnapperML is a framework for experiment tracking and machine learning operationalization that combines existent and well-supported technologies. These technologies include Docker, [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), among others.
 
 The framework provides an opinionated workflow to design and execute experiments either on a local environment or the cloud. ml-experiment includes:
 - An automatic tracking system
@@ -19,7 +19,7 @@ The project has some core dependencies:
 The python package can be install using **pip**:
 
 ```
-pip install ml-experiment
+pip install SnapperML
 ```
 
 ## Architecture
@@ -81,5 +81,5 @@ run:
 
 ```bash
 
-ml-experiment run --config_file=train_svm.yaml
+snapper-ml run --config_file=train_svm.yaml
 ```
