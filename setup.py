@@ -11,7 +11,7 @@ setuptools.setup(
     description="A framework for reproducible machine learning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/aguillenATC/ml-experiment",
+    url="https://github.com/SnapperML/SnapperML",
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': ['snapper-ml=snapper_ml.scripts.run_experiment:app'],
@@ -42,5 +42,5 @@ setuptools.setup(
         'colorama',
         'numpy'
     ],
-    dependency_links=['https://github.com/antoniomdk/knockknock.git@master#egg=knockknock']
+    dependency_links=['https://github.com/SnapperML/knockknock.git@master#egg=knockknock']
 )
