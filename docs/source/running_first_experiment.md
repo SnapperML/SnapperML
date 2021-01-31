@@ -74,17 +74,13 @@ docker_config:
 
 ## Adding callbacks
 
-Callbacks are an important aspect in almost any ML/DL framework.
-Callbacks allow one to hook into the process and react to some event happening.
-
-snapper-ml offers a simple callback system based on the class
-[Callback][]. In order to implement a custom callback, all it takes is implementing that
+Callbacks allow one to hook into the process and react to events. snapper-ml offers a simple callback system
+based on the class [Callback][]. In order to implement a custom callback, all it takes is implementing that
 abstract class.
 
 Once we've implemented a custom callback class, we can add an instance of it
-as *callbacks* argument of [job][]
-
-The module [notifiers][] contains some predefined callbacks for notifications. It
+as *callbacks* argument of [job][]. The module [notifiers][] contains some predefined callbacks for the
+most common scenarios.
 
 ```python
 from snapper_ml import job
