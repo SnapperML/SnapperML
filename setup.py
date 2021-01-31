@@ -1,11 +1,12 @@
 import setuptools
+import os
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='snapper-ml',
-    version="0.1",
+    version=os.environ.get('PROJECT_VERSION', '0.1.0'),
     author="Antonio Molner Domenech",
     author_email="antonio.molner@correo.ugr.es",
     description="A framework for reproducible machine learning",
