@@ -23,7 +23,7 @@ The project has some core dependencies:
 The python package can be install using **pip**:
 
 ```
-pip install SnapperML
+pip install snapper-ml
 ```
 
 ## Architecture
@@ -37,14 +37,15 @@ environment or a remote environment.
 
 ## Documentation
 
-<TODO> Insert link to docs
+The documentation is available [here](https://snapperml.readthedocs.io/en/latest/)
+
 
 ## Example
 
 ```python
 # train_svm.py
 
-from ml_experiment import job
+from snapper_ml import job
 
 @job
 def main(C, kernel, gamma='scale'):
