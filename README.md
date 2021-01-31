@@ -1,5 +1,7 @@
 # SnapperML
 
+[![Documentation Status](https://readthedocs.org/projects/snapperml/badge/?version=latest)](https://snapperml.readthedocs.io/en/latest/?badge=latest)
+
 SnapperML is a framework for experiment tracking and machine learning operationalization that combines existent and well-supported technologies. These technologies include Docker, [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), among others.
 
 The framework provides an opinionated workflow to design and execute experiments either on a local environment or the cloud. ml-experiment includes:
