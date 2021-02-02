@@ -25,6 +25,22 @@ The python package can be install using **pip**:
 ```
 pip install snapper-ml
 ```
+Please note that ray is not available for newer Python versions (3.9). In order to configure this, you have to install a previous version and configure it. For a Linux system (Fedora) you would have to do:
+
+```
+# install python 3.7
+sudo dnf install python3.7
+# configure the system to use python 3.7
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
+# here select 3.7 version
+sudo alternatives --config python3 
+# make pip available to be used by python 3.7
+python -m ensurepip --default-pip
+# Install SnapperML
+pip install snapper-ml
+```
+WARNING: while chaging the default interpreter to python3.7 some of the native functions of the system might not operate properly.
 
 ## Architecture
 
