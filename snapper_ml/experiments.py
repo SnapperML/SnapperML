@@ -259,6 +259,7 @@ def _run_experiment(func: Callable,
                     log_system_info: bool,
                     delete_if_failed: bool):
     mlflow.set_experiment(config.name)
+
     with MlflowRunWithErrorHandling(callbacks_handler, delete_if_failed=delete_if_failed):
         setup_autologging(func, autologging_backends, log_seeds, log_system_info)
         mlflow.set_tag('mlflow.source.name', getfile(func))

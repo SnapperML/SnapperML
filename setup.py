@@ -26,7 +26,7 @@ setuptools.setup(
     install_requires=[
         'docker>=4.1.0',
         'EasyProcess>=0.2.10',
-        'mlflow',
+        'mlflow>=1.11.0',
         'gorilla>=0.3.0',
         'optuna>=1.1.0',
         'docstring-parser>=0.6',
