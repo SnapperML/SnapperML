@@ -185,7 +185,7 @@ FileOrDict = lambda *args, **kwargs: typer.Option(
 tracking_uri = None
 
 CLI_HELP = """
-ml-experiment CLI allows you to execute jobs from a configuration file.
+snapper-ml CLI allows you to execute jobs from a configuration file.
 It can also be used to run a job on-the-fly by specifying the arguments in-place.
 And ultimately, it can be used to execute jobs combining input arguments with
 a configuration file, so config files can used as templates.
