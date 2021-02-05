@@ -10,7 +10,7 @@ import click
 from pydantic import ValidationError
 import pystache
 
-from snapper_ml.config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS
+from snapper_ml.config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS, _print_validation_error
 from snapper_ml.config.models import DockerConfig, JobConfig, ExperimentConfig, \
     GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric, Run
 from snapper_ml.logging import logger, setup_logging
@@ -304,6 +304,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
             result = JobConfig(**job_config)
     except ValidationError as e:
         print(e)
+        _print_validation_error(config_file, e)
         raise typer.Exit()
 
     setup_logging(experiment_name=result.name)

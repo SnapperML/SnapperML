@@ -43,10 +43,16 @@ class Metric(BaseModel):
     name: str
     direction: OptimizationDirection = OptimizationDirection.MINIMIZE
 
+    class Config:
+        extra = 'forbid'
+
 
 class WorkerResourcesConfig(BaseModel):
     cpu: PositiveFloat = 1.0
     gpu: float = 0.0
+
+    class Config:
+        extra = 'forbid'
 
 
 class DockerConfig(BaseModel):
@@ -61,16 +67,25 @@ class DockerConfig(BaseModel):
             raise ValueError('image and dockerfile fields cannot be used simultaneously. Use one of them.')
         return values
 
+    class Config:
+        extra = 'forbid'
+
 
 class Run(BaseModel):
     command: Union[FilePath, str]
     template: bool = False
+
+    class Config:
+        extra = 'forbid'
 
 
 class GoogleCloudConfig(BaseModel):
     credentials_keyfile: FilePath = None
     job_spec: dict
     project_id: str = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
+
+    class Config:
+        extra = 'forbid'
 
 
 class JobConfig(BaseModel):
@@ -83,26 +98,25 @@ class JobConfig(BaseModel):
 
     @root_validator()
     def check_docker_and_ray(cls, values):
-        if values.get('docker_config') and values.get('ray_config'):
+        if values.get('docker_config') in values and values.get('ray_config'):
             raise ValueError('Executing on Docker and Ray are incompatible. Please, select just one way.')
         return values
 
     @root_validator()
     def check_ray_for_jobs(cls, values):
-        if values.get('ray_config') and values['kind'] == JobTypes.JOB:
+        if 'ray_config' in values and values['kind'] == JobTypes.JOB:
             raise ValueError('Ray as an execution environment is only supported for experiments and groups.')
         return values
 
-    @root_validator()
-    def check_run_commands(cls, values):
-        for cmd in values['run']:
-            command = cmd.command
-            if values['kind'] in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
-                if isinstance(command, str) or not command.exists():
-                    raise ValueError('Script does not exists')
-                elif command.suffix != '.py':
-                    raise ValueError('Script should be a python file when running an experiment or a group')
-        return values
+    @validator('run', each_item=True)
+    def check_run_commands(cls, cmd, values):
+        command = cmd.command
+        if values['kind'] in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
+            if isinstance(command, str) or not command.exists():
+                raise ValueError('Script does not exists')
+            elif command.suffix != '.py':
+                raise ValueError('Script should be a python file when running an experiment or a group')
+        return cmd
 
     @validator('run', pre=True)
     def convert_to_run(cls, value):
