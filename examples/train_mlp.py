@@ -3,11 +3,13 @@ from keras.layers import Dense, Dropout, Activation, BatchNormalization
 from keras.models import Model, Sequential
 from keras.optimizers import Adam, SGD
 from keras.callbacks import EarlyStopping
-from modelling.utils.data import UnifiedDataLoader
+
 import numpy as np
 from snapper_ml import job, AutologgingBackend, Trial
 from snapper_ml.integrations import KerasPruningCallback
-from modelling.utils.one_cycle import OneCycleLR
+
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
 
 VALIDATION_SPLIT = 0.2
 SEED = 1234
@@ -31,7 +33,7 @@ def create_model(output_size, layers, ps, optimizer, activation, use_bn) -> Mode
     return model
 
 
-@job(autologging_backends=AutologgingBackend.KERAS, data_loader_func=UnifiedDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS)
 def main(layers: List[int],
          epochs: int,
          batch_size: int = 128,
@@ -42,7 +44,13 @@ def main(layers: List[int],
          lr: float = 1e-3):
     """Simple autoencoder"""
     np.random.seed(SEED)
-    X_train, X_val, y_train, y_val = UnifiedDataLoader.load_data()
+    [X,y] = fetch_california_housing(data_home=None, download_if_missing=True, return_X_y=True)        
+    
+
+    X_train, X_test, y_train, y_test = train_test_split(X,y, class_vector,
+                                                              test_size=VALIDATION_SPLIT,
+                                                              random_state=SEED)
+    
     num_classes = len(np.unique(y_train))
 
     callbacks = [
