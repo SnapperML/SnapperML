@@ -27,7 +27,7 @@ services:
     volumes:
       - ../:/mnt
     entrypoint: 
-      - ./docker/myentrypoint.sh
+      - ./myentrypoint.sh
     depends_on:
       - mlflow_storage
       - optuna_storage
