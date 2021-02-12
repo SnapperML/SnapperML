@@ -5,4 +5,4 @@ WORKDIR /app
 COPY start_mlflow_server.sh .
 COPY wait-for .
 
-RUN  pip install mlflow
+RUN  pip install mlflow pymysql
