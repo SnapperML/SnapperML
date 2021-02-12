@@ -47,7 +47,7 @@ def main(layers: List[int],
     [X,y] = fetch_california_housing(data_home=None, download_if_missing=True, return_X_y=True)        
     
 
-    X_train, X_test, y_train, y_test = train_test_split(X,y, class_vector,
+    X_train, X_test, y_train, y_test = train_test_split(X,y,
                                                               test_size=VALIDATION_SPLIT,
                                                               random_state=SEED)
     
@@ -78,7 +78,7 @@ def main(layers: List[int],
         epochs=epochs,
         batch_size=batch_size,
         shuffle=True,
-        validation_data=(X_val, y_val),
+        validation_data=(X_test, y_test),
         callbacks=callbacks,
         verbose=0)
 

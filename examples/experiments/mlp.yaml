@@ -26,5 +26,5 @@ ray_config:
   num_cpus: 4
 
 run:
-  - modelling/train_mlp.py
+  - train_mlp.py
 
