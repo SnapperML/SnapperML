@@ -128,7 +128,7 @@ python-dotenv==0.10.3
 python-editor==1.0.4
 pytictoc==1.5.0
 pytz==2019.3
-PyYAML==5.1.2
+PyYAML==5.4
 querystring-parser==1.2.4
 ray==0.8.2
 redis==3.4.1
