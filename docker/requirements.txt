@@ -104,7 +104,7 @@ prettytable==0.7.2
 prometheus-client==0.7.1
 prometheus-flask-exporter==0.13.0
 prompt-toolkit==3.0.3
-protobuf==3.11.1
+protobuf==3.15.0
 psycopg2-binary==2.8.4
 ptyprocess==0.6.0
 py==1.8.1
