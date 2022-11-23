@@ -114,7 +114,7 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.7
 pycodestyle==2.5.0
 pycparser==2.20
-pydantic==1.4
+pydantic==1.6.2
 pyflakes==2.1.1
 Pygments==2.7.4
 PyMySQL==0.9.3
