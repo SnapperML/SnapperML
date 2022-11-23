@@ -8,7 +8,7 @@ async-timeout==3.0.1
 attrs==19.3.0
 awkward==0.12.20
 awscli==1.16.303
-Babel==2.7.0
+Babel==2.9.1
 backcall==0.1.0
 beautifulsoup4==4.8.2
 blis==0.4.1
