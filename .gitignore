@@ -58,7 +58,8 @@ target/
 
 # DotEnv configuration
 .env
-
+.venv
+.envdocker
 # Database
 *.db
 *.rdb
