@@ -15,13 +15,12 @@ PRUNERS = {
 SAMPLERS = {
     'random': optuna.samplers.RandomSampler,
     'tpe': optuna.samplers.TPESampler,
-    'skopt': optuna.integration.SkoptSampler
 }
 
 
 def _delete_optuna_study(study_name, storage: str):
     try:
-        optuna.delete_study(study_name, storage)
+        optuna.delete_study(study_name=study_name, storage=storage)
     except Exception:
         pass
 
