@@ -8,13 +8,12 @@ from datetime import timedelta
 import mlflow
 from mlflow.entities import RunStatus
 import ray
-import numpy as np
 import traceback
 from pytictoc import TicToc
 import optuna
 
 from .callbacks.core import Callback, CallbacksHandler
-from .logging import logger, setup_logging
+from .loggings import logger, setup_logging
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
     JobConfig, Metric, RayConfig, Settings
@@ -110,6 +109,8 @@ class MlflowRunWithErrorHandling:
 
 
 def _parse_experiment_arguments() -> JobConfig:
+    if len(sys.argv) < 2:
+        raise ValueError("Error: No argument passed. Please provide the configuration file path as an argument.") 
     return parse_config(sys.argv[1], get_validation_model)
 
 
@@ -120,7 +121,7 @@ def _calculate_concurrent_workers(config: GroupConfig) -> int:
     available_cpus = (config.ray_config and config.ray_config.num_cpus) or available_resources.get('CPU', 1)
     available_gpus = (config.ray_config and config.ray_config.num_gpus) or available_resources.get('GPU', 0)
     concurrent_workers_by_cpu = available_cpus / cpu
-    concurrent_workers_by_gpu = available_gpus / gpu if gpu else np.inf
+    concurrent_workers_by_gpu = available_gpus / gpu if gpu else float('inf')
     return int(min([concurrent_workers_by_cpu, concurrent_workers_by_gpu, config.num_trials]))
 
 
@@ -283,7 +284,7 @@ def _run_job(func: Callable, config: JobConfig):
 
 
 def _initialize_ray(config: JobConfig):
-    params = config.ray_config.dict() if config.ray_config else {}
+    params = config.ray_config.model_dump() if config.ray_config else {}
     return ray.init(**params, log_to_driver=True)
 
 
@@ -363,7 +364,7 @@ def job(func: Optional[Callable] = None, *,
     @wraps(func)
     def wrapper():
         config = _parse_experiment_arguments()
-        config = config.copy(update=kwargs)
+        config = config.model_copy(update=kwargs)
         callbacks_handler = CallbacksHandler(callbacks=list(callbacks or []), config=config)
 
         setup_logging(experiment_name=config.name)
@@ -375,7 +376,7 @@ def job(func: Optional[Callable] = None, *,
         if config.kind == JobTypes.EXPERIMENT:
             config = cast(ExperimentConfig, config)
 
-        logger.info(f"Job Config -> {config.dict()}")
+        logger.info(f"Job Config -> {config.model_dump()}")
 
         if config.kind == JobTypes.GROUP or config.ray_config:
             _initialize_ray(config)

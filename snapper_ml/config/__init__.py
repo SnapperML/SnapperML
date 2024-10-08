@@ -6,7 +6,7 @@ import termcolor
 import ruamel.yaml
 
 
-from ..logging import logger
+from ..loggings import logger
 from typing import Callable, Type, TypeVar, Union
 from pydantic import BaseModel, ValidationError
 from .models import JobConfig, JobTypes, GroupConfig, ExperimentConfig
@@ -36,7 +36,7 @@ def _print_validation_error(config_file: Union[None, str, Path], validation_erro
 
     if config_file:
         document = os.path.expandvars(config_file.read_text())
-        yaml_doc = ruamel.yaml.load(document, ruamel.yaml.RoundTripLoader)
+        yaml_doc = yaml.load(document, ruamel.yaml.RoundTripLoader)
         document_lines = document.split('\n')
     else:
         yaml_doc = {}
@@ -81,7 +81,8 @@ def parse_config(config_file: Union[str, Path], model: Union[BaseModel, ModelFac
         if model:
             try:
                 model = model(config) if callable(model) else model
-                return model.parse_obj(config)
+
+                return model.model_validate(config)
             except ValidationError as e:
                 _print_validation_error(config_file, e)
                 exit(1)
