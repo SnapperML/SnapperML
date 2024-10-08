@@ -6,6 +6,7 @@ from typing import *
 from dotenv import find_dotenv, load_dotenv
 import docker
 import typer
+from typer import BadParameter
 import click
 from pydantic import ValidationError
 import pystache
@@ -13,7 +14,7 @@ import pystache
 from snapper_ml.config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS, _print_validation_error
 from snapper_ml.config.models import DockerConfig, JobConfig, ExperimentConfig, \
     GroupConfig, JobTypes, PrunerEnum, SamplerEnum, OptimizationDirection, Metric, Run
-from snapper_ml.logging import logger, setup_logging
+from snapper_ml.loggings import logger, setup_logging
 from snapper_ml.utils import recursive_map
 
 
@@ -96,30 +97,39 @@ def run_job(job: JobConfig, config_file: str, env: Dict):
             subprocess.run(commands, shell=True, env={**os.environ, **env})
 
 
-def validate_dict(value: str) -> dict:
+def validate_dict(value: str) -> dict:    
     value = value.strip()
+
+    # Check if the input is "{}"
+    if value == "{}":
+        return {}
+    
     if not value:
         return {}
     try:
         return dict(item.strip().split("=") for item in value.split(";"))
-    except Exception:
+    except ValueError as e:
         raise typer.BadParameter(
-            'It should be semicolon-separated list of field=value pairs, e.g. "date=0; amount=1"')
+            f"Failed to parse input string as a dictionary: '{value}'. Ensure it is formatted "
+            f"as 'key1=value1; key2=value2'."
+        ) from e
 
-
-def validate_file_or_dict(value: Union[dict, str]) -> dict:
-    if isinstance(value, dict):
-        return value
+def validate_file_or_dict(value: str) -> dict:
     try:
         if os.path.isfile(value):
             return parse_config(value)
         else:
             return validate_dict(value)
+    except BadParameter:  # Catch the specific Typer exception
+        raise  # Re-raise it directly so Typer handles it
     except Exception:
-        raise typer.BadParameter('It should be dictionary of the form "k1=v1; k2=v2" or an existent YAML or JSON file')
+        raise BadParameter('It should be dictionary of the form "k1=v1; k2=v2" or an existent YAML or JSON file')
 
 
-def validate_existent_file(value: Union[List[Path], Path], extensions: Union[str, List[str]] = '.py'):
+def validate_existent_file(value: Union[List[Path], Path], extensions: Union[str, List[str]] = '.py', isList = False):
+    if not value and isList:
+        return []
+
     if not value:
         return value
 
@@ -143,7 +153,7 @@ app = typer.Typer()
 
 ExistentFile = lambda extension, *args, **kwargs: typer.Argument(
     *args,
-    callback=lambda value: validate_existent_file(value, extension),
+    callback=lambda value: validate_existent_file(value, extension, True),
     exists=True,
     file_okay=True,
     dir_okay=False,
@@ -198,6 +208,9 @@ DICT_OVERLAP = 'In case of overlap, the values of this dictionary will take prec
 NAME_HELP = f'Name of the job. {OVERRIDE_CONFIG}'
 PARAMS_HELP = f'Job parameters. If config file is specified, these parameters {DICT_OVERLAP}'
 KIND_HELP = f'Type of job. {OVERRIDE_CONFIG}'
+
+######### TODO ENV_HELP #########
+
 PARAM_SPACE_HELP = f'Job parameter space. {ONLY_GROUP} {DICT_OVERLAP}'
 NUM_TRIALS_HELP = f'Number of experiments to execute in parallel. {ONLY_GROUP} {OVERRIDE_CONFIG}'
 TIMEOUT_HELP = 'Timeout per trial. In case of an experiment taking too long, it will be aborted.' \
@@ -237,8 +250,9 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         docker_context: Path = ExistentDir(None, '--docker_context', help=DOCKER_CONTEXT_HELP),
         docker_build_args: str = FileOrDict({}, '--docker_build_args', help=DOCKER_ARGS_HELP),
         ray_config: str = FileOrDict({}, '--ray_config', help=RAY_CONFIG_HELP)):
+    
     load_dotenv(find_dotenv())
-
+    
     if not scripts and not config_file:
         ctx = click.get_current_context()
         click.echo(ctx.get_help())
@@ -247,6 +261,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
     if config_file:
         # TODO: Fix parse when file does not exist
         config = parse_config(config_file, get_validation_model)
+
         kind = kind or config.kind
         name = name or config.name
         scripts = scripts or config.run
@@ -289,7 +304,8 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 
     try:
         if kind == JobTypes.GROUP:
-            group_config = dict(sampler=sampler,
+            group_config = dict(kind=JobTypes.GROUP,
+                                sampler=sampler,
                                 pruner=pruner,
                                 num_trials=num_trials,
                                 timeout_per_trial=timeout_per_trial,
@@ -297,7 +313,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
                                 param_space=param_space)
             group_config = {k: v for k, v in group_config.items() if v}
             group_config = {**job_config, **config, **group_config}
-            result = GroupConfig.parse_obj(group_config)
+            result = GroupConfig.model_validate(group_config)
         elif kind == JobTypes.EXPERIMENT:
             result = ExperimentConfig(**job_config)
         else:
@@ -315,9 +331,12 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
             lambda x: str(x) if isinstance(x, Callable) else x, result.param_space)
 
     fp = tempfile.NamedTemporaryFile(mode='w+', suffix='.json')
-    file_content = result.json(exclude_defaults=False)
+    file_content = result.model_dump_json(exclude_defaults=False)
     fp.write(file_content)
     fp.flush()
     os.fsync(fp.fileno())
     run_job(result, fp.name, env)
     fp.close()
+
+if __name__ == '__main__':
+    app()
