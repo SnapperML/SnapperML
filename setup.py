@@ -31,17 +31,22 @@ setuptools.setup(
         'optuna>=1.1.0',
         'docstring-parser>=0.6',
         'pydantic>=1.4',
+        'pydantic-settings',
         'python-dotenv>=0.10.3',
         'ray>=0.8.2',
         'PyYAML>=5.1.2',
         'pytictoc>=1.5.0',
         'coloredlogs>=10.0',
         'py-cpuinfo>=5.0.0',
-        'typer>=0.1.1',
+        'typer>=0.1',
         'pystache',
         'shellingham',
+        'ruamel.yaml',
+        'knockknock',
         'colorama',
-        'numpy'
-    ],
-    dependency_links=['https://github.com/SnapperML/knockknock.git@master#egg=knockknock']
+        'termcolor',
+        'mysqlclient',
+        'numpy',
+        'psycopg2'
+    ]
 )
