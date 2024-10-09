@@ -33,21 +33,22 @@ class SplitDataLoader(DataLoader):
 
         return train_datasets, val_datasets
 
+class UnifiedDataLoader(DataLoader):
+    @classmethod
+    def load_unified_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        train_files = glob.glob('data/raw/QGSJet-*-train.txt')
+        datasets = [np.genfromtxt(file, delimiter=',') for file in train_files]
+        X, y = [], []
 
-def load_unified_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    train_files = glob.glob('data/raw/QGSJet-*-train.txt')
-    datasets = [np.genfromtxt(file, delimiter=',') for file in train_files]
-    X, y = [], []
+        for i, dataset in enumerate(datasets):
+            X.append(dataset[:, 3:-1])
+            y.append(np.full(dataset.shape[0], i))
 
-    for i, dataset in enumerate(datasets):
-        X.append(dataset[:, 3:-1])
-        y.append(np.full(dataset.shape[0], i))
+        X = np.concatenate(X, axis=0)
+        y = np.concatenate(y, axis=0)
 
-    X = np.concatenate(X, axis=0)
-    y = np.concatenate(y, axis=0)
-
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=VALIDATION_SPLIT, random_state=SEED)
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_val = scaler.transform(X_val)
-    return X_train, X_val, y_train, y_val
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=VALIDATION_SPLIT, random_state=SEED)
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_val = scaler.transform(X_val)
+        return X_train, X_val, y_train, y_val
