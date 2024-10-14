@@ -1,18 +1,18 @@
 from typing import *
 import numpy as np
 from snapper_ml import job, AutologgingBackend
-
-from keras.layers import Dense, Dropout, Input
-from keras.models import Sequential, Model
-from keras.optimizers import SGD
-from keras import constraints
-import keras.backend as K
 import tensorflow as tf
-from keras.callbacks import EarlyStopping
-from modelling.utils.data import SplitDataLoader, SEED
+
+from tensorflow.keras.layers import Dense, Dropout, Input
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.optimizers import SGD
+from keras import constraints
+import tensorflow.keras.backend as K
+from tensorflow.keras.callbacks import EarlyStopping
+from utils.data import SplitDataLoader, SEED
 from scipy.spatial.distance import euclidean
-from tied_autoencoder_keras import DenseLayerAutoencoder
-from modelling.utils.one_cycle import OneCycleLR
+from utils.one_cycle import OneCycleLR
+from snapper_ml.callbacks.notifiers import DesktopNotifier
 
 
 class WeightsOrthogonalityConstraint(constraints.Constraint):
@@ -117,18 +117,33 @@ def create_model(input_size: int, encoding_dim: List[int], lr: float,
     if not isinstance(encoding_dim, list):
         encoding_dim = [encoding_dim]
 
+    inputs = Input(shape=(input_size,))
+    
     if tied_weights:
-        inputs = Input(shape=(input_size,))
-        x = DenseLayerAutoencoder(encoding_dim, dropout=ps)(inputs)
-        autoencoder = Model(inputs=inputs, outputs=x)
+        # Encoder
+        encoded = inputs
+        for dim in encoding_dim:
+            encoded = Dense(dim, activation=activation)(encoded)
+            encoded = Dropout(ps)(encoded)
+        
+        # Decoder (tied weights)
+        decoded = encoded
+        for dim in reversed(encoding_dim):
+            decoded = Dense(dim, activation=activation, kernel_initializer='glorot_uniform', use_bias=False)(decoded)
+            decoded = Dropout(ps)(decoded)
+
+        # Output layer
+        outputs = Dense(input_size, activation='sigmoid')(decoded)
+        
+        autoencoder = Model(inputs=inputs, outputs=outputs)
     else:
         autoencoder = create_untied_model(input_size, encoding_dim, ps, activation, **kwargs)
 
-    autoencoder.compile(SGD(learning_rate=lr), loss='mse')
+    autoencoder.compile(optimizer=SGD(learning_rate=lr), loss='mse')
     return autoencoder
 
 
-@job(autologging_backends=AutologgingBackend.KERAS, data_loader_func=SplitDataLoader)
+@job(autologging_backends=AutologgingBackend.KERAS, data_loader_func=SplitDataLoader, callbacks=[DesktopNotifier()])
 def main(encoding_dim: Union[int, List[int]],
          epochs: int,
          batch_size: int = 128,

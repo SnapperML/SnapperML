@@ -3,11 +3,11 @@ from keras.layers import Dense, Dropout, Activation, BatchNormalization
 from keras.models import Model, Sequential
 from keras.optimizers import Adam, SGD
 from keras.callbacks import EarlyStopping
-from modelling.utils.data import UnifiedDataLoader
+from utils.data import UnifiedDataLoader
 import numpy as np
 from snapper_ml import job, AutologgingBackend, Trial
 from snapper_ml.integrations import KerasPruningCallback
-from modelling.utils.one_cycle import OneCycleLR
+from utils.one_cycle import OneCycleLR
 
 VALIDATION_SPLIT = 0.2
 SEED = 1234

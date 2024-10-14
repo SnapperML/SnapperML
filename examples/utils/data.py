@@ -15,12 +15,11 @@ SEED = 1234
 class SplitDataLoader(DataLoader):
     @classmethod
     def load_data(cls) -> Tuple[List[Dataset], List[Dataset]]:
-        train_files = glob.glob('data/raw/QGSJet-*-train.txt')
-        datasets = [np.genfromtxt(file, delimiter=',') for file in train_files]
+        train_files = glob.glob('examples/data/*QGSJet.txt')
+        datasets = [np.genfromtxt(file, delimiter='   ', dtype=float, encoding='utf-8') for file in train_files]
         train_datasets, val_datasets, = [], []
-
         for i, dataset in enumerate(datasets):
-            dataset = dataset[:, 3:-1]
+            dataset = dataset[:, 3:]
             class_vector = np.full(dataset.shape[0], i)
             X_train, X_val, y_train, y_val = train_test_split(dataset, class_vector,
                                                               test_size=VALIDATION_SPLIT,
@@ -33,15 +32,19 @@ class SplitDataLoader(DataLoader):
 
         return train_datasets, val_datasets
 
+
 class UnifiedDataLoader(DataLoader):
     @classmethod
-    def load_unified_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        train_files = glob.glob('data/raw/QGSJet-*-train.txt')
-        datasets = [np.genfromtxt(file, delimiter=',') for file in train_files]
+    def load_data(cls) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        train_files = glob.glob('examples/data/*QGSJet.txt')
+        if not train_files:
+            raise ValueError(f"No train files loaded.")
+        
+        datasets = [np.genfromtxt(file, delimiter='   ', dtype=float, encoding='utf-8') for file in train_files]
         X, y = [], []
 
         for i, dataset in enumerate(datasets):
-            X.append(dataset[:, 3:-1])
+            X.append(dataset[:, 3:])
             y.append(np.full(dataset.shape[0], i))
 
         X = np.concatenate(X, axis=0)
@@ -51,4 +54,5 @@ class UnifiedDataLoader(DataLoader):
         scaler = StandardScaler()
         X_train = scaler.fit_transform(X_train)
         X_val = scaler.transform(X_val)
+
         return X_train, X_val, y_train, y_val

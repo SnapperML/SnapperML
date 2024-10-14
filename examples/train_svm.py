@@ -1,5 +1,5 @@
 from typing import *
-from examples.utils.data import UnifiedDataLoader, SEED
+from utils.data import UnifiedDataLoader, SEED
 from snapper_ml.callbacks.notifiers import DesktopNotifier
 import numpy as np
 from snapper_ml import job
@@ -7,7 +7,9 @@ from sklearn.svm import LinearSVC
 from sklearn.kernel_approximation import Nystroem
 
 
+# @job(data_loader_func=UnifiedDataLoader, callbacks=[EmailNotifier("ylopezramirez02@gmail.com", ["donoreo69@gmail.com"])])
 @job(data_loader_func=UnifiedDataLoader, callbacks=[DesktopNotifier()])
+#@job(data_loader_func=UnifiedDataLoader, callbacks=[TelegramNotifier("AAF9RK6bwJGz4CraUSXNcJOtJlf5LlZVdYs", "7790628987")])
 def main(C: float = 1.0, kernel: str = 'rbf', degree: int = 4, gamma: Any = 'scale'):
     np.random.seed(SEED)
     X_train, X_val, y_train, y_val = UnifiedDataLoader.load_data()

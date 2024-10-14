@@ -8,9 +8,9 @@ from keras.losses import mse
 from keras.optimizers import SGD
 import keras.backend as K
 from keras.callbacks import EarlyStopping
-from modelling.utils.data import SplitDataLoader, SEED
+from utils.data import SplitDataLoader, SEED
 from scipy.spatial.distance import euclidean
-from modelling.utils.one_cycle import OneCycleLR
+from utils.one_cycle import OneCycleLR
 
 
 def sampling(args):

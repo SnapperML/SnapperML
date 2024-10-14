@@ -22,5 +22,5 @@ ray_config:
   num_cpus: 4
 
 run:
-  - modelling/train_vae.py
+  - examples/train_vae.py
 

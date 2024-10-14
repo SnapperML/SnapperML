@@ -27,5 +27,5 @@ ray_config:
   num_cpus: 4
 
 run:
-  - modelling/train_autoencoder.py
+  - examples/train_autoencoder.py
 
