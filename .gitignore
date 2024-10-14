@@ -58,7 +58,8 @@ target/
 
 # DotEnv configuration
 .env
-
+.venv
+.envdocker
 # Database
 *.db
 *.rdb
@@ -93,3 +94,4 @@ website
 node_modules
 
 mlruns
+data

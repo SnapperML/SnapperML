@@ -1,7 +1,7 @@
 from googleapiclient import discovery
 from googleapiclient import errors
 from .config.models import JobConfig
-from .logging import logger
+from .loggings import logger
 
 
 def create_job_spec(job_name, config_filepath):

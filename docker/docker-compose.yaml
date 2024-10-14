@@ -1,10 +1,8 @@
-version: '3'
-
 services:
   mlflow_storage:
     image: mysql
     env_file:
-      - ../.env
+      - .envdocker
     volumes:
       - mlflow_storage_data:/var/lib/mysql
     ports:
@@ -13,7 +11,7 @@ services:
   optuna_storage:
     image: postgres
     env_file:
-      - ../.env
+      - .envdocker
     volumes:
       - optuna_storage_data:/var/lib/postgresql/data/
     ports:
@@ -35,7 +33,7 @@ services:
     container_name: "mlflow_${USER}"
     tty: true
     env_file:
-      - ../.env
+      - .envdocker
 
 volumes:
   mlflow_storage_data:

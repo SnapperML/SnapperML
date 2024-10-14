@@ -10,7 +10,7 @@ import mlflow
 from easyprocess import EasyProcess, EasyProcessError
 from cpuinfo import get_cpu_info
 
-from .logging import logger
+from .loggings import logger
 from .utils import monkey_patch_imported_function
 from .config.models import Settings
 
@@ -37,7 +37,7 @@ def create_mlflow_experiment(experiment_name: str, settings: Settings):
     """
     try:
         mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
-        exp = mlflow.create_experiment(experiment_name)
+        exp = mlflow.create_experiment(experiment_name) 
         logger.info(f"mlflow - Created new experiment id: {exp}")
     except Exception:
         logger.info(f"mlflow - Experiment already exists. Writing to same URI/artifact store")
@@ -118,15 +118,15 @@ def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds:
     patch = None
 
     if backend == AutologgingBackend.TENSORFLOW:
-        import mlflow.tensorflow
-        import tensorflow as tf
-        patch = log_seeds and _get_seed_initializer_patch(target, tf.random, 'Tensorflow', 'set_seed')
+        import mlflow.tensorflow as tf
+        import tensorflow
+        patch = log_seeds and _get_seed_initializer_patch(target, tensorflow.random, 'Tensorflow', 'set_seed')
         mlflow.tensorflow.autolog()
         logger.info("Enabled autologging for Tensorflow")
     elif backend == AutologgingBackend.KERAS:
         import mlflow.keras
-        import tensorflow as tf
-        patch = log_seeds and _get_seed_initializer_patch(target, tf.random, 'Tensorflow', 'set_seed')
+        import tensorflow
+        patch = log_seeds and _get_seed_initializer_patch(target, tensorflow.random, 'Tensorflow', 'set_seed')
         mlflow.keras.autolog()
         logger.info("Enabled autologging for Keras")
     elif backend == AutologgingBackend.FASTAI:
@@ -138,12 +138,12 @@ def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds:
     elif backend == AutologgingBackend.XGBOOST:
         import mlflow.xgboost
         mlflow.xgboost.autolog()
-        # patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
+        patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
         logger.info("Enabled autologging for Xgboost")
     elif backend == AutologgingBackend.LIGHTGBM:
         import mlflow.lightgbm
         mlflow.lightgbm.autolog()
-        # patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
+        patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
         logger.info("Enabled autologging for LightGBM")
     elif backend:
         raise Exception(f'Autologging backend {backend} not supported')
@@ -165,8 +165,7 @@ def setup_autologging(target: Callable,
     if log_seeds:
         patches = [_get_seed_initializer_patch(target, random, 'Python Random', 'seed')]
         try:
-            import numpy as np
-            patches.append(_get_seed_initializer_patch(target, np.random, 'Numpy', 'seed'))
+            patches.append(_get_seed_initializer_patch(target, random, 'Python', 'seed'))
         except ModuleNotFoundError:
             pass
         for patch in patches:

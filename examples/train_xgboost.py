@@ -1,4 +1,4 @@
-from modelling.utils.data import load_unified_data, SEED
+from utils.data import UnifiedDataLoader, SEED
 import numpy as np
 from snapper_ml import job, AutologgingBackend, Trial, DataLoader
 from snapper_ml.integrations import XGBoostPruningCallback
@@ -6,7 +6,7 @@ import xgboost as xgb
 from xgboost.callback import print_evaluation
 
 
-@job(data_loader_func=load_unified_data,
+@job(data_loader_func=UnifiedDataLoader,
      autologging_backends=AutologgingBackend.XGBOOST)
 def main(n_estimators: int,
          learning_rate: float,

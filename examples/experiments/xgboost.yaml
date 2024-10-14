@@ -16,5 +16,5 @@ metric:
   direction: maximize
 
 run:
-  - modelling/train_xgboost.py
+  - examples/train_xgboost.py
 

@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snapper-ml"
+version = "0.1.0"  # You can set this dynamically if needed
+description = "A framework for reproducible machine learning"
+readme = "README.md"
+authors = [
+    { name = "Antonio Molner Domenech", email = "antonio.molner@correo.ugr.es" },
+    { name = "Yeray López Ramírez", email = "ylopezramirez@correo.ugr.es" }
+]
+license = { text = "MIT License" }
+requires-python = ">=3.12"
+keywords = ["machine learning", "reproducibility", "automation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "docker>=4.1.0",
+    "EasyProcess>=0.2.10",
+    "mlflow>=1.11.0",
+    "gorilla>=0.3.0",
+    "optuna>=1.1.0",
+    "docstring-parser>=0.6",
+    "pydantic>=1.4",
+    "pydantic-settings",
+    "python-dotenv>=0.10.3",
+    "ray>=0.8.2",
+    "PyYAML>=5.1.2",
+    "pytictoc>=1.5.0",
+    "coloredlogs>=10.0",
+    "py-cpuinfo>=5.0.0",
+    "typer>=0.1",
+    "pystache",
+    "shellingham",
+    "ruamel.yaml",
+    "knockknock",
+    "colorama",
+    "termcolor",
+    "mysqlclient",
+    "numpy",
+    "psycopg2"
+]
+
+[project.urls]
+homepage = "https://github.com/SnapperML/SnapperML"
+
+[tool.setuptools.packages.find]
+include = ["snapper_ml"]
+exclude = ["logs", "docker", "thesis", "mlruns"]
+
+[project.optional-dependencies]
+dev = ["pytest", "tox", "black"]
+
+[project.scripts]
+snapper-ml = "snapper_ml.scripts.run_experiment:app"

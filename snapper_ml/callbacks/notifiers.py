@@ -9,9 +9,7 @@ from .core import Callback
 from pytictoc import TicToc
 import socket
 import traceback
-from knockknock.slack_sender import send_slack_message
-from knockknock.email_sender import send_email, create_yag_sender
-from knockknock.desktop_sender import show_desktop_notification
+from knockknock import desktop_sender, slack_sender, email_sender
 import sys
 import telegram
 
@@ -208,7 +206,13 @@ class DesktopNotifier(NotifierBase):
     """
     def send_message(self, msg: str):
         subject = msg.split('\n')[0]
-        show_desktop_notification(subject, msg)
+
+        @desktop_sender(title=subject)
+        def notify():
+            return msg
+        
+        # Call the notify function to send the message
+        notify()
 
 
 @dataclass
@@ -227,10 +231,19 @@ class SlackNotifier(NotifierBase):
     channel: str
     username: str
 
-    def send_message(self, msg: str, **kwargs):
-        icon_emoji = ':x:' if 'exception' in kwargs else ':tada:'
-        send_slack_message(self.webhook_url, self.channel, msg, self.username, icon_emoji=icon_emoji)
+    def send_message(self, msg: str, user_mentions: list = []):
+        """
+        Send a message to Slack using the slack_sender decorator.
 
+        :param msg: The message to send.
+        :param user_mentions: List of user IDs to mention in the message.
+        """
+        @slack_sender(self.webhook_url, self.channel, user_mentions)
+        def notify():
+            return msg
+        
+        # Call the notify function to send the message
+        notify()
 
 @dataclass
 class EmailNotifier(NotifierBase):
@@ -243,10 +256,17 @@ class EmailNotifier(NotifierBase):
     sender_email: str
     recipient_emails: List[str]
 
-    def __post_init__(self):
-        super().__post_init__()
-        self._yag_sender = create_yag_sender(self.recipient_emails, self.sender_email)
-
     def send_message(self, msg: str):
+        """
+        Send a message to email using the email_sender decorator.
+
+        :param msg: The message to send, the first line will be used as the subject.
+        """
         subject = msg.split('\n')[0]
-        return send_email(self._yag_sender, self.recipient_emails, subject, msg)
+    
+        @email_sender(self.recipient_emails, self.sender_email)
+        def notify():
+            return msg
+
+        # Call the notify function to send the email
+        notify()

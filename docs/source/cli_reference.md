@@ -17,7 +17,7 @@ $ snapper-ml [OPTIONS] [SCRIPTS]...
 * `--param_space FILE | DICT`: Job parameter space. Only applies for groups of experiments. In case of overlap, the values of this dictionary will take precedence over the rest
 * `--num_trials POSITIVE_INT`: Number of experiments to execute in parallel. Only applies for groups of experiments. Overrides the config file field if specified.
 * `--timeout_per_trial POSITIVE_FLOAT`: Timeout per trial. In case of an experiment taking too long, it will be aborted.Only applies for groups of experiments. Overrides the config file field if specified.
-* `--sampler [random|tpe|skopt]`: Sampler name. Only applies for groups of experiments. Overrides the config file field if specified.
+* `--sampler [random|tpe]`: Sampler name. Only applies for groups of experiments. Overrides the config file field if specified.
 * `--pruner [hyperband|sha|percentile|median]`: Pruner name. Only applies for groups of experiments. Overrides the config file field if specified.
 * `--metric_key TEXT`: Name of the metric to optimize. It must be one of the keys of the metrics dictionary returned by the main function. Only applies for groups of experiments. Overrides the config file field if specified.
 * `--metric_direction [minimize|maximize]`: Whether Hyperparameter Optimization Engine should minimize or maximize the given metric. Only applies for groups of experiments. Overrides the config file field if specified.

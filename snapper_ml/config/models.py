@@ -1,16 +1,16 @@
 import os
 from enum import Enum
 from typing import *
-from pydantic import BaseModel, PositiveFloat, DirectoryPath, \
-    root_validator, PositiveInt, validator, FilePath, BaseSettings, AnyUrl
+from pydantic import field_validator, model_validator, field_serializer, ConfigDict, BaseModel, PositiveFloat, DirectoryPath, \
+    PositiveInt, FilePath, AnyUrl, FieldValidationInfo
 from ..optuna import SAMPLERS, PRUNERS
 from ..optuna.types import ParamDistribution
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    MLFLOW_TRACKING_URI: AnyUrl
+    MLFLOW_TRACKING_URI: str
     OPTUNA_STORAGE_URI: Optional[str]
-
 
 class JobTypes(Enum):
     JOB = "job"
@@ -19,19 +19,18 @@ class JobTypes(Enum):
 
 
 class RayConfig(BaseModel):
-    address: Optional[str]
-    num_cpus: Optional[PositiveInt]
-    num_gpus: Optional[PositiveInt]
+    address: Optional[str] = None
+    num_cpus: Optional[PositiveInt] = None
+    num_gpus: Optional[PositiveInt] = None
 
-    @validator('address', pre=True)
+    @field_validator('address', mode="before")
+    @classmethod
     def convert_localhost(cls, v: str):
         if v:
             v_striped = v.strip()
             return '' if v_striped == 'localhost' else v_striped
         return v
-
-    class Config:
-        extra = 'allow'
+    model_config = SettingsConfigDict(extra='allow')
 
 
 class OptimizationDirection(Enum):
@@ -42,97 +41,98 @@ class OptimizationDirection(Enum):
 class Metric(BaseModel):
     name: str
     direction: OptimizationDirection = OptimizationDirection.MINIMIZE
-
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class WorkerResourcesConfig(BaseModel):
     cpu: PositiveFloat = 1.0
     gpu: float = 0.0
-
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class DockerConfig(BaseModel):
-    dockerfile: Optional[FilePath]
-    image: Optional[str]
+    dockerfile: Optional[FilePath] = None
+    image: Optional[str] = None
     context: Optional[DirectoryPath] = None
     args: Dict = {}
 
-    @root_validator()
+    @model_validator(mode='before')
+    @classmethod
     def check_dockerfile_and_image(cls, values):
         if values.get('image') and values.get('dockerfile'):
             raise ValueError('image and dockerfile fields cannot be used simultaneously. Use one of them.')
         return values
-
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class Run(BaseModel):
     command: Union[FilePath, str]
     template: bool = False
-
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class GoogleCloudConfig(BaseModel):
     credentials_keyfile: FilePath = None
     job_spec: dict
     project_id: str = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
-
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class JobConfig(BaseModel):
     name: str
     kind: JobTypes = JobTypes.JOB
     run: List[Run]
-    docker_config: Optional[DockerConfig]
+    docker_config: Optional[DockerConfig] = None
     params: dict = {}
-    ray_config: Optional[RayConfig]
+    ray_config: Optional[RayConfig] = None
 
-    @root_validator()
+    @model_validator(mode='before')
+    @classmethod
     def check_docker_and_ray(cls, values):
         if values.get('docker_config') in values and values.get('ray_config'):
             raise ValueError('Executing on Docker and Ray are incompatible. Please, select just one way.')
         return values
 
-    @root_validator()
+    @model_validator(mode='before')
+    @classmethod
     def check_ray_for_jobs(cls, values):
         if 'ray_config' in values and values['kind'] == JobTypes.JOB:
             raise ValueError('Ray as an execution environment is only supported for experiments and groups.')
         return values
 
-    @validator('run', each_item=True)
-    def check_run_commands(cls, cmd, values):
-        command = cmd.command
-        if values['kind'] in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
-            if isinstance(command, str) or not command.exists():
-                raise ValueError('Script does not exists')
-            elif command.suffix != '.py':
-                raise ValueError('Script should be a python file when running an experiment or a group')
-        return cmd
+    @field_validator('run', mode='before')
+    def check_run_commands(cls, value: List[Run], info: FieldValidationInfo):
+        kind = info.data.get('kind')
 
-    @validator('run', pre=True)
+        for cmd in value:
+            command = cmd.command
+
+            if kind in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
+                if not isinstance(command, str) or not os.path.exists(command):
+                    raise ValueError('Script does not exist')
+            
+            # Check for .py suffix if the kind is GROUP or EXPERIMENT
+            if kind in [JobTypes.GROUP, JobTypes.EXPERIMENT] and not command.endswith('.py'):
+                raise ValueError('Script should be a Python file when running an experiment or a group')
+
+        return value
+
+    @field_validator('run', mode="before")
+    @classmethod
     def convert_to_run(cls, value):
-        if isinstance(value, str) or isinstance(value, FilePath):
-            return [Run(command=value)]
-        if isinstance(value, List):
+        if isinstance(value, list):
             return [x for v in value for x in cls.convert_to_run(v)]
+        elif isinstance(value, dict) and 'command' in value:
+            return [Run(command=value['command'])]
+        elif isinstance(value, (str, FilePath)):
+            return [Run(command=value)]
         elif isinstance(value, Run):
             return [value]
-        elif isinstance(value, Dict):
+        elif isinstance(value, dict):
             return [Run(**value)]
         else:
             raise ValueError()
-
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 PrunerEnum = Enum('PrunerEnum', zip(PRUNERS.keys(), PRUNERS.keys()), module=__name__)
@@ -140,15 +140,19 @@ SamplerEnum = Enum('SamplerEnum', zip(SAMPLERS.keys(), SAMPLERS.keys()), module=
 
 
 class GroupConfig(JobConfig):
-    kind = JobTypes.GROUP
-    sampler: Optional[SamplerEnum]
-    pruner: Optional[PrunerEnum]
+    kind: JobTypes = JobTypes.GROUP
+    sampler: Optional[SamplerEnum] = None
+    pruner: Optional[PrunerEnum] = None
     num_trials: PositiveInt
     resources_per_worker: WorkerResourcesConfig = WorkerResourcesConfig()
-    timeout_per_trial: Optional[PositiveFloat]
+    timeout_per_trial: Optional[PositiveFloat] = None
     param_space: Dict[str, Union[ParamDistribution, List[ParamDistribution]]]
-    metric: Optional[Metric]
+    metric: Optional[Metric] = None
+
+    @field_serializer('param_space')
+    def serialize(self, paramDistribution : str):
+        return paramDistribution
 
 
 class ExperimentConfig(JobConfig):
-    kind = JobTypes.EXPERIMENT
+    kind: JobTypes = JobTypes.EXPERIMENT

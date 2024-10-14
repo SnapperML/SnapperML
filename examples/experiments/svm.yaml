@@ -17,5 +17,4 @@ ray_config:
   num_cpus: 4
 
 run:
-  - modelling/train_svm.py
-
+  - examples/train_svm.py
