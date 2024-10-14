@@ -263,7 +263,7 @@ class EmailNotifier(NotifierBase):
         :param msg: The message to send, the first line will be used as the subject.
         """
         subject = msg.split('\n')[0]
-
+    
         @email_sender(self.recipient_emails, self.sender_email)
         def notify():
             return msg

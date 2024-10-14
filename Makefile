@@ -13,11 +13,11 @@ install: venv check_venv
 
 ## Create the python virtual environment
 venv:
-	(python3 -m venv .venv)
+	python3 -m venv .venv
 
 ## Execute the train_svm.py file
 run_example_svm: install check_venv
-	(snapper-ml --config_file=examples/experiments/svm.yaml)
+	snapper-ml --config_file=examples/experiments/svm.yaml
 
 ## Delete all compiled Python files
 clean:

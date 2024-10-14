@@ -109,7 +109,7 @@ class Uniform:
         return cls(low=low, high=high)
 
     def __call__(self, name, trial: Trial):
-        return trial.suggest_uniform(name, self.low, self.high)
+        return trial.suggest_float(name, self.low, self.high)
 
     def __str__(self):
         return f'uniform({self.low}, {self.high})'
@@ -146,7 +146,7 @@ class LogUniform:
         return cls(low=low, high=high)
 
     def __call__(self, name, trial: Trial):
-        return trial.suggest_loguniform(name, self.low, self.high)
+        return trial.suggest_float(name, self.low, self.high, log=True)
 
     def __str__(self):
         return f'loguniform({self.low}, {self.high})'

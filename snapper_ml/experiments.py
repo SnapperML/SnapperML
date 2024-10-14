@@ -164,7 +164,7 @@ def _run_group(func: Callable,
         if i == 0:
             num_trials += config.num_trials % concurrent_workers
 
-        new_group_config = config.copy(update={'num_trials': num_trials})
+        new_group_config = config.model_copy(update={'num_trials': num_trials})
         object_id = remote_func.remote(func=func,
                                        study=study,
                                        optimize_metric=optimize_metric,

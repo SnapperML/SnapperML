@@ -119,13 +119,14 @@ def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds:
 
     if backend == AutologgingBackend.TENSORFLOW:
         import mlflow.tensorflow as tf
-        patch = log_seeds and _get_seed_initializer_patch(target, tf.random, 'Tensorflow', 'set_seed')
+        import tensorflow
+        patch = log_seeds and _get_seed_initializer_patch(target, tensorflow.random, 'Tensorflow', 'set_seed')
         mlflow.tensorflow.autolog()
         logger.info("Enabled autologging for Tensorflow")
     elif backend == AutologgingBackend.KERAS:
         import mlflow.keras
-        import mlflow.tensorflow as tf
-        patch = log_seeds and _get_seed_initializer_patch(target, tf.random, 'Tensorflow', 'set_seed')
+        import tensorflow
+        patch = log_seeds and _get_seed_initializer_patch(target, tensorflow.random, 'Tensorflow', 'set_seed')
         mlflow.keras.autolog()
         logger.info("Enabled autologging for Keras")
     elif backend == AutologgingBackend.FASTAI:
@@ -137,12 +138,12 @@ def _setup_autologging(target: Callable, backend: AutologgingBackend, log_seeds:
     elif backend == AutologgingBackend.XGBOOST:
         import mlflow.xgboost
         mlflow.xgboost.autolog()
-        # patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
+        patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
         logger.info("Enabled autologging for Xgboost")
     elif backend == AutologgingBackend.LIGHTGBM:
         import mlflow.lightgbm
         mlflow.lightgbm.autolog()
-        # patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
+        patch = log_seeds and _get_seed_initializer_patch(target, torch.random, 'Pytorch', 'manual_seed')
         logger.info("Enabled autologging for LightGBM")
     elif backend:
         raise Exception(f'Autologging backend {backend} not supported')
