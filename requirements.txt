@@ -1,2 +1,2 @@
-numpy
-psycopg2
+tensorflow
+keras<=3.5.0
