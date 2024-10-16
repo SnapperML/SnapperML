@@ -1,0 +1,20 @@
+# MySQL Configuration
+MYSQL_ROOT_PASSWORD=root_password
+MYSQL_DATABASE=mlflow_db
+MYSQL_USER=mlflow_user
+MYSQL_PASSWORD=mlflow_password
+MYSQL_PORT=3306
+
+# PostgreSQL Configuration
+POSTGRES_USER=optuna_user
+POSTGRES_PASSWORD=optuna_password
+POSTGRES_DB=optuna_db
+POSTGRES_PORT=5432
+
+# MLflow Configuration
+MLFLOW_TRACKING_URI=mysql+mysqldb://${MYSQL_USER}:${MYSQL_PASSWORD}@mlflow_storage:${MYSQL_PORT}/${MYSQL_DATABASE}
+MLFLOW_BACKEND_STORE_URI=mysql+mysqldb://${MYSQL_USER}:${MYSQL_PASSWORD}@mlflow_storage:${MYSQL_PORT}/${MYSQL_DATABASE}
+MLFLOW_ARTIFACT_ROOT=/mnt/mlruns
+
+# Optuna Storage URI
+OPTUNA_STORAGE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@optuna_storage:${POSTGRES_PORT}/${POSTGRES_DB}

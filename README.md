@@ -7,6 +7,7 @@
 SnapperML is a framework for experiment tracking and machine learning operationalization that combines existent and well-supported technologies. These technologies include Docker, [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), among others.
 
 The framework provides an opinionated workflow to design and execute experiments either on a local environment or the cloud. ml-experiment includes:
+
 - An automatic tracking system
 - First-class support for distributed training and hyperparameter optimization
 - Command Line Interface (CLI) for packaging and running projects inside containers.
@@ -25,22 +26,22 @@ The python package can be install using **pip**:
 ```
 pip install snapper-ml
 ```
-Please note that ray is not available for newer Python versions (3.9). In order to configure this, you have to install a previous version and configure it. For a Linux system (Fedora) you would have to do:
+
+Or from this repo:
 
 ```
-# install python 3.7
-sudo dnf install python3.7
-# configure the system to use python 3.7
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
-# here select 3.7 version
-sudo alternatives --config python3 
-# make pip available to be used by python 3.7
-python -m ensurepip --default-pip
-# Install SnapperML
-pip install snapper-ml
+pip install -e .
 ```
-WARNING: while chaging the default interpreter to python3.7 some of the native functions of the system might not operate properly.
+
+## Deploy
+
+To run snapper first you need to deploy mlflow and optuna. Go to docker folder and execute:
+
+```
+docker compose up
+```
+
+Once the deploy finished you can execute `snapper-ml` in the CLI. For an ilustrative example, check the [example section](#Example).
 
 ## Architecture
 
@@ -50,11 +51,9 @@ environment or a remote environment.
 
 ![Architecture Overview](./thesis/source/figures/ml_experiment_overview.svg)
 
-
 ## Documentation
 
 The documentation is available [here](https://snapperml.readthedocs.io/en/latest/)
-
 
 ## Example
 
@@ -81,7 +80,7 @@ if __name__ == '__main__':
 # train_svm.yaml
 
 name: "SVM"
-kind: 'group'
+kind: "group"
 num_trials: 12
 sampler: TPE
 
@@ -102,5 +101,7 @@ run:
 
 ```bash
 
-snapper-ml run --config_file=train_svm.yaml
+snapper-ml --config_file=train_svm.yaml
 ```
+
+There are more examples in the [examples folder](https://github.com/yerasiito/SnapperML/tree/master/examples).
