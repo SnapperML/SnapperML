@@ -47,12 +47,6 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
     }
   };
 
-  const handleAttributeChange = (updatedYaml: object) => {
-    const newYamlString = yaml.dump(updatedYaml);
-    setYamlContent(newYamlString);
-    setParsedYaml(updatedYaml);
-  };
-
   // Function to highlight YAML syntax
   const highlightWithPrism = (code: string) =>
     Prism.highlight(code, Prism.languages.yaml, "yaml");
@@ -76,20 +70,15 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
               overflow: "auto",
             }}
           />
-          <ExecuteButton yamlContent={yamlContent} />
         </div>
 
         {/* Right side - Editable YAML attributes */}
         <div className="col-md-6">
-          <h5>Edit Atributes:</h5>
-          {parsedYaml && (
-            <YamlAttributes
-              yamlData={parsedYaml}
-              onAttributeChange={handleAttributeChange}
-            />
-          )}
+          <h5>Preview atributes:</h5>
+          {parsedYaml && <YamlAttributes yamlData={parsedYaml} />}
         </div>
       </div>
+      <ExecuteButton yamlContent={yamlContent} />
 
       {/* Error Alert */}
       {error && (

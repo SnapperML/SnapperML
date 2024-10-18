@@ -58,9 +58,10 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
           "Execute"
         )}
       </button>
-
-      {/* Display the terminal */}
+      <br></br>
+      <br></br>
       <TerminalComponent command={command} output={output} />
+      <br></br>
     </div>
   );
 };

@@ -21,18 +21,20 @@ const FileUpload: React.FC = () => {
 
   return (
     <div className="container mt-4">
-      <form>
-        <div className="form-group">
-          <label htmlFor="fileUpload">Subir archivo (.yaml, .yml):</label>
-          <input
-            type="file"
-            className="form-control-file"
-            id="fileUpload"
-            accept=".yaml, .yml"
-            onChange={handleFileUpload}
-          />
-        </div>
-      </form>
+      <div className="d-flex justify-content-center">
+        <form>
+          <div className="form-group">
+            <label htmlFor="fileUpload">Subir archivo (.yaml, .yml):</label>
+            <input
+              type="file"
+              className="form-control-file"
+              id="fileUpload"
+              accept=".yaml, .yml"
+              onChange={handleFileUpload}
+            />
+          </div>
+        </form>
+      </div>
 
       {/* Render YAML editor */}
       {selectedFile && <YamlEditor file={selectedFile} />}
