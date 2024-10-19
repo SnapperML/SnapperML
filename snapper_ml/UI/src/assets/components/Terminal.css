@@ -1,39 +1,7 @@
-/* Terminal.css */
 .terminal {
-  background-color: #1e1e1e; /* Dark background */
-  color: #dcdcdc; /* Light text */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow */
-  font-family: 'Courier New', Courier, monospace; /* Monospace font */
-  overflow: hidden; /* Prevent overflow */
-  max-width: 100%;
-  max-height: 300px; /* Limit height as per design */
-  text-align: left; /* Ensure left alignment */
-}
-
-/* Ensure text wraps naturally and is aligned to the left */
-.xterm {
-  text-align: left !important; /* Force left alignment in xterm content */
-  white-space: pre-wrap; /* Ensure long lines wrap properly */
-}
-
-/* Colors for the terminal output */
-.text-info {
-  color: #00bfff; /* Light blue for commands */
-}
-
-.text-light {
-  color: #dcdcdc; /* Light grey for general text */
-}
-
-.text-success {
-  color: #32cd32; /* Green for directory listings */
-}
-
-.text-warning {
-  color: #ffa500; /* Yellow for warnings */
-}
-
-.text-danger {
-  color: #ff4500; /* Red for errors */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  max-height: auto; 
+  text-align: left;
 }

@@ -44,6 +44,7 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
             <input
               type="text"
               className="form-control"
+              readOnly
               value={
                 typeof value === "string"
                   ? value.replace(/(^"|"$)/g, "")
@@ -69,6 +70,7 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
               style={{
                 width: key === "name" || key === "kind" ? "200px" : "100px", // Increase width for name and kind
               }}
+              readOnly // Set input as read-only
               value={
                 typeof yamlData[key] === "string"
                   ? yamlData[key].replace(/(^"|"$)/g, "")

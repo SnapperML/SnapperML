@@ -24,10 +24,7 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     try {
       // Call the backend API to execute the command
       const response = await axios.post<ExecuteResponse>(
-        "http://localhost:5000/execute",
-        {
-          command: "snapper-ml",
-        }
+        "http://localhost:5000/execute_snapper_ml"
       );
       // Set the command and output from the backend response
       setCommand(response.data.command);
