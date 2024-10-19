@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
+from flask import Response, stream_with_context
+
 from flask_cors import CORS
 import subprocess
 import logging
 import os
+import select
 
 app = Flask(__name__)
 
@@ -41,23 +44,43 @@ def execute_command():
 @app.route('/execute_snapper_ml', methods=['POST'])
 def execute_snapper_ml():
     try:
-        # Set the desired terminal size (e.g., 80 columns and 24 rows)
+        # Set the desired terminal size
         os.environ["COLUMNS"] = "110"
         os.environ["LINES"] = "24"
 
-        # Activate the virtual environment and run the snapper-ml command
+        # Use 'stdbuf' to disable output buffering for the command
         command = "source .venv/bin/activate && snapper-ml --config_file examples/experiments/svm.yaml"
 
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, executable="/bin/bash", env=os.environ)
-        stdout, stderr = process.communicate()
+        # Set text=True (universal_newlines=True) for real-time line-by-line output
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
+                                   executable="/bin/bash", env=os.environ, text=True, bufsize=1, universal_newlines=True)
 
-        # Check if there is an error in stderr
-        if stderr:
-            logging.info(f"output {stderr}")
-            return jsonify({"command": "snapper-ml", "output": stderr.decode("utf-8"), "logs": stderr.decode("utf-8")}), 200
+        def generate():
+            # Monitor both stdout and stderr simultaneously
+            while True:
+                reads = [process.stdout, process.stderr]
+                # Use `select` to wait for either stdout or stderr to be ready for reading
+                readable, _, _ = select.select(reads, [], [])
 
-        # Return the output and logs (for this example, logs will be empty)
-        return jsonify({"command": "snapper-ml", "output": stdout.decode("utf-8"), "logs": ""}), 200
+                for stream in readable:
+                    # Read from stdout or stderr, whichever is ready
+                    output = stream.readline()
+                    if output:
+                        yield output
+                        stream.flush()
+                    process.stdout.flush()
+                    process.stderr.flush()
+                # Exit loop when process has finished
+                if process.poll() is not None:
+                    break
+
+            # Close stdout and stderr to clean up
+            process.stdout.close()
+            process.stderr.close()
+
+        # Stream the output using Flask's Response
+        return Response(stream_with_context(generate()), content_type='text/plain', mimetype='text/event-stream')
+
     except Exception as e:
         return jsonify({"output": str(e), "logs": str(e)}), 500
 
