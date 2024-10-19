@@ -9,9 +9,14 @@ import "./Terminal.css";
 interface TerminalProps {
   command: string;
   output: string;
+  dataStream: boolean;
 }
 
-const TerminalComponent: React.FC<TerminalProps> = ({ command, output }) => {
+const TerminalComponent: React.FC<TerminalProps> = ({
+  command,
+  output,
+  dataStream,
+}) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const xterm = useRef<Terminal | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
@@ -66,10 +71,16 @@ const TerminalComponent: React.FC<TerminalProps> = ({ command, output }) => {
   }, []);
 
   useEffect(() => {
-    if (command && output) {
-      executeCommand(command, output);
+    if (command) {
+      xterm.current?.write(`${command}\n`);
     }
-  }, [command, output]);
+  }, [command]);
+
+  useEffect(() => {
+    if (output) {
+      writeOutput(output, dataStream);
+    }
+  }, [output]);
 
   let inputBuffer = "";
 
@@ -89,12 +100,12 @@ const TerminalComponent: React.FC<TerminalProps> = ({ command, output }) => {
           }
         );
         inputBuffer = "";
-        executeCommand("", response.data.output);
+        writeOutput(response.data.output, dataStream);
       } catch (error) {
         inputBuffer = "";
         const axiosError = error as AxiosError;
         console.error("Error executing command:", axiosError);
-        executeCommand("", "API is not reachable");
+        writeOutput("API is not reachable", dataStream);
       }
     } else if (input === "\x7f") {
       // Handle backspace
@@ -111,10 +122,8 @@ const TerminalComponent: React.FC<TerminalProps> = ({ command, output }) => {
     }
   };
 
-  const executeCommand = (cmd: string, result: string) => {
-    // Write the command
-    xterm.current?.write(`${cmd}\n`);
-
+  const writeOutput = (result: string, dataStream: boolean) => {
+    xterm.current?.write("\n");
     // Split the result into lines and write each line
     const lines = result.split("\n");
     lines.forEach((line) => {
@@ -122,7 +131,9 @@ const TerminalComponent: React.FC<TerminalProps> = ({ command, output }) => {
     });
 
     // Reset the prompt for next input
-    xterm.current?.write(" $ ");
+    if (!dataStream) {
+      xterm.current?.write(" $ ");
+    }
   };
 
   return <div ref={terminalRef} />;
