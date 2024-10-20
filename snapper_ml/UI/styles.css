@@ -1,7 +1,8 @@
 /*Global*/
 body {
   /* Gradient background using modern colors */
-  background: radial-gradient(circle, #3fc1c9 0%, #8193a8 100%);
+  background: radial-gradient(circle, #95dbfe 0%, #0786c5 100.2%);
+  /* background: radial-gradient(circle, #3fc1c9 0%, #c491ca 100%); */
   font-family: 'Arial', sans-serif;
   color: #000;
   margin: 0;
@@ -41,9 +42,10 @@ button {
 }
 
 .navbar.navbar-expand-lg {
-  background-color: #3fc1c9;
+  background-color: #45C0FD;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding-left: 10px; /* Adjust padding as needed */
+  font-weight: bold;
 }
 
 /*YAML editor*/
@@ -92,17 +94,22 @@ button {
 }
 
 /*Execute buttons*/
-.btn.btn-primary.executeButton {
-  margin: 0px 5px 0px 0px;
+.mlflowButton {
   height: 3rem;
   width: 6rem;
   font-weight: bold;
 }
 
-.cancelButton {
+.btn.btn-primary.executeButton {
+  margin: 0px 10px 0px 10px;
+  height: 3rem;
+  width: 10rem;
+  font-weight: bold;
+}
+
+.btn.btn-danger.cancelButton {
   height: 3rem;
   width: 6rem;
-  margin: 0px 0px 0px 5px;
   font-weight: bold;
 }
 

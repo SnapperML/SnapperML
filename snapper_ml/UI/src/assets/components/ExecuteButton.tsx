@@ -54,6 +54,7 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
         terminalRef.current?.writeOutput("Execution error!\n", false);
       }
     } finally {
+      handleMlflowClick();
       setLoading(false);
       setController(null);
     }
@@ -82,8 +83,18 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     }
   };
 
+  const handleMlflowClick = () => {
+    window.open("http://localhost:5000/#/experiments/1", "_blank"); // Open in new tab
+  };
+
   return (
     <div className="text-center mt-4">
+      <button
+        className="btn btn-light ml-2 mlflowButton"
+        onClick={handleMlflowClick}
+      >
+        <img src="MLflow-Logo.svg" alt="Mlflow" style={{ width: "50px" }} />
+      </button>
       <button
         className="btn btn-primary executeButton"
         onClick={handleExecute}
