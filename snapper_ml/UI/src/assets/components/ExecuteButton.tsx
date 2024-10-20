@@ -1,4 +1,3 @@
-// ExecuteButton.tsx
 import React, { useState, useRef } from "react";
 import TerminalComponent from "./Terminal";
 
@@ -18,14 +17,10 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     const cmd = "snapper-ml --config_file examples/experiments/svm.yaml";
     setLoading(true);
 
-    // Use the writeCommand method to display the command
     terminalRef.current?.writeCommand(cmd);
 
     const newController = new AbortController();
     setController(newController);
-    const timeoutId = setTimeout(() => {
-      newController.abort();
-    }, 20000);
 
     try {
       const response = await fetch("http://localhost:8000/execute_snapper_ml", {
@@ -33,7 +28,6 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
         signal: newController.signal,
       });
 
-      clearTimeout(timeoutId);
       if (!response.ok) {
         throw new Error("Failed to execute the command.");
       }
@@ -48,17 +42,16 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
           done = doneReading;
           const chunk = decoder.decode(value);
 
-          // Directly write output to the terminal
           terminalRef.current?.writeOutput(chunk, !done);
         }
       }
     } catch (error) {
       const typedError = error as Error;
       console.error("Error executing command:", typedError);
-      if (typedError.name === "AbortError") {
-        terminalRef.current?.writeOutput("Execution canceled!", false);
-      } else {
-        terminalRef.current?.writeOutput("Execution error!", false);
+
+      // Only write the execution error if it's not an AbortError
+      if (typedError.name !== "AbortError") {
+        terminalRef.current?.writeOutput("Execution error!\n", false);
       }
     } finally {
       setLoading(false);
@@ -66,13 +59,26 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     if (controller) {
-      controller.abort();
-      setLoading(false);
-      setController(null);
-      terminalRef.current?.writeCommand("^C");
-      terminalRef.current?.writeOutput("Execution canceled!", false);
+      terminalRef.current?.writeOutput("Execution canceled!\n", false);
+      try {
+        // Call the cancel_snapper_ml API to terminate the ongoing process
+        await fetch("http://localhost:8000/cancel_snapper_ml", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        // Abort the fetch request
+        controller.abort();
+        setLoading(false);
+        setController(null);
+      } catch (error) {
+        console.error("Error canceling the process:", error);
+        terminalRef.current?.writeOutput("Error canceling process!\n", false);
+      }
     }
   };
 

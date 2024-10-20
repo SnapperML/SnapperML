@@ -1,4 +1,3 @@
-// Terminal.tsx
 import { useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import axios, { AxiosError } from "axios";
 import { Terminal } from "xterm";
@@ -36,9 +35,8 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
       xterm.current.loadAddon(fitAddon.current);
       xterm.current.open(terminalRef.current);
       fitAddon.current.fit();
-      xterm.current?.write("\n $ ");
+      xterm.current.write("\n $ ");
 
-      // Handle user input
       xterm.current.onData((data) => {
         handleInput(data);
       });
@@ -49,22 +47,18 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
     }
   }, []);
 
-  // Define writeOutput so it's accessible within the component
   const writeOutput = (result: string, dataStream: boolean) => {
     const lines = result.split("\n");
     lines.forEach((line, index) => {
-      // Write the line to the terminal without adding a newline for the last line
       if (index === lines.length - 1) {
-        xterm.current?.write(`   ${line}\r`); // No newline for the last line
+        xterm.current?.write(`   ${line}\r`);
       } else {
-        xterm.current?.write(`   ${line}\n`); // Add newline for other lines
+        xterm.current?.write(`   ${line}\n`);
       }
     });
-
-    if (!dataStream) xterm.current?.write(" $ "); // Reset the prompt
+    if (!dataStream) xterm.current?.write(" $ ");
   };
 
-  // Expose methods to parent component
   useImperativeHandle(ref, () => ({
     writeOutput,
     writeCommand: (command: string) => {
@@ -74,10 +68,8 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
 
   const handleInput = async (input: string) => {
     const arrowKeyCodes = ["\x1b[A", "\x1b[B", "\x1b[C", "\x1b[D"];
-
     if (input === "\r") {
-      // Enter key pressed
-      xterm.current?.write("\r\n"); // Move to the next line
+      xterm.current?.write("\r\n");
       try {
         const response = await axios.post<{ output: string }>(
           "http://localhost:8000/execute",
@@ -85,8 +77,13 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
             command: inputBuffer,
           }
         );
-        inputBuffer = ""; // Clear input buffer
-        writeOutput(response.data.output, false); // Assume command execution ends here
+        if (inputBuffer === "clear" || inputBuffer === "reset") {
+          writeOutput(response.data.output, true);
+          xterm.current?.write("\n $ ");
+        } else {
+          writeOutput(response.data.output, false);
+        }
+        inputBuffer = "";
       } catch (error) {
         inputBuffer = "";
         const axiosError = error as AxiosError;
@@ -94,13 +91,11 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
         writeOutput("API is not reachable", false);
       }
     } else if (input === "\x7f") {
-      // Backspace key pressed
       if (inputBuffer.length > 0) {
         inputBuffer = inputBuffer.slice(0, -1);
         xterm.current?.write("\b \b");
       }
     } else if (!arrowKeyCodes.includes(input)) {
-      // Other keys
       inputBuffer += input;
       xterm.current?.write(input);
     }
