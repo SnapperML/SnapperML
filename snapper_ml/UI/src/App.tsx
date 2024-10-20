@@ -4,7 +4,7 @@ import NavBar from "./assets/components/NavBar";
 import FileUpload from "./assets/components/FileUpload";
 import About from "./assets/components/About"; // Import new About component
 import Contact from "./assets/components/Contact"; // Import new Contact component
-
+import "../styles.css";
 const App: React.FC = () => {
   return (
     <div>

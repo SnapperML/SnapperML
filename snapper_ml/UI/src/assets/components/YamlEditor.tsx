@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import * as yaml from "js-yaml";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
-import "prismjs/components/prism-yaml";
-import "prismjs/themes/prism.css"; // Optional: Choose a theme for the editor
 import YamlAttributes from "./YamlAttributes";
 import ExecuteButton from "./ExecuteButton";
+import "prismjs/components/prism-yaml";
+import "prismjs/themes/prism-coy.min.css"; // Use a dark theme
 
 interface YamlEditorProps {
   file: File | null;
@@ -52,7 +52,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
     Prism.highlight(code, Prism.languages.yaml, "yaml");
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-3">
       <div className="row">
         {/* Left side - YAML editor with syntax highlighting */}
         <div className="col-md-6">
@@ -62,19 +62,13 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
             onValueChange={handleYamlChange}
             highlight={highlightWithPrism}
             padding={10}
-            style={{
-              fontFamily: '"Fira code", "Fira Mono", monospace',
-              minHeight: "400px",
-              backgroundColor: "#f5f5f5",
-              borderRadius: "4px",
-              overflow: "auto",
-            }}
+            className="editor"
           />
         </div>
 
         {/* Right side - Editable YAML attributes */}
         <div className="col-md-6">
-          <h5>Preview atributes:</h5>
+          <h5>Preview attributes:</h5>
           {parsedYaml && <YamlAttributes yamlData={parsedYaml} />}
         </div>
       </div>

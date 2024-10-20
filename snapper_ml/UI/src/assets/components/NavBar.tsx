@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const NavBar: React.FC = () => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light ms-3">
+    <nav className="navbar navbar-expand-lg ">
       <Link className="navbar-brand" to="/">
         SnapperML
       </Link>

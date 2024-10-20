@@ -85,7 +85,7 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
   return (
     <div className="text-center mt-4">
       <button
-        className="btn btn-primary"
+        className="btn btn-primary executeButton"
         onClick={handleExecute}
         disabled={loading}
       >
@@ -100,7 +100,7 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
         )}
       </button>
       <button
-        className="btn btn-danger ml-2"
+        className="btn btn-danger ml-2 cancelButton"
         onClick={handleCancel}
         disabled={!loading}
       >

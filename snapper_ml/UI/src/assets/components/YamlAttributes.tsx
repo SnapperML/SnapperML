@@ -28,22 +28,19 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
       ) {
         // If the value is an object, render it recursively
         return (
-          <div key={fieldKey} className="form-group" style={indentationStyle}>
-            <label style={{ fontWeight: "bold" }}>{key}</label>{" "}
-            <div className="nested-attributes">
-              {renderAttributes(value, fieldKey, level + 1)}{" "}
-              {/* Pass the prefix and increment level */}
-            </div>
+          <div key={fieldKey} className="form-group nested-attributes">
+            <label className="bold">{key}</label>
+            <div>{renderAttributes(value, fieldKey, level + 1)}</div>
           </div>
         );
       } else {
         // Render input for non-object values
         return (
           <div key={fieldKey} className="form-group" style={indentationStyle}>
-            <label>{key}</label> {/* Regular font weight for child labels */}
+            <label className="regular">{key}</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control custom-input" // Use custom class
               readOnly
               value={
                 typeof value === "string"
@@ -60,22 +57,21 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
   const renderTopLevelAttributes = () => {
     const topLevelKeys = ["name", "kind", "num_trials", "sampler"]; // List of top-level keys to display inline
     return (
-      <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+      <div className="top-level-attributes">
         {topLevelKeys.map((key) => (
           <div key={key} className="form-group">
-            <label style={{ fontWeight: "bold" }}>{key}</label>
+            <label className="bold">{key}</label>
             <input
               type="text"
-              className="form-control"
-              style={{
-                width: key === "name" || key === "kind" ? "200px" : "100px", // Increase width for name and kind
-              }}
-              readOnly // Set input as read-only
+              className={`form-control custom-input ${
+                key === "name" || key === "kind" ? "name-kind" : "num-sampler"
+              }`} // Use custom class
+              readOnly
               value={
                 typeof yamlData[key] === "string"
                   ? yamlData[key].replace(/(^"|"$)/g, "")
                   : String(yamlData[key])
-              } // Remove outer quotes for display
+              }
             />
           </div>
         ))}

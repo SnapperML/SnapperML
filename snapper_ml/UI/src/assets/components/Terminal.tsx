@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
-import "./Terminal.css";
 
 interface TerminalProps {
   command: string;
@@ -40,8 +39,25 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
       xterm.current.onData((data) => {
         handleInput(data);
       });
+      // Prevent scrolling issues
+      const preventScroll = (event: WheelEvent) => {
+        const terminalElement = terminalRef.current;
+        if (terminalElement) {
+          const { scrollTop, scrollHeight, clientHeight } = terminalElement;
+          const isAtTop = scrollTop === 0 && event.deltaY < 0;
+          const isAtBottom =
+            scrollTop + clientHeight === scrollHeight && event.deltaY > 0;
+
+          if (isAtTop || isAtBottom) {
+            event.preventDefault();
+          }
+        }
+      };
+
+      terminalRef.current.addEventListener("wheel", preventScroll);
 
       return () => {
+        terminalRef.current?.removeEventListener("wheel", preventScroll);
         xterm.current?.dispose();
       };
     }
@@ -88,7 +104,7 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
         inputBuffer = "";
         const axiosError = error as AxiosError;
         console.error("Error executing command:", axiosError);
-        writeOutput("API is not reachable", false);
+        writeOutput("API not reachable.\n", false);
       }
     } else if (input === "\x7f") {
       if (inputBuffer.length > 0) {

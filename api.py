@@ -1,12 +1,11 @@
-from flask import Flask, request, jsonify
-from flask import Response, stream_with_context
-
+from flask import Flask, request, jsonify, Response, stream_with_context
 from flask_cors import CORS
 import subprocess
 import logging
 import os
 import select
 import threading
+import uuid
 
 app = Flask(__name__)
 
@@ -21,7 +20,11 @@ processes = {}
 # Mutex lock to prevent race conditions
 process_lock = threading.Lock()
 
-# Endpoint to execute a command
+# Set the desired terminal size
+os.environ["COLUMNS"] = "134"
+os.environ["LINES"] = "24"
+
+# Endpoint to execute a generic command
 @app.route('/execute', methods=['POST'])
 def execute_command():
     try:
@@ -34,6 +37,7 @@ def execute_command():
 
         # Run the provided command
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         stdout, stderr = process.communicate()
 
         # Check if there is an error in stderr
@@ -44,9 +48,10 @@ def execute_command():
         # Return the output and logs (for this example, logs will be empty)
         return jsonify({"command": command, "output": stdout.decode("utf-8"), "logs": ""}), 200
     except Exception as e:
+        logging.error(f"Error executing command: {e}")
         return jsonify({"output": str(e), "logs": str(e)}), 500
 
-
+# Endpoint to execute snapper-ml within the virtual environment
 @app.route('/execute_snapper_ml', methods=['POST'])
 def execute_snapper_ml():
     try:
@@ -87,8 +92,8 @@ def execute_snapper_ml():
         return Response(stream_with_context(generate()), content_type='text/plain', mimetype='text/event-stream')
 
     except Exception as e:
+        logging.error(f"Error executing snapper-ml: {e}")
         return jsonify({"output": str(e), "logs": str(e)}), 500
-
 
 @app.route('/cancel_snapper_ml', methods=['POST'])
 def cancel_snapper_ml():
@@ -98,9 +103,9 @@ def cancel_snapper_ml():
             process = processes.get(process_id)
 
         if process and process.poll() is None:  # Check if the process is running
-            process.terminate()  # Terminate the process
+            process.terminate() 
             with process_lock:
-                processes.pop(process_id, None)  # Remove from the global dictionary
+                processes.pop(process_id, None) 
             return jsonify({"status": "Process terminated successfully"}), 200
         else:
             return jsonify({"status": "No running process found"}), 404
