@@ -5,7 +5,6 @@ import logging
 import os
 import select
 import threading
-import uuid
 
 app = Flask(__name__)
 
@@ -55,14 +54,24 @@ def execute_command():
 @app.route('/execute_snapper_ml', methods=['POST'])
 def execute_snapper_ml():
     try:
-        # Set the desired terminal size
-        os.environ["COLUMNS"] = "110"
-        os.environ["LINES"] = "24"
+        data = request.get_json()
+        yaml_content = data.get('yamlContent')
+        filename = data.get('filename')
 
-        # Use 'stdbuf' to disable output buffering for the command
-        command = "source .venv/bin/activate && unbuffer snapper-ml --config_file examples/experiments/svm.yaml"
+        if not yaml_content or not filename:
+            return "Invalid data", 400
+    
+        # Ensure the directory exists
+        os.makedirs('artifacts/experiments_config', exist_ok=True)
 
-        # Set text=True (universal_newlines=True) for real-time line-by-line output
+        # Save the YAML content to the specified file
+        file_path = os.path.join('artifacts/experiments_config', filename)
+        with open(file_path, 'w') as f:
+            f.write(yaml_content)
+
+        # Use 'unbuffer' to disable output buffering for the command
+        command = f"source .venv/bin/activate && unbuffer snapper-ml --config_file {file_path}"
+
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
                                    executable="/bin/bash", env=os.environ)
 
