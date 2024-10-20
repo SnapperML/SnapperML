@@ -97,4 +97,5 @@ website
 node_modules
 
 mlruns
+artifacts
 data

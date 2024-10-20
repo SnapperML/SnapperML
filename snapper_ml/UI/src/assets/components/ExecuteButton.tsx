@@ -1,8 +1,16 @@
 import React, { useState, useRef } from "react";
 import TerminalComponent from "./Terminal";
+import yaml from "js-yaml"; // Import js-yaml to parse YAML content
 
 interface ExecuteButtonProps {
   yamlContent: string | null;
+}
+
+// Define the interface for parsed YAML content
+interface ParsedYaml {
+  name?: string;
+  num_trials?: number;
+  run?: string[];
 }
 
 const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
@@ -10,11 +18,40 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
   const [controller, setController] = useState<AbortController | null>(null);
 
   const terminalRef = useRef<any>(null);
+  const wasCanceledRef = useRef(false); // Ref to track if execution was canceled
 
   const handleExecute = async () => {
     if (loading) return;
 
-    const cmd = "snapper-ml --config_file examples/experiments/svm.yaml";
+    if (!yamlContent) {
+      console.error("No YAML content to execute.");
+      return;
+    }
+
+    let parsedYaml: ParsedYaml;
+    try {
+      // Parse the YAML content to extract the "name" attribute
+      parsedYaml = yaml.load(yamlContent) as ParsedYaml;
+    } catch (e) {
+      console.error("Failed to parse YAML content:", e);
+      return;
+    }
+
+    const nameAttribute = parsedYaml?.name || "default_name";
+    // Get current date and time components
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    // Format: YYYY-MM-DD_HH-MM-SS
+    const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+    const filename = `${currentDateTime}_${nameAttribute}.yaml`;
+
+    const cmd = `snapper-ml --config_file config_artifacts/${filename}`;
     setLoading(true);
 
     terminalRef.current?.writeCommand(cmd);
@@ -22,9 +59,19 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     const newController = new AbortController();
     setController(newController);
 
+    // Reset wasCanceledRef at the start of execution
+    wasCanceledRef.current = false;
+
+    let executionCompleted = false; // Variable to track if execution completed successfully
+
     try {
+      // Send the YAML content and filename to the server
       const response = await fetch("http://localhost:8000/execute_snapper_ml", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ yamlContent, filename }),
         signal: newController.signal,
       });
 
@@ -45,6 +92,8 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
           terminalRef.current?.writeOutput(chunk, !done);
         }
       }
+
+      executionCompleted = true; // Mark execution as completed successfully
     } catch (error) {
       const typedError = error as Error;
       console.error("Error executing command:", typedError);
@@ -54,14 +103,19 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
         terminalRef.current?.writeOutput("Execution error!\n", false);
       }
     } finally {
-      handleMlflowClick();
       setLoading(false);
       setController(null);
+
+      // Call handleMlflowClick only if execution completed and was not canceled
+      if (executionCompleted && !wasCanceledRef.current) {
+        handleMlflowClick();
+      }
     }
   };
 
   const handleCancel = async () => {
     if (controller) {
+      wasCanceledRef.current = true; // Mark execution as canceled
       terminalRef.current?.writeOutput("Execution canceled!\n", false);
       try {
         // Call the cancel_snapper_ml API to terminate the ongoing process
