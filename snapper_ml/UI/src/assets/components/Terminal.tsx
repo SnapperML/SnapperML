@@ -1,5 +1,5 @@
 // Terminal.tsx
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import axios, { AxiosError } from "axios";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -9,20 +9,16 @@ import "./Terminal.css";
 interface TerminalProps {
   command: string;
   output: string;
-  dataStream: boolean;
 }
 
-const TerminalComponent: React.FC<TerminalProps> = ({
-  command,
-  output,
-  dataStream,
-}) => {
+const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const xterm = useRef<Terminal | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
 
+  let inputBuffer = "";
+
   useEffect(() => {
-    // Initialize the terminal
     xterm.current = new Terminal({
       cursorBlink: true,
       convertEol: true,
@@ -41,102 +37,76 @@ const TerminalComponent: React.FC<TerminalProps> = ({
       xterm.current.open(terminalRef.current);
       fitAddon.current.fit();
       xterm.current?.write("\n $ ");
+
       // Handle user input
       xterm.current.onData((data) => {
         handleInput(data);
       });
-      // Prevent the website from scrolling when reaching the top or bottom of the terminal
-      const preventScroll = (event: WheelEvent) => {
-        const terminalElement = terminalRef.current;
-        if (terminalElement) {
-          const { scrollTop, scrollHeight, clientHeight } = terminalElement;
-          const isAtTop = scrollTop === 0 && event.deltaY < 0;
-          const isAtBottom =
-            scrollTop + clientHeight === scrollHeight && event.deltaY > 0;
 
-          if (isAtTop || isAtBottom) {
-            event.preventDefault();
-          }
-        }
-      };
-
-      terminalRef.current.addEventListener("wheel", preventScroll);
-
-      // Clean up event listener when the component is unmounted
       return () => {
-        terminalRef.current?.removeEventListener("wheel", preventScroll);
         xterm.current?.dispose();
       };
     }
   }, []);
 
-  useEffect(() => {
-    if (command) {
+  // Define writeOutput so it's accessible within the component
+  const writeOutput = (result: string, dataStream: boolean) => {
+    const lines = result.split("\n");
+    lines.forEach((line, index) => {
+      // Write the line to the terminal without adding a newline for the last line
+      if (index === lines.length - 1) {
+        xterm.current?.write(`   ${line}\r`); // No newline for the last line
+      } else {
+        xterm.current?.write(`   ${line}\n`); // Add newline for other lines
+      }
+    });
+
+    if (!dataStream) xterm.current?.write(" $ "); // Reset the prompt
+  };
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    writeOutput,
+    writeCommand: (command: string) => {
       xterm.current?.write(`${command}\n`);
-    }
-  }, [command]);
-
-  useEffect(() => {
-    if (output) {
-      writeOutput(output, dataStream);
-    }
-  }, [output]);
-
-  let inputBuffer = "";
+    },
+  }));
 
   const handleInput = async (input: string) => {
-    // Ignore arrow keys (up, down, left, right)
-    const arrowKeyCodes = ["\x1b[A", "\x1b[B", "\x1b[C", "\x1b[D"]; // Escape sequences for arrow keys
+    const arrowKeyCodes = ["\x1b[A", "\x1b[B", "\x1b[C", "\x1b[D"];
 
     if (input === "\r") {
-      // Enter key
-      console.log("Input submitted:", inputBuffer);
+      // Enter key pressed
+      xterm.current?.write("\r\n"); // Move to the next line
       try {
-        // Call the backend API to execute the command
-        const response = await axios.post<TerminalProps>(
-          "http://localhost:5000/execute",
+        const response = await axios.post<{ output: string }>(
+          "http://localhost:8000/execute",
           {
             command: inputBuffer,
           }
         );
-        inputBuffer = "";
-        writeOutput(response.data.output, dataStream);
+        inputBuffer = ""; // Clear input buffer
+        writeOutput(response.data.output, false); // Assume command execution ends here
       } catch (error) {
         inputBuffer = "";
         const axiosError = error as AxiosError;
         console.error("Error executing command:", axiosError);
-        writeOutput("API is not reachable", dataStream);
+        writeOutput("API is not reachable", false);
       }
     } else if (input === "\x7f") {
-      // Handle backspace
+      // Backspace key pressed
       if (inputBuffer.length > 0) {
-        // Remove the last character from inputBuffer
         inputBuffer = inputBuffer.slice(0, -1);
-        // Move the cursor back, overwrite the character with a space, then move back again
         xterm.current?.write("\b \b");
       }
     } else if (!arrowKeyCodes.includes(input)) {
-      // Ignore arrow key inputs
+      // Other keys
       inputBuffer += input;
-      xterm.current?.write(input); // Write other characters to the terminal
-    }
-  };
-
-  const writeOutput = (result: string, dataStream: boolean) => {
-    xterm.current?.write("\n");
-    // Split the result into lines and write each line
-    const lines = result.split("\n");
-    lines.forEach((line) => {
-      xterm.current?.write(`   ${line}\n`);
-    });
-
-    // Reset the prompt for next input
-    if (!dataStream) {
-      xterm.current?.write(" $ ");
+      xterm.current?.write(input);
     }
   };
 
   return <div ref={terminalRef} />;
-};
+});
 
 export default TerminalComponent;

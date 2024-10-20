@@ -49,28 +49,20 @@ def execute_snapper_ml():
         os.environ["LINES"] = "24"
 
         # Use 'stdbuf' to disable output buffering for the command
-        command = "source .venv/bin/activate && snapper-ml --config_file examples/experiments/svm.yaml"
+        command = "source .venv/bin/activate && unbuffer snapper-ml --config_file examples/experiments/svm.yaml"
 
         # Set text=True (universal_newlines=True) for real-time line-by-line output
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
-                                   executable="/bin/bash", env=os.environ, text=True, bufsize=1, universal_newlines=True)
+                                   executable="/bin/bash", env=os.environ)
 
         def generate():
-            # Monitor both stdout and stderr simultaneously
             while True:
                 reads = [process.stdout, process.stderr]
-                # Use `select` to wait for either stdout or stderr to be ready for reading
                 readable, _, _ = select.select(reads, [], [])
 
                 for stream in readable:
-                    # Read from stdout or stderr, whichever is ready
                     output = stream.readline()
-                    if output:
-                        yield output
-                        stream.flush()
-                    process.stdout.flush()
-                    process.stderr.flush()
-                # Exit loop when process has finished
+                    yield output
                 if process.poll() is not None:
                     break
 
@@ -85,4 +77,4 @@ def execute_snapper_ml():
         return jsonify({"output": str(e), "logs": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8000)

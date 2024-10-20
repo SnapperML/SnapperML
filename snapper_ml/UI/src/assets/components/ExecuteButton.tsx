@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// ExecuteButton.tsx
+import React, { useState, useRef } from "react";
 import TerminalComponent from "./Terminal";
 
 interface ExecuteButtonProps {
@@ -7,26 +8,29 @@ interface ExecuteButtonProps {
 
 const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
   const [loading, setLoading] = useState(false);
-  const [output, setOutput] = useState<string>("");
-  const [command, setCommand] = useState<string>("");
-  const [controller, setController] = useState<AbortController | null>(null); // Track abort controller
+  const [controller, setController] = useState<AbortController | null>(null);
+
+  const terminalRef = useRef<any>(null);
 
   const handleExecute = async () => {
-    if (loading) return; // If already loading, prevent execution
-    setCommand("snapper-ml --config_file examples/experiments/svm.yaml");
-    setOutput("");
+    if (loading) return;
+
+    const cmd = "snapper-ml --config_file examples/experiments/svm.yaml";
     setLoading(true);
 
-    const newController = new AbortController(); // Create a new AbortController for this execution
-    setController(newController); // Store the controller in state
+    // Use the writeCommand method to display the command
+    terminalRef.current?.writeCommand(cmd);
+
+    const newController = new AbortController();
+    setController(newController);
     const timeoutId = setTimeout(() => {
-      newController.abort(); // Abort if it exceeds 20 seconds
+      newController.abort();
     }, 20000);
 
     try {
-      const response = await fetch("http://localhost:5000/execute_snapper_ml", {
+      const response = await fetch("http://localhost:8000/execute_snapper_ml", {
         method: "POST",
-        signal: newController.signal, // Use the new controller's signal
+        signal: newController.signal,
       });
 
       clearTimeout(timeoutId);
@@ -34,7 +38,6 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
         throw new Error("Failed to execute the command.");
       }
 
-      // Read the response stream
       const reader = response.body?.getReader();
       const decoder = new TextDecoder("utf-8");
 
@@ -44,31 +47,32 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
           const chunk = decoder.decode(value);
-          setOutput(chunk);
+
+          // Directly write output to the terminal
+          terminalRef.current?.writeOutput(chunk, !done);
         }
       }
     } catch (error) {
-      const typedError = error as Error; // Type the caught error
-
+      const typedError = error as Error;
       console.error("Error executing command:", typedError);
       if (typedError.name === "AbortError") {
-        setOutput("Execution canceled!"); // Specific message for abort errors
+        terminalRef.current?.writeOutput("Execution canceled!", false);
       } else {
-        setOutput("Execution error!");
+        terminalRef.current?.writeOutput("Execution error!", false);
       }
     } finally {
       setLoading(false);
-      setController(null); // Reset the controller
+      setController(null);
     }
   };
 
   const handleCancel = () => {
     if (controller) {
-      controller.abort(); // Abort the fetch request
-      setLoading(false); // Set loading to false
-      setController(null); // Reset the controller
-      setCommand("^C");
-      setOutput("Execution canceled!"); // Update output message
+      controller.abort();
+      setLoading(false);
+      setController(null);
+      terminalRef.current?.writeCommand("^C");
+      terminalRef.current?.writeOutput("Execution canceled!", false);
     }
   };
 
@@ -92,17 +96,13 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
       <button
         className="btn btn-danger ml-2"
         onClick={handleCancel}
-        disabled={!loading} // Enable only if loading
+        disabled={!loading}
       >
         Cancel
       </button>
       <br />
       <br />
-      <TerminalComponent
-        command={command}
-        output={output}
-        dataStream={loading}
-      />
+      <TerminalComponent ref={terminalRef} command="" output="" />
       <br />
     </div>
   );
