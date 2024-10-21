@@ -89,12 +89,13 @@ target/
 # Mypy cache
 .mypy_cache/
 
-# vite library
-.vite
 
 website
 
+# UI
 node_modules
+.vite
+package-lock.json
 
 mlruns
 artifacts

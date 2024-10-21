@@ -1,8 +1,8 @@
 import { useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import axios, { AxiosError } from "axios";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import "xterm/css/xterm.css";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import "@xterm/xterm/css/xterm.css";
 
 interface TerminalProps {
   command: string;
