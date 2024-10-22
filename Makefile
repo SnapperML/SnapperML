@@ -1,29 +1,28 @@
 .PHONY: install clean venv help run_example_svm UI docker vite api stop_UI stop_docker stop_vite stop_api
 
-## Check if the virtual environment is active
-check_venv:
-	@if [ -z "$(VIRTUAL_ENV)" ]; then \
-		echo "Virtual environment is not activated. Please run 'source .venv/bin/activate'."; \
-		exit 1; \
-	fi
-
-## Install the package and dependencies
-install: venv check_venv
-	pip install -e .
+## Variables
+VENV_DIR := .venv
+VENV_BIN := $(VENV_DIR)/bin
+LOGS_DIR := artifacts/logs
 
 ## Create the python virtual environment
 venv:
-	python3 -m venv .venv
+	python3 -m venv $(VENV_DIR)
+
+## Install the package and dependencies
+install: venv
+	$(VENV_BIN)/pip install -e .
+	$(VENV_BIN)/pip install -r requirements.txt
 
 ## Execute the train_svm.py file
-run_example_svm: install check_venv
-	snapper-ml --config_file=examples/experiments/svm.yaml
+run_example_svm: install
+	$(VENV_BIN)/snapper-ml --config_file=examples/experiments/svm.yaml
 
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
-	rm -rf .venv
+	rm -rf $(VENV_DIR)
 
 ## Start the UI (starts docker, vite, api in the background)
 UI:
@@ -56,8 +55,9 @@ stop_docker:
 vite:
 	@(cd snapper_ml/UI && npm install)
 	@if [ "$(BACKGROUND)" = "1" ]; then \
+		mkdir -p $(LOGS_DIR); \
 		cd snapper_ml/UI && \
-		bash -c 'set +H; nohup npx vite --port=4000 > ../../artifacts/logs/vite.log 2>&1 & echo $$! > ../../vite.pid' & \
+		bash -c 'set +H; nohup npx vite --port=4000 > ../../$(LOGS_DIR)/vite.log 2>&1 & echo $$! > ../../vite.pid' & \
 	else \
 		cd snapper_ml/UI && npx vite --port=4000; \
 	fi
@@ -72,12 +72,12 @@ stop_vite:
 	fi
 
 ## Start the API
-api: check_venv
-	pip install -r requirements.txt
+api: install
 	@if [ "$(BACKGROUND)" = "1" ]; then \
-		bash -c 'set +H; nohup python api.py > artifacts/logs/api.log 2>&1 & echo $$! > api.pid' & \
+		mkdir -p $(LOGS_DIR); \
+		bash -c 'set +H; nohup $(VENV_BIN)/python api.py > $(LOGS_DIR)/api.log 2>&1 & echo $$! > api.pid' & \
 	else \
-		python api.py; \
+		$(VENV_BIN)/python api.py; \
 	fi
 
 ## Stop the API
