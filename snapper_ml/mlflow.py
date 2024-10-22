@@ -5,6 +5,7 @@ import sys
 import tempfile
 import shutil
 from typing import Optional, Union, List, Callable, Any
+from pathlib import Path
 import gorilla
 import mlflow
 from easyprocess import EasyProcess, EasyProcessError
@@ -38,6 +39,7 @@ def create_mlflow_experiment(experiment_name: str, settings: Settings):
     try:
         mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
         exp = mlflow.create_experiment(experiment_name) 
+
         logger.info(f"mlflow - Created new experiment id: {exp}")
     except Exception:
         logger.info(f"mlflow - Experiment already exists. Writing to same URI/artifact store")

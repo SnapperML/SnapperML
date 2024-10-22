@@ -47,8 +47,9 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
+# logs and pids:
 *.log
+*.pid
 
 # Sphinx documentation
 docs/_build/
@@ -89,9 +90,14 @@ target/
 # Mypy cache
 .mypy_cache/
 
+
 website
 
+# UI
 node_modules
+.vite
+package-lock.json
 
 mlruns
+artifacts
 data

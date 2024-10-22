@@ -12,6 +12,31 @@ The framework provides an opinionated workflow to design and execute experiments
 - First-class support for distributed training and hyperparameter optimization
 - Command Line Interface (CLI) for packaging and running projects inside containers.
 
+## SnapperML UI
+
+To run snapper UI execute:
+
+```
+make UI
+```
+
+Open [localhost:4000](http://localhost:4000/) and upload your firsts experiments!
+![](docs/assets/UI.png)
+
+> [!IMPORTANT]
+> You need install `expect` package to use the interactive terminal
+
+```
+apt-get install expect // Ubuntu
+pacman -S expect // Arch Linux
+```
+
+To stop snapper UI just execute:
+
+```
+make stop_UI
+```
+
 ## How to install?
 
 The project has some core dependencies:
@@ -35,10 +60,10 @@ pip install -e .
 
 ## Deploy
 
-To run snapper first you need to deploy mlflow and optuna. Go to docker folder and execute:
+To run snapper first you need to deploy mlflow and optuna. Execute:
 
 ```
-docker compose up
+make docker
 ```
 
 Once the deploy finished you can execute `snapper-ml` in the CLI. For an ilustrative example, check the [example section](#Example).
