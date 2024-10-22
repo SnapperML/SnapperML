@@ -1,4 +1,4 @@
-.PHONY: install clean venv help run_example_svm
+.PHONY: install clean venv help run_example_svm UI docker vite api stop_UI stop_docker stop_vite stop_api
 
 ## Check if the virtual environment is active
 check_venv:
@@ -25,7 +25,71 @@ clean:
 	find . -type d -name "__pycache__" -delete
 	rm -rf .venv
 
-## Show avainables make commands
+## Start the UI (starts docker, vite, api in the background)
+UI:
+	@$(MAKE) BACKGROUND=1 docker
+	@$(MAKE) BACKGROUND=1 vite
+	@$(MAKE) BACKGROUND=1 api
+	@echo "UI started."
+
+## Stop the UI services
+stop_UI: stop_docker stop_vite stop_api
+	@echo "UI stopped."
+
+## Start Docker containers
+docker:
+	@if ! docker info > /dev/null 2>&1; then \
+		echo "Docker is not active. Attempting to start it..."; \
+		sudo systemctl start docker || (echo "Failed to start Docker. Please start it manually." && exit 1); \
+	fi
+	@if [ "$(BACKGROUND)" = "1" ]; then \
+		(cd docker && docker compose up -d); \
+	else \
+		(cd docker && docker compose up); \
+	fi
+
+## Stop Docker containers
+stop_docker:
+	@(cd docker && docker compose down)
+
+## Start Vite development server
+vite:
+	@(cd snapper_ml/UI && npm install)
+	@if [ "$(BACKGROUND)" = "1" ]; then \
+		cd snapper_ml/UI && \
+		bash -c 'set +H; nohup npx vite --port=4000 > ../../artifacts/logs/vite.log 2>&1 & echo $$! > ../../vite.pid' & \
+	else \
+		cd snapper_ml/UI && npx vite --port=4000; \
+	fi
+
+## Stop Vite development server
+stop_vite:
+	@if [ -f vite.pid ]; then \
+		kill $$(cat vite.pid) && rm vite.pid; \
+		echo "Vite server stopped."; \
+	else \
+		echo "vite.pid not found. Vite may not be running or was not started via Makefile."; \
+	fi
+
+## Start the API
+api: check_venv
+	pip install -r requirements.txt
+	@if [ "$(BACKGROUND)" = "1" ]; then \
+		bash -c 'set +H; nohup python api.py > artifacts/logs/api.log 2>&1 & echo $$! > api.pid' & \
+	else \
+		python api.py; \
+	fi
+
+## Stop the API
+stop_api:
+	@if [ -f api.pid ]; then \
+		kill $$(cat api.pid) && rm api.pid; \
+		echo "API stopped."; \
+	else \
+		echo "api.pid not found. API may not be running or was not started via Makefile."; \
+	fi
+
+## Show available make commands
 help:
 	@echo "$$(tput bold)Available rules:$$(tput sgr0)"
 	@echo
