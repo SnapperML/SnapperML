@@ -50,10 +50,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
     const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
     const filename = `${currentDateTime}_${nameAttribute}.yaml`;
 
-    const cmd = `snapper-ml --config_file artifacts/experiments_config/${filename}`;
     setLoading(true);
-
-    terminalRef.current?.writeCommand(cmd);
 
     const newController = new AbortController();
     setController(newController);
@@ -133,7 +130,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       terminalRef.current?.writeOutput("Execution canceled!\n", false);
       try {
         // Call the cancel_snapper_ml API to terminate the ongoing process
-        await fetch("http://localhost:8000/cancel_snapper_ml", {
+        await fetch("http://localhost:8000/cancel", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
