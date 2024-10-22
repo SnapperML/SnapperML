@@ -22,37 +22,10 @@ process_lock = threading.Lock()
 # Set the desired terminal size
 os.environ["COLUMNS"] = "134"
 os.environ["LINES"] = "24"
+os.environ["PATH"] = os.path.join(os.getcwd(), ".venv/bin") + os.pathsep + os.environ["PATH"]
 
-# Endpoint to execute a generic command
-@app.route('/execute', methods=['POST'])
-def execute_command():
-    try:
-        # Get the command from the request JSON
-        data = request.get_json() or {}
-        command = data.get("command", "")
-
-        if not command:
-            return jsonify({"output": "", "logs": "No command provided"}), 200
-
-        # Run the provided command
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        stdout, stderr = process.communicate()
-
-        # Check if there is an error in stderr
-        if stderr:
-            logging.info(f"output {stderr}")
-            return jsonify({"command": command, "output": stderr.decode("utf-8"), "logs": stderr.decode("utf-8")}), 200
-
-        # Return the output and logs (for this example, logs will be empty)
-        return jsonify({"command": command, "output": stdout.decode("utf-8"), "logs": ""}), 200
-    except Exception as e:
-        logging.error(f"Error executing command: {e}")
-        return jsonify({"output": str(e), "logs": str(e)}), 500
-
-# Endpoint to execute snapper-ml within the virtual environment
-@app.route('/execute_snapper_ml', methods=['POST'])
-def execute_snapper_ml():
+@app.route('/create_yaml', methods=['POST'])
+def create_yaml():
     try:
         data = request.get_json()
         yaml_content = data.get('yamlContent')
@@ -60,7 +33,7 @@ def execute_snapper_ml():
 
         if not yaml_content or not filename:
             return "Invalid data", 400
-    
+
         # Ensure the directory exists
         os.makedirs('artifacts/experiments_config', exist_ok=True)
 
@@ -69,8 +42,23 @@ def execute_snapper_ml():
         with open(file_path, 'w') as f:
             f.write(yaml_content)
 
-        # Use 'unbuffer' to disable output buffering for the command
-        command = f"source .venv/bin/activate && unbuffer snapper-ml --config_file {file_path}"
+        return {"message": "YAML file created successfully", "file_path": file_path}, 200
+
+    except Exception as e:
+        return str(e), 500
+
+# Endpoint to execute commands within the virtual environment
+@app.route('/execute', methods=['POST'])
+def execute():
+    try:
+        data = request.get_json()
+        cmd = data.get('cmd')  # Get the cmd from the request body
+
+        if not cmd:
+            return "Invalid command", 400
+
+        # Append "unbuffer" to the command received from the client
+        command = f"unbuffer {cmd}"
 
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
                                    executable="/bin/bash", env=os.environ)
@@ -101,11 +89,11 @@ def execute_snapper_ml():
         return Response(stream_with_context(generate()), content_type='text/plain', mimetype='text/event-stream')
 
     except Exception as e:
-        logging.error(f"Error executing snapper-ml: {e}")
+        logging.error(f"Error executing {cmd}: {e}")
         return jsonify({"output": str(e), "logs": str(e)}), 500
 
-@app.route('/cancel_snapper_ml', methods=['POST'])
-def cancel_snapper_ml():
+@app.route('/cancel', methods=['POST'])
+def cancel():
     try:
         process_id = request.remote_addr  # Use the client IP address to identify the process
         with process_lock:

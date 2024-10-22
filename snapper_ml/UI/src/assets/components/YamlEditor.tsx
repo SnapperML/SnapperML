@@ -3,7 +3,7 @@ import * as yaml from "js-yaml";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
 import YamlAttributes from "./YamlAttributes";
-import ExecuteButton from "./ExecuteButton";
+import Execute from "./Execute";
 import "prismjs/components/prism-yaml";
 import "prismjs/themes/prism-coy.min.css"; // Use a dark theme
 
@@ -72,7 +72,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
           {parsedYaml && <YamlAttributes yamlData={parsedYaml} />}
         </div>
       </div>
-      <ExecuteButton yamlContent={yamlContent} />
+      <Execute yamlContent={yamlContent} />
 
       {/* Error Alert */}
       {error && (

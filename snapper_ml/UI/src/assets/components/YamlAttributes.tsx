@@ -40,7 +40,7 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
             <label className="regular">{key}</label>
             <input
               type="text"
-              className="form-control custom-input" // Use custom class
+              className="form-control custom-input"
               readOnly
               value={
                 typeof value === "string"

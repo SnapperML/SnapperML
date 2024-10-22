@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import TerminalComponent from "./Terminal";
 import yaml from "js-yaml"; // Import js-yaml to parse YAML content
 
-interface ExecuteButtonProps {
+interface ExecuteProps {
   yamlContent: string | null;
 }
 
@@ -13,7 +13,7 @@ interface ParsedYaml {
   run?: string[];
 }
 
-const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
+const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
   const [loading, setLoading] = useState(false);
   const [controller, setController] = useState<AbortController | null>(null);
 
@@ -38,10 +38,9 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     }
 
     const nameAttribute = parsedYaml?.name || "default_name";
-    // Get current date and time components
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const month = String(now.getMonth() + 1).padStart(2, "0");
     const day = String(now.getDate()).padStart(2, "0");
     const hours = String(now.getHours()).padStart(2, "0");
     const minutes = String(now.getMinutes()).padStart(2, "0");
@@ -51,7 +50,7 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
     const filename = `${currentDateTime}_${nameAttribute}.yaml`;
 
-    const cmd = `snapper-ml --config_file config_artifacts/${filename}`;
+    const cmd = `snapper-ml --config_file artifacts/experiments_config/${filename}`;
     setLoading(true);
 
     terminalRef.current?.writeCommand(cmd);
@@ -59,27 +58,44 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
     const newController = new AbortController();
     setController(newController);
 
-    // Reset wasCanceledRef at the start of execution
     wasCanceledRef.current = false;
-
-    let executionCompleted = false; // Variable to track if execution completed successfully
+    let executionCompleted = false;
 
     try {
-      // Send the YAML content and filename to the server
-      const response = await fetch("http://localhost:8000/execute_snapper_ml", {
+      // Step 1: Create the YAML file on the server
+      const createYamlResponse = await fetch(
+        "http://localhost:8000/create_yaml",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ yamlContent, filename }),
+        }
+      );
+
+      if (!createYamlResponse.ok) {
+        throw new Error("Failed to create YAML file.");
+      }
+
+      // Step 2: Execute the command to run snapper-ml with the created YAML file
+      const cmd = `snapper-ml --config_file artifacts/experiments_config/${filename}`;
+      terminalRef.current?.writeCommand(cmd);
+
+      const executeResponse = await fetch("http://localhost:8000/execute", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ yamlContent, filename }),
+        body: JSON.stringify({ cmd }), // pass the command to the execute API
         signal: newController.signal,
       });
 
-      if (!response.ok) {
+      if (!executeResponse.ok) {
         throw new Error("Failed to execute the command.");
       }
 
-      const reader = response.body?.getReader();
+      const reader = executeResponse.body?.getReader();
       const decoder = new TextDecoder("utf-8");
 
       if (reader) {
@@ -93,12 +109,11 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
         }
       }
 
-      executionCompleted = true; // Mark execution as completed successfully
+      executionCompleted = true;
     } catch (error) {
       const typedError = error as Error;
       console.error("Error executing command:", typedError);
 
-      // Only write the execution error if it's not an AbortError
       if (typedError.name !== "AbortError") {
         terminalRef.current?.writeOutput("Execution error!\n", false);
       }
@@ -106,7 +121,6 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
       setLoading(false);
       setController(null);
 
-      // Call handleMlflowClick only if execution completed and was not canceled
       if (executionCompleted && !wasCanceledRef.current) {
         handleMlflowClick();
       }
@@ -179,4 +193,4 @@ const ExecuteButton: React.FC<ExecuteButtonProps> = ({ yamlContent }) => {
   );
 };
 
-export default ExecuteButton;
+export default Execute;
