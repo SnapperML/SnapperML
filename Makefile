@@ -25,7 +25,7 @@ clean:
 	rm -rf $(VENV_DIR)
 
 ## Start the UI (starts docker, vite, api in the background)
-UI:
+UI: expect
 	@$(MAKE) BACKGROUND=1 docker
 	@$(MAKE) BACKGROUND=1 vite
 	@$(MAKE) BACKGROUND=1 api
@@ -87,6 +87,26 @@ stop_api:
 		echo "API stopped."; \
 	else \
 		echo "api.pid not found. API may not be running or was not started via Makefile."; \
+	fi
+
+## Check if "expect" is installed and try to install it
+expect:
+	@if ! command -v expect > /dev/null 2>&1; then \
+		echo "'expect' is not installed. Attempting to install it..."; \
+		if command -v apt-get > /dev/null 2>&1; then \
+			sudo apt-get update && sudo apt-get install -y expect; \
+		elif command -v yum > /dev/null 2>&1; then \
+			sudo yum install -y expect; \
+		elif command -v brew > /dev/null 2>&1; then \
+			brew install expect; \
+		elif command -v pacman > /dev/null 2>&1; then \
+			sudo pacman -S expect; \
+		else \
+			echo "Package manager not found. Please install 'expect' manually."; \
+			exit 1; \
+		fi; \
+	else \
+		echo "'expect' is already installed."; \
 	fi
 
 ## Show available make commands

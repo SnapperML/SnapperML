@@ -21,15 +21,8 @@ make UI
 ```
 
 Open [localhost:4000](http://localhost:4000/) and upload your firsts experiments!
+
 ![](docs/assets/UI.png)
-
-> [!IMPORTANT]
-> You need install `expect` package to use the interactive terminal
-
-```
-apt-get install expect // Ubuntu
-pacman -S expect // Arch Linux
-```
 
 To stop snapper UI just execute:
 
