@@ -59,9 +59,9 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
     let executionCompleted = false;
 
     try {
-      // Step 1: Create the YAML file on the server
-      const createYamlResponse = await fetch(
-        "http://localhost:8000/create_yaml",
+      // Step 1: Create the YAML experiment file file on the server
+      const saveExperimentResponse = await fetch(
+        "http://localhost:8000/save_experiment_file",
         {
           method: "POST",
           headers: {
@@ -71,7 +71,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
         }
       );
 
-      if (!createYamlResponse.ok) {
+      if (!saveExperimentResponse.ok) {
         throw new Error("Failed to create YAML file.");
       }
 

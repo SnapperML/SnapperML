@@ -24,12 +24,13 @@ clean:
 	find . -type d -name "__pycache__" -delete
 	rm -rf $(VENV_DIR)
 
+
 ## Start the UI (starts docker, vite, api in the background)
 UI: expect
 	@$(MAKE) BACKGROUND=1 docker
 	@$(MAKE) BACKGROUND=1 vite
 	@$(MAKE) BACKGROUND=1 api
-	@echo "UI started."
+	@echo -e '\n\033[1;32mUI started on http://localhost:4000/\033[0m'
 
 ## Stop the UI services
 stop_UI: stop_docker stop_vite stop_api

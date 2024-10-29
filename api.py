@@ -24,8 +24,8 @@ os.environ["COLUMNS"] = "134"
 os.environ["LINES"] = "24"
 os.environ["PATH"] = os.path.join(os.getcwd(), ".venv/bin") + os.pathsep + os.environ["PATH"]
 
-@app.route('/create_yaml', methods=['POST'])
-def create_yaml():
+@app.route('/save_experiment_file', methods=['POST'])
+def save_experiment_file():
     try:
         data = request.get_json()
         yaml_content = data.get('yamlContent')
