@@ -16,7 +16,7 @@ from .callbacks.core import Callback, CallbacksHandler
 from .loggings import logger, setup_logging
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
-    JobConfig, Metric, RayConfig, Settings
+    JobConfig, Metric, RayConfig, Settings, Data
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam, log_text_file
 from .optuna import create_optuna_study, optimize_optuna_study, sample_params_from_distributions
@@ -41,6 +41,13 @@ class DataLoader(object):
     The shared data will be stored in the Plasma Object Store of ray, so you should take into account
     its limitations: https://docs.ray.io/en/latest/serialization.html
     """
+    data: Data
+
+    @classmethod
+    def set_data(cls, data: Data):
+        # Ensure that the dataset is set on the base class
+        cls.data = data
+
     @classmethod
     def load_data(cls):
         raise DataNotLoaded()
@@ -199,6 +206,7 @@ def _run_group_remote(func: Callable,
 
     if data:
         DataLoader.load_data = lambda: data
+        DataLoader.set_data(group_config.data)
 
     def objective(trial: optuna.Trial):
         with MlflowRunWithErrorHandling(callbacks_handler=callbacks_handler,
@@ -267,6 +275,7 @@ def _run_experiment(func: Callable,
 
         if data_loader_func:
             DataLoader.load_data = data_loader_func
+            DataLoader.set_data(config.data)
 
         results = _run_job(func, config)
         if not results:

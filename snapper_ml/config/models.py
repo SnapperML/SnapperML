@@ -43,6 +43,9 @@ class Metric(BaseModel):
     direction: OptimizationDirection = OptimizationDirection.MINIMIZE
     model_config = ConfigDict(extra='forbid')
 
+class Data(BaseModel):
+    folder: Optional[str] = ''
+    files: List[str]
 
 class WorkerResourcesConfig(BaseModel):
     cpu: PositiveFloat = 1.0
@@ -82,6 +85,7 @@ class JobConfig(BaseModel):
     name: str
     kind: JobTypes = JobTypes.JOB
     run: List[Run]
+    data: Data = None
     docker_config: Optional[DockerConfig] = None
     params: dict = {}
     ray_config: Optional[RayConfig] = None

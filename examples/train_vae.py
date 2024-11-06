@@ -8,7 +8,7 @@ from keras.losses import mse
 from keras.optimizers import SGD
 import keras.backend as K
 from keras.callbacks import EarlyStopping
-from utils.data import SplitDataLoader, SEED
+from snapper_ml.data import SplitDataLoader, SEED
 from scipy.spatial.distance import euclidean
 from utils.one_cycle import OneCycleLR
 

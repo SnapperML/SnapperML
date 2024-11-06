@@ -265,6 +265,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         kind = kind or config.kind
         name = name or config.name
         scripts = scripts or config.run
+        dataset = config.dataset
         params = {**config.params, **params}
 
         if config.ray_config:

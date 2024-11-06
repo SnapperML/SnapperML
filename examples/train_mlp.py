@@ -3,7 +3,7 @@ from keras.layers import Dense, Dropout, Activation, BatchNormalization
 from keras.models import Model, Sequential
 from keras.optimizers import Adam, SGD
 from keras.callbacks import EarlyStopping
-from utils.data import UnifiedDataLoader
+from snapper_ml.data import UnifiedDataLoader
 import numpy as np
 from snapper_ml import job, AutologgingBackend, Trial
 from snapper_ml.integrations import KerasPruningCallback
