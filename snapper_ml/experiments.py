@@ -184,7 +184,10 @@ def _run_group(func: Callable,
     try:
         result = ray.get(futures)
     except Exception as e:
+        # Log the exception with detailed information
         callbacks_handler.on_job_end(exception=e)
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)  # Exit with a non-zero status code to indicate failure
     else:
         callbacks_handler.on_job_end(exception=None)
         return result

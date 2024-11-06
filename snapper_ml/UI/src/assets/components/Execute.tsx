@@ -10,6 +10,10 @@ interface ExecuteProps {
 interface ParsedYaml {
   name?: string;
   num_trials?: number;
+  data?: {
+    folder?: string;
+    files?: string[];
+  };
   run?: string[];
 }
 
@@ -37,7 +41,8 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       return;
     }
 
-    const nameAttribute = parsedYaml?.name || "default_name";
+    const experiment_name = parsedYaml?.name || "default_name";
+
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -48,7 +53,8 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
 
     // Format: YYYY-MM-DD_HH-MM-SS
     const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-    const filename = `${currentDateTime}_${nameAttribute}.yaml`;
+    const folder = `artifacts/experiments_config/${currentDateTime}_${experiment_name}`;
+    const filename = `${experiment_name}.yaml`;
 
     setLoading(true);
 
@@ -56,7 +62,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
     setController(newController);
 
     wasCanceledRef.current = false;
-    let executionCompleted = false;
+    let wasSuccessful = false;
 
     try {
       // Step 1: Create the YAML experiment file file on the server
@@ -67,7 +73,12 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ yamlContent, filename }),
+          body: JSON.stringify({
+            folder,
+            experiment_name,
+            yamlContent,
+            dataset: parsedYaml.data,
+          }),
         }
       );
 
@@ -76,7 +87,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       }
 
       // Step 2: Execute the command to run snapper-ml with the created YAML file
-      const cmd = `snapper-ml --config_file artifacts/experiments_config/${filename}`;
+      const cmd = `snapper-ml --config_file ${folder}/${filename}`;
       terminalRef.current?.writeCommand(cmd);
 
       const executeResponse = await fetch("http://localhost:8000/execute", {
@@ -100,13 +111,20 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
-          const chunk = decoder.decode(value);
+          let chunk = decoder.decode(value);
+
+          // Check for the process status message
+          if (chunk.includes("PROCESS_STATUS:")) {
+            const statusMatch = chunk.match(/PROCESS_STATUS: (True|False)/);
+            chunk = chunk.replace(/\nPROCESS_STATUS: (True|False)\n/, "");
+            if (statusMatch) {
+              wasSuccessful = statusMatch[1] === "True";
+            }
+          }
 
           terminalRef.current?.writeOutput(chunk, !done);
         }
       }
-
-      executionCompleted = true;
     } catch (error) {
       const typedError = error as Error;
       console.error("Error executing command:", typedError);
@@ -118,7 +136,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       setLoading(false);
       setController(null);
 
-      if (executionCompleted && !wasCanceledRef.current) {
+      if (wasSuccessful && !wasCanceledRef.current) {
         handleMlflowClick();
       }
     }

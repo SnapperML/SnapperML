@@ -1,7 +1,6 @@
 import os
 import glob
 from typing import Tuple, List
-
 import numpy as np
 from snapper_ml import DataLoader
 from sklearn.model_selection import train_test_split
