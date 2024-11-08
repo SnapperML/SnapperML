@@ -366,7 +366,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 def make(target: str = typer.Argument("docker", help="Makefile target to execute, default is 'docker'.")):
     """Executes the specified Makefile target."""
     try:
-        makefile_directory = Path(__file__).parent.parent
+        makefile_directory = Path(__file__).resolve().parents[2]
         result = subprocess.run(
             ["make", target, "BACKGROUND=1"],
             check=True,
