@@ -42,10 +42,16 @@ button {
 }
 
 .navbar.navbar-expand-lg {
-  background-color: #45C0FD;
+  background-color: rgba(54, 79, 107, 0.5); /* Semi-transparent background */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding-left: 10px; /* Adjust padding as needed */
   font-weight: bold;
+  color: white; /* White text color */
+}
+
+.navbar.navbar-expand-lg .navbar-brand,
+.navbar.navbar-expand-lg .nav-link {
+  color: #f5f5f5; /* Ensure links and brand text are white */
 }
 
 /*YAML editor*/

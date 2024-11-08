@@ -2,7 +2,9 @@
 
 [![Documentation Status](https://readthedocs.org/projects/snapperml/badge/?version=latest)](https://snapperml.readthedocs.io/en/latest/?badge=latest)
 
-![](docs/assets/banner.png)
+<div style="text-align: center;">
+  <img src="docs/assets/new_banner.png" alt="SnapperML">
+</div>
 
 SnapperML is a framework for experiment tracking and machine learning operationalization that combines existent and well-supported technologies. These technologies include Docker, [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), among others.
 

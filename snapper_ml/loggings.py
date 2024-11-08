@@ -5,6 +5,7 @@ import logging
 import os
 import coloredlogs
 
+logs_path = './artifacts/logs'
 
 logger = logging.getLogger(__name__)
 
@@ -12,11 +13,9 @@ logger = logging.getLogger(__name__)
 def setup_logging(experiment_name):
     global logger
     logger = logging.getLogger(__name__)
-    logs_folder = os.environ.get('LOGS_FOLDER', './artifacts/logs')
-    if not os.path.exists(logs_folder):
-        os.mkdir(logs_folder)
-    info_handler = logging.FileHandler(os.path.join('./artifacts/logs', f'{experiment_name}.info.log'))
-    error_handler = logging.FileHandler(os.path.join('./artifacts/logs', f'{experiment_name}.error.log'))
+    os.makedirs(logs_path, exist_ok=True)
+    info_handler = logging.FileHandler(os.path.join(logs_path, f'{experiment_name}.info.log'))
+    error_handler = logging.FileHandler(os.path.join(logs_path, f'{experiment_name}.error.log'))
     console = logging.StreamHandler()
 
     simple_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

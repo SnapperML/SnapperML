@@ -5,6 +5,11 @@ const NavBar: React.FC = () => {
   return (
     <nav className="navbar navbar-expand-lg ">
       <Link className="navbar-brand" to="/">
+        <img
+          src="/snapper.png"
+          alt="SnapperML Logo"
+          style={{ height: "40px", marginRight: "10px" }}
+        />
         SnapperML
       </Link>
       <button

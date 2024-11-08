@@ -1,0 +1,40 @@
+services:
+  mlflow_storage:
+    image: mysql
+    env_file:
+      - .envdocker
+    volumes:
+      - mlflow_storage_data:/var/lib/mysql
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+
+  optuna_storage:
+    image: postgres
+    env_file:
+      - .envdocker
+    volumes:
+      - optuna_storage_data:/var/lib/postgresql/data/
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  mlflow:
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../:/mnt
+    entrypoint: |
+      bash -c "./wait-for mlflow_storage:${MYSQL_PORT:-3306} -- ./start_mlflow_server.sh && /bin/bash"
+    depends_on:
+      - mlflow_storage
+      - optuna_storage
+    stdin_open: true
+    container_name: "mlflow_${USER}"
+    tty: true
+    env_file:
+      - .envdocker
+
+volumes:
+  mlflow_storage_data:
+  optuna_storage_data:

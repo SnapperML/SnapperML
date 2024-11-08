@@ -240,7 +240,6 @@ DOCKER_ARGS_HELP = 'A dictionary of build arguments. Only applies when the Docke
 RAY_CONFIG_HELP = 'A dictionary of arguments to pass to Ray.init.' \
                   f'Here you can specify the cluster address, number of cpu, gpu, etc. {DICT_OVERLAP}'
 
-
 # TODO: Add .py extension restriction when params/params_space is used.
 @app.command(help=CLI_HELP)
 def run(scripts: List[Path] = ExistentFile('.py', None),
@@ -269,7 +268,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         
         if not scripts and not config_file:
             ctx = click.get_current_context()
-            click.echo(ctx.get_help())
+            click.echo(ctx.command.get_help(ctx))
             ctx.exit()
 
         if config_file:
@@ -362,6 +361,29 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         logger.error(f"An unexpected error occurred: {e}")
         typer.echo(f"An unexpected error occurred: {e}", err=True)
         sys.exit(1) 
+
+@app.command(help="Execute a Makefile to start the project.")
+def make(target: str = typer.Argument("docker", help="Makefile target to execute, default is 'docker'.")):
+    """Executes the specified Makefile target."""
+    try:
+        makefile_directory = Path(__file__).parent.parent
+        result = subprocess.run(
+            ["make", target, "BACKGROUND=1"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=str(makefile_directory)
+        )
+        typer.echo(result.stdout.decode())
+        typer.echo(result.stderr.decode())
+    except subprocess.CalledProcessError as e:
+        typer.echo(f"Error: Makefile target '{target}' failed.", err=True)
+        typer.echo(e.stderr.decode(), err=True)
+        sys.exit(1)
+    except FileNotFoundError:
+        typer.echo("Error: 'make' command not found. Please ensure Make is installed.", err=True)
+        sys.exit(1)
+
 
 if __name__ == '__main__':
     app()
