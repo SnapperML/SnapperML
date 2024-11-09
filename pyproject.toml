@@ -44,6 +44,7 @@ dependencies = [
     "mysqlclient",
     "numpy",
     "psycopg2",
+    "flask_cors",
 ]
 
 [project.urls]

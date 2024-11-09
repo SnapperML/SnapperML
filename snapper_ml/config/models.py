@@ -81,7 +81,7 @@ class GoogleCloudConfig(BaseModel):
 
 class JobConfig(BaseModel):
     name: str
-    root_path: Optional[str] = None
+    root_path: DirectoryPath = None
     kind: JobTypes = JobTypes.JOB
     run: List[Run]
     data: Data = None
@@ -107,8 +107,6 @@ class JobConfig(BaseModel):
     def check_run_commands(cls, value: List[Run], info: FieldValidationInfo):
         kind = info.data.get('kind')
         root_path = info.data.get('root_path')
-        if root_path is None:
-            root_path = os.getcwd()
             
         for cmd in value:
             command = cmd.command

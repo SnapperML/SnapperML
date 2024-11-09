@@ -10,7 +10,7 @@ interface ExecuteProps {
 interface ParsedYaml {
   name?: string;
   root_path?: string;
-  data?: {
+  data: {
     folder?: string;
     files?: string[];
   };
@@ -52,10 +52,8 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
 
     // Format: YYYY-MM-DD_HH-MM-SS
     const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-    if (!parsedYaml.root_path) {
-      parsedYaml.root_path = ".";
-    }
     const folder = `${parsedYaml.root_path}/artifacts/experiments_config/${currentDateTime}_${experiment_name}`;
+    parsedYaml.data.folder = `${parsedYaml.root_path}/${parsedYaml.data.folder}`;
     const filename = `${experiment_name}.yaml`;
 
     setLoading(true);

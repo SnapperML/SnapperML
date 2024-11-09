@@ -1,16 +1,7 @@
-.PHONY: install clean venv help run_example_svm UI docker vite api stop_UI stop_docker stop_vite stop_api
+.PHONY: clean venv help run_example_svm UI docker vite api stop_UI stop_docker stop_vite stop_api
 
 ## Variables
 LOGS_DIR := artifacts/logs
-
-## Install the package and dependencies
-install:
-	pip install -e .
-	pip install -r requirements.txt
-
-## Execute the train_svm.py file
-run_example_svm: install
-	snapper-ml --config_file=examples/experiments/svm.yaml
 
 ## Delete all compiled Python files
 clean:
@@ -66,7 +57,7 @@ stop_vite:
 	fi
 
 ## Start the API
-api: install
+api: 
 	@if [ "$(BACKGROUND)" = "1" ]; then \
 		mkdir -p $(LOGS_DIR); \
 		cd snapper_ml && bash -c 'set +H; nohup python3 api.py > ../$(LOGS_DIR)/api.log 2>&1 & echo $$! > ../api.pid' & \

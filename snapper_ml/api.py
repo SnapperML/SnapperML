@@ -42,7 +42,6 @@ def save_experiment_file():
         if not yaml_content or not experiment_name:
             return "Invalid data", 400
 
-        logging.info(folder)
         # Ensure the directory exists
         os.makedirs(folder, exist_ok=True)
 
