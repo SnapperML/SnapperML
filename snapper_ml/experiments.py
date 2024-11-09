@@ -11,7 +11,6 @@ import ray
 import traceback
 from pytictoc import TicToc
 import optuna
-
 from .callbacks.core import Callback, CallbacksHandler
 from .loggings import logger, setup_logging
 from .config import parse_config, get_validation_model
@@ -399,7 +398,8 @@ def job(func: Optional[Callable] = None, *,
         safe_project_settings = _validate_project_settings(config, settings)
 
         create_mlflow_experiment(experiment_name=config.name, settings=safe_project_settings)
-
+        
+        logger.info(config.data)
         call_params = dict(func=func,
                            config=config,
                            autologging_backends=autologging_backends,

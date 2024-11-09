@@ -1,6 +1,5 @@
 import os
 import sys
-import logging
 import subprocess
 from pathlib import Path
 import tempfile
@@ -99,11 +98,11 @@ def run_job(job: JobConfig, config_file: str, env: Dict):
     else:
         for command in bash_commands:
             try:
-                result = subprocess.run(
+                subprocess.run(
                     command,
                     shell=True,
                     env={**os.environ, **env},
-                    check=True,  # Raise an error if the command fails
+                    check=True,
                 )
             except Exception as e:
                 logger.error(f"Command '{e}' failed with exit code {e}")
@@ -155,8 +154,6 @@ def validate_existent_file(value: Union[List[Path], Path], extensions: Union[str
     for file in value:
         if extensions and file.suffix not in extensions:
             raise typer.BadParameter(f'File should have one of the following extensions: {",".join(extensions)}')
-        if current_dir not in list(file.parents):
-            raise typer.BadParameter('Running scripts from outside the working directory is not supported.')
 
     return value[0] if is_singleton else value
 
@@ -222,6 +219,7 @@ PARAMS_HELP = f'Job parameters. If config file is specified, these parameters {D
 KIND_HELP = f'Type of job. {OVERRIDE_CONFIG}'
 
 ######### TODO ENV_HELP #########
+ROOT_PATH_HELP = ''
 
 PARAM_SPACE_HELP = f'Job parameter space. {ONLY_GROUP} {DICT_OVERLAP}'
 NUM_TRIALS_HELP = f'Number of experiments to execute in parallel. {ONLY_GROUP} {OVERRIDE_CONFIG}'
@@ -245,6 +243,7 @@ RAY_CONFIG_HELP = 'A dictionary of arguments to pass to Ray.init.' \
 def run(scripts: List[Path] = ExistentFile('.py', None),
         config_file: Path = ExistentFileOption(SUPPORTED_EXTENSIONS, None, '--config_file'),
         name: str = typer.Option(None, help=NAME_HELP),
+        root_path: Path = typer.Option(None, help=ROOT_PATH_HELP),
         kind: JobTypes = typer.Option(None, help=KIND_HELP),
         env: str = FileOrDict({}),
         params: str = FileOrDict({}, help=PARAMS_HELP),
@@ -263,7 +262,6 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         ray_config: str = FileOrDict({}, '--ray_config', help=RAY_CONFIG_HELP)):
     
     try:
-
         load_dotenv(find_dotenv())
         
         if not scripts and not config_file:
@@ -284,8 +282,19 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
                 
             kind = kind or config.kind
             name = name or config.name
+            root_path = root_path or config.root_path
             scripts = scripts or config.run
             params = {**config.params, **params}
+            
+            if root_path is None:
+                config.root_path = os.getcwd()
+
+            # Append root path to scripts
+            for script in scripts:
+                script.command = os.path.join(config.root_path, Path(script.command))
+
+            # Append root path to data
+            config.data.folder = os.path.join(config.root_path, config.data.folder)
 
             if config.ray_config:
                 ray_config = {**config.ray_config.dict(), **ray_config}
@@ -325,6 +334,7 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         try:
             if kind == JobTypes.GROUP:
                 group_config = dict(kind=JobTypes.GROUP,
+                                    root_path = root_path,
                                     sampler=sampler,
                                     pruner=pruner,
                                     num_trials=num_trials,

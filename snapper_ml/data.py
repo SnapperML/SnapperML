@@ -6,6 +6,7 @@ from snapper_ml import DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from snapper_ml.config.models import Data
+from .loggings import logger
 
 Dataset = Tuple[np.ndarray, np.ndarray]
 VALIDATION_SPLIT = 0.2
@@ -49,7 +50,6 @@ class UnifiedDataLoader(DataLoader):
             glob_pattern = os.path.join(cls.data.folder, file_pattern)
             matched_files = glob.glob(glob_pattern)
             train_files.extend(matched_files)
-
         if not train_files:
             raise ValueError(f"No train files loaded.")
         

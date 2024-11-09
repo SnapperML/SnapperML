@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "snapper-ml"
-version = "0.2.2"
+version = "0.2.3"
 description = "A framework for reproducible machine learning"
 readme = "README.md"
 authors = [
@@ -60,4 +60,10 @@ dev = ["pytest", "tox", "black"]
 snapper-ml = "snapper_ml.scripts.run_experiment:app"
 
 [tool.setuptools.package-data]
-"snapper_ml" = ["../docs/assets/*", "../Makefile", "../docker/*"]
+"snapper_ml" = [
+    "../docs/assets/*",
+    "../Makefile",
+    "../docker/*",
+    "../.env",
+    "../docker/.envdocker",
+]

@@ -23,7 +23,6 @@ process_lock = threading.Lock()
 # Set the desired terminal size
 os.environ["COLUMNS"] = "134"
 os.environ["LINES"] = "24"
-os.environ["PATH"] = os.path.join(os.getcwd(), ".venv/bin") + os.pathsep + os.environ["PATH"]
 
 @app.route('/save_experiment_file', methods=['POST'])
 def save_experiment_file():
@@ -34,7 +33,6 @@ def save_experiment_file():
         yaml_content = data.get('yamlContent')
         dataset = data.get('dataset')
 
-
         train_files = []
         for file_pattern in dataset['files']:
             glob_pattern = os.path.join(dataset['folder'], file_pattern)
@@ -44,6 +42,7 @@ def save_experiment_file():
         if not yaml_content or not experiment_name:
             return "Invalid data", 400
 
+        logging.info(folder)
         # Ensure the directory exists
         os.makedirs(folder, exist_ok=True)
 
@@ -78,6 +77,10 @@ def execute():
 
         if not cmd:
             return "Invalid command", 400
+
+        # Change the working directory to the parent of the parent directory
+        parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        os.chdir(parent_directory)
 
         # Append "unbuffer" to the command received from the client
         command = f"unbuffer {cmd}"

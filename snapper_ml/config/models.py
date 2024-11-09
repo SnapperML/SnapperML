@@ -6,8 +6,6 @@ from pydantic import field_validator, model_validator, field_serializer, ConfigD
 from ..optuna import SAMPLERS, PRUNERS
 from ..optuna.types import ParamDistribution
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
 class Settings(BaseSettings):
     MLFLOW_TRACKING_URI: str
     OPTUNA_STORAGE_URI: Optional[str]
@@ -83,6 +81,7 @@ class GoogleCloudConfig(BaseModel):
 
 class JobConfig(BaseModel):
     name: str
+    root_path: Optional[str] = None
     kind: JobTypes = JobTypes.JOB
     run: List[Run]
     data: Data = None
@@ -107,18 +106,24 @@ class JobConfig(BaseModel):
     @field_validator('run', mode='before')
     def check_run_commands(cls, value: List[Run], info: FieldValidationInfo):
         kind = info.data.get('kind')
-
+        root_path = info.data.get('root_path')
+        if root_path is None:
+            root_path = os.getcwd()
+            
         for cmd in value:
             command = cmd.command
 
+            # Use root_path as the base path
+            if not os.path.isabs(command):
+                command = os.path.join(root_path, command)
+
             if kind in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
                 if not isinstance(command, str) or not os.path.exists(command):
-                    raise ValueError('Script does not exist')
-            
-            # Check for .py suffix if the kind is GROUP or EXPERIMENT
-            if kind in [JobTypes.GROUP, JobTypes.EXPERIMENT] and not command.endswith('.py'):
-                raise ValueError('Script should be a Python file when running an experiment or a group')
-
+                    raise ValueError(f'Script does not exist: {os.path.abspath(command)}')
+                
+                # Check for .py suffix if the kind is GROUP or EXPERIMENT
+                if not command.endswith('.py'):
+                    raise ValueError('Script should be a Python file when running an experiment or a group')
         return value
 
     @field_validator('run', mode="before")

@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 def setup_logging(experiment_name):
     global logger
+
     logger = logging.getLogger(__name__)
     os.makedirs(logs_path, exist_ok=True)
     info_handler = logging.FileHandler(os.path.join(logs_path, f'{experiment_name}.info.log'))

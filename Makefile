@@ -1,29 +1,22 @@
 .PHONY: install clean venv help run_example_svm UI docker vite api stop_UI stop_docker stop_vite stop_api
 
 ## Variables
-VENV_DIR := .venv
-VENV_BIN := $(VENV_DIR)/bin
 LOGS_DIR := artifacts/logs
 
-## Create the python virtual environment
-venv:
-	python3 -m venv $(VENV_DIR)
-
 ## Install the package and dependencies
-install: venv
-	$(VENV_BIN)/pip install -e .
-	$(VENV_BIN)/pip install -r requirements.txt
+install:
+	pip install -e .
+	pip install -r requirements.txt
 
 ## Execute the train_svm.py file
 run_example_svm: install
-	$(VENV_BIN)/snapper-ml --config_file=examples/experiments/svm.yaml
+	snapper-ml --config_file=examples/experiments/svm.yaml
 
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
-	rm -rf $(VENV_DIR)
-
+	rm -rf .venv
 
 ## Start the UI (starts docker, vite, api in the background)
 UI: expect
@@ -76,9 +69,9 @@ stop_vite:
 api: install
 	@if [ "$(BACKGROUND)" = "1" ]; then \
 		mkdir -p $(LOGS_DIR); \
-		bash -c 'set +H; nohup $(VENV_BIN)/python api.py > $(LOGS_DIR)/api.log 2>&1 & echo $$! > api.pid' & \
+		cd snapper_ml && bash -c 'set +H; nohup python3 api.py > ../$(LOGS_DIR)/api.log 2>&1 & echo $$! > ../api.pid' & \
 	else \
-		$(VENV_BIN)/python api.py; \
+		(cd snapper_ml && python3 api.py;) \
 	fi
 
 ## Stop the API

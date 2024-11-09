@@ -9,12 +9,11 @@ interface ExecuteProps {
 // Define the interface for parsed YAML content
 interface ParsedYaml {
   name?: string;
-  num_trials?: number;
+  root_path?: string;
   data?: {
     folder?: string;
     files?: string[];
   };
-  run?: string[];
 }
 
 const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
@@ -53,7 +52,10 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
 
     // Format: YYYY-MM-DD_HH-MM-SS
     const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-    const folder = `artifacts/experiments_config/${currentDateTime}_${experiment_name}`;
+    if (!parsedYaml.root_path) {
+      parsedYaml.root_path = ".";
+    }
+    const folder = `${parsedYaml.root_path}/artifacts/experiments_config/${currentDateTime}_${experiment_name}`;
     const filename = `${experiment_name}.yaml`;
 
     setLoading(true);
@@ -77,6 +79,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
             folder,
             experiment_name,
             yamlContent,
+            root_path: parsedYaml.root_path,
             dataset: parsedYaml.data,
           }),
         }
@@ -87,7 +90,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       }
 
       // Step 2: Execute the command to run snapper-ml with the created YAML file
-      const cmd = `snapper-ml --config_file ${folder}/${filename}`;
+      const cmd = `snapper-ml run --config_file ${folder}/${filename}`;
       terminalRef.current?.writeCommand(cmd);
 
       const executeResponse = await fetch("http://localhost:8000/execute", {
