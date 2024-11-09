@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "snapper-ml"
-version = "0.2.3"
+version = "0.2.4.1"
 description = "A framework for reproducible machine learning"
 readme = "README.md"
 authors = [
@@ -51,7 +51,14 @@ homepage = "https://github.com/SnapperML/SnapperML"
 
 [tool.setuptools.packages.find]
 include = ["snapper_ml", "snapper_ml.*"]
-exclude = ["logs", "docker", "thesis", "mlruns", "artifacts"]
+exclude = [
+    "logs",
+    "docker",
+    "thesis",
+    "mlruns",
+    "artifacts",
+    "snapper_ml.UI.node_modules.*",
+]
 
 [project.optional-dependencies]
 dev = ["pytest", "tox", "black"]
@@ -66,4 +73,8 @@ snapper-ml = "snapper_ml.scripts.run_experiment:app"
     "../docker/*",
     "../.env",
     "../docker/.envdocker",
+    "UI/**",
 ]
+
+[tool.setuptools.exclude-package-data]
+"snapper_ml" = ["UI/node_modules/**"]
