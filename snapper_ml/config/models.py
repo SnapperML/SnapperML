@@ -81,7 +81,7 @@ class GoogleCloudConfig(BaseModel):
 
 class JobConfig(BaseModel):
     name: str
-    root_path: DirectoryPath = None
+    root_path: str = ''
     kind: JobTypes = JobTypes.JOB
     run: List[Run]
     data: Data = None
@@ -107,7 +107,7 @@ class JobConfig(BaseModel):
     def check_run_commands(cls, value: List[Run], info: FieldValidationInfo):
         kind = info.data.get('kind')
         root_path = info.data.get('root_path')
-            
+
         for cmd in value:
             command = cmd.command
 
@@ -118,7 +118,7 @@ class JobConfig(BaseModel):
             if kind in [JobTypes.GROUP, JobTypes.EXPERIMENT]:
                 if not isinstance(command, str) or not os.path.exists(command):
                     raise ValueError(f'Script does not exist: {os.path.abspath(command)}')
-                
+
                 # Check for .py suffix if the kind is GROUP or EXPERIMENT
                 if not command.endswith('.py'):
                     raise ValueError('Script should be a Python file when running an experiment or a group')
