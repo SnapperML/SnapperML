@@ -45,6 +45,8 @@ dependencies = [
     "numpy>=2.1.3",
     "psycopg2>=2.9.10",
     "flask_cors>=5.0.0",
+    "google-api-python-client",
+    "optuna-integration",
 ]
 
 [project.urls]

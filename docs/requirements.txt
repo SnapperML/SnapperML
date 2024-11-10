@@ -1,2 +1,4 @@
 sphinx-pydantic
+sphinx_rtd_theme
 recommonmark
+snapper_ml
