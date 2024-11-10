@@ -1,9 +1,11 @@
 # SnapperML
 
-[![Documentation Status](https://readthedocs.org/projects/snapperml/badge/?version=latest)](https://snapperml.readthedocs.io/en/latest/?badge=latest)
+[![](https://readthedocs.org/projects/snapperml/badge/?style=for-the-badge&version=latest)](https://snapperml.readthedocs.io/en/latest/?badge=latest)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+[![PyPI version](https://img.shields.io/pypi/v/snapper-ml.svg?style=for-the-badge)](https://pypi.org/project/snapper-ml/)
 
 <div style="text-align: center;">
-  <img src="docs/assets/new_banner.png" alt="SnapperML">
+  <img src="docs/assets/banner.png" alt="SnapperML">
 </div>
 
 SnapperML is a comprehensive framework for experiment tracking and machine learning operationalization (MLOps), built using well-supported technologies like [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), Docker, and more. It provides an opinionated workflow designed to facilitate both local and cloud-based experimentation.
@@ -34,7 +36,10 @@ SnapperML integrates several components to streamline machine learning workflows
 - **Flask API**: Manages requests from the frontend and interfaces with backend processes.
 - **Vite-Powered Web UI**: An accessible and intuitive web application that handles experiment configurations and tracks real-time logs.
 - **Containerized Databases**: Securely stores experiment results using containerized MLflow and Optuna databases.
-  ![Architecture Overview](./docs/assets/snapperml_architecture.png)
+  > [!IMPORTANT]
+  > Be sure to configure your databases and network settings carefully to ensure the security and integrity of your experiment data.
+
+![Architecture Overview](./docs/assets/snapperml_architecture.png)
 
 ## Installation
 
@@ -58,9 +63,15 @@ Or from this repo:
 pip install .
 ```
 
+> [!NOTE]
+> Python 3.12 or later is required. Ensure that Docker is installed and running on your system for full functionality.
+
 ## Deploy
 
-To run snapper first you need to deploy mlflow and optuna databases. Execute:
+To run SnapperML, you first need to deploy MLflow and Optuna databases. Execute:
+
+> [!TIP]
+> To use the SnapperML web interface, deploy it with:
 
 ```
 snapper-ml make docker
@@ -90,11 +101,15 @@ And to stop mlflow and optuna databases execute:
 make stop_docker
 ```
 
-stop_UI stop docker containers too.
+> [!CAUTION]
+> Running make stop_UI also stops the Docker containers for the databases, so ensure you have saved all necessary data.
 
 ## Documentation
 
 The documentation is available [here](https://snapperml.readthedocs.io/en/latest/)
+
+> [!TIP]
+> Visit the documentation for more examples and detailed instructions.
 
 ## Example
 
@@ -144,9 +159,12 @@ run:
   - train_svm.py
 ```
 
-```bash
+```
 
 snapper-ml run --config_file=train_svm.yaml
 ```
+
+> [!WARNING]
+> Make sure the configuration files are correctly set to avoid runtime errors. Misconfigured parameters could lead to unexpected behavior.
 
 There are more examples in the [examples folder](https://github.com/yerasiito/SnapperML/tree/master/examples).

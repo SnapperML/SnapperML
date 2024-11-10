@@ -1,7 +1,8 @@
 /*Global*/
 body {
   /* Gradient background using modern colors */
-  background: radial-gradient(circle, #95dbfe 0%, #0786c5 100.2%);
+  background: radial-gradient(circle, #84fab0 0%, #8fd3f4 100%);
+
   /* background: radial-gradient(circle, #3fc1c9 0%, #c491ca 100%); */
   font-family: 'Arial', sans-serif;
   color: #000;
@@ -19,10 +20,23 @@ button {
 .header-title {
   font-weight: bold;
   font-size: 3rem;
+  color: #2c3e50; /* Deep, elegant color */
+  text-align: center; /* Center the title */
+  margin-bottom: 30px; /* Space below the title */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+  letter-spacing: 1px; /* Slightly increased letter spacing */
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
 }
 
 .header-subtitle {
-  font-size: 1.4rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #2c3e50; /* Deep, elegant color */
+  text-align: center; /* Center the title */
+  margin-bottom: 30px; /* Space below the title */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+  letter-spacing: 1px; /* Slightly increased letter spacing */
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
 }
 
 .hidden-file-input {
@@ -42,7 +56,7 @@ button {
 }
 
 .navbar.navbar-expand-lg {
-  background-color: rgba(54, 79, 107, 0.5); /* Semi-transparent background */
+  background-color: rgba(54, 79, 107, 0.3); /* Semi-transparent background */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding-left: 10px; /* Adjust padding as needed */
   font-weight: bold;
@@ -51,7 +65,7 @@ button {
 
 .navbar.navbar-expand-lg .navbar-brand,
 .navbar.navbar-expand-lg .nav-link {
-  color: #f5f5f5; /* Ensure links and brand text are white */
+  color: #000000; /* Ensure links and brand text are white */
 }
 
 /*YAML editor*/
@@ -128,4 +142,101 @@ button {
   text-align: left;
   scrollbar-color: #fff #333;
   scrollbar-width: hide;
+}
+
+/*About*/
+.about-box {
+  background-color: #f8f9fa; /* Light gray background */
+  border: 1px solid #dee2e6; /* Soft border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Space inside the box */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-bottom: 20px; /* Space below the box */
+  transition: transform 0.2s ease-in-out; /* Animation effect */
+}
+
+.about-box:hover {
+  transform: translateY(-5px); /* Lift the box slightly on hover */
+}
+
+.about-box h2,
+.about-box h3 {
+  color: #343a40; /* Darker color for headings */
+  font-weight: 600; /* Bolder headings */
+}
+
+.about-box p,
+.about-box li {
+  color: #495057; /* Standard text color */
+  line-height: 1.6; /* Improved readability */
+}
+
+.about-box a {
+  color: #007bff; /* Link color */
+  text-decoration: none; /* Remove underline from links */
+}
+
+.about-box a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/*Contacts*/
+.contact-title {
+  font-size: 2.5rem; /* Larger font size */
+  font-weight: 700; /* Bold weight */
+  color: #2c3e50; /* Deep, elegant color */
+  text-align: center; /* Center the title */
+  margin-bottom: 30px; /* Space below the title */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+  letter-spacing: 1px; /* Slightly increased letter spacing */
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.contact-title:hover {
+  color: #1abc9c; /* Change color on hover */
+}
+
+.contact-box {
+  background-color: #f1f3f5; /* Light gray background */
+  border: 1px solid #ced4da; /* Soft border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Space inside the box */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-bottom: 20px; /* Space below each box */
+  transition: transform 0.2s ease-in-out; /* Animation effect */
+}
+
+.contact-box:hover {
+  transform: translateY(-5px); /* Lift the box slightly on hover */
+}
+
+.contact-content {
+  display: flex; /* Use flexbox to arrange image and text side by side */
+  align-items: center; /* Center items vertically */
+}
+
+.contact-image {
+  width: 80px; /* Image width */
+  height: 80px; /* Image height */
+  border-radius: 50%; /* Make the image circular */
+  margin-right: 16px; /* Space between image and text */
+}
+
+.contact-text h3 {
+  color: #343a40; /* Darker color for the heading */
+  font-weight: 600; /* Bolder heading */
+  margin-bottom: 8px; /* Space below the heading */
+}
+
+.contact-text p {
+  color: #495057; /* Standard text color */
+  font-size: 14px; /* Consistent text size */
+  line-height: 1.5; /* Improved readability */
+  margin: 0; /* Remove default margin */
 }
