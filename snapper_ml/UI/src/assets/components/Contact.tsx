@@ -60,16 +60,16 @@ const Contact: React.FC = () => {
             className="contact-image"
           />
           <div className="contact-text">
-            <h3>Antonio Molner</h3>
+            <h3>Antonio Molner Domenech</h3>
             <p>
-              Antonio Molner is a Senior Machine Learning Engineer at Procore
-              Technologies and the original creator of SnapperML. He earned his
-              degree in Computer Engineering from the University of Granada,
-              where he developed SnapperML as his final degree project, titled
-              "Diseño e implementación de ml-experiment: framework para MLOps.
-              Aplicación a rayos cósmicos de ultra alta energía." His work laid
-              the foundation for SnapperML, contributing significantly to the
-              field of MLOps frameworks.
+              Antonio Molner Domenech is a Senior Machine Learning Engineer at
+              Procore Technologies and the original creator of SnapperML. He
+              earned his degree in Computer Engineering from the University of
+              Granada, where he developed SnapperML as his final degree project,
+              titled "Diseño e implementación de ml-experiment: framework para
+              MLOps. Aplicación a rayos cósmicos de ultra alta energía." His
+              work laid the foundation for SnapperML, contributing significantly
+              to the field of MLOps frameworks.
             </p>
           </div>
         </div>
