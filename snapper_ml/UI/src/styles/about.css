@@ -17,7 +17,7 @@
 }
 
 .container .about-box a:hover {
-  background-color: #e6f7ff;
+  background-color: rgba(206, 206, 206, 0.5);
 }
 
 .about-box h2,
