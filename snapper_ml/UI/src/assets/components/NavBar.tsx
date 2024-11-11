@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import "/node_modules/fontawesome-free/css/all.min.css";
 
 const NavBar: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add("dark-mode");
+      document.body.classList.remove("light-mode");
+    } else {
+      document.body.classList.add("light-mode");
+      document.body.classList.remove("dark-mode");
+    }
+  }, [isDarkMode]);
+
+  const handleThemeToggle = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
     <header>
       <nav className="navbar navbar-expand-lg">
@@ -44,6 +61,13 @@ const NavBar: React.FC = () => {
           </ul>
         </div>
       </nav>
+      <button
+        className="btn btn-outline-secondary dark-mode-toggle"
+        onClick={handleThemeToggle}
+        aria-label="Toggle dark mode"
+      >
+        <i className={isDarkMode ? "fas fa-moon" : "fas fa-sun"}></i>
+      </button>
     </header>
   );
 };

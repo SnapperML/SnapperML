@@ -1,0 +1,12 @@
+/* Footer */
+.footer {
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-text {
+  margin-top: 0.5rem;
+}

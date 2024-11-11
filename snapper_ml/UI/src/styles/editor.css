@@ -1,0 +1,44 @@
+/* YAML Editor */
+.editor {
+  font-family: "Fira code", "Fira Mono", monospace;
+  background-color: #fbfbfb;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  overflow: auto;
+}
+
+.alert {
+  margin-top: 20px;
+}
+
+/* YAML Attributes */
+.form-control.custom-input {
+  background: #fbfbfb;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.form-group label.bold {
+  font-weight: bold;
+}
+
+.form-group label.regular {
+  font-weight: normal;
+}
+
+.top-level-attributes {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.top-level-attributes .form-control.name-kind {
+  width: 196px;
+}
+
+.top-level-attributes .form-control.num-sampler {
+  width: 100px;
+}
+
+.nested-attributes {
+  padding-left: 20px;
+}

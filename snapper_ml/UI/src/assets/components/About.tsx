@@ -1,6 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const About: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check if the dark-mode class is present on the body
+    const darkModeEnabled = document.body.classList.contains("dark-mode");
+    setIsDarkMode(darkModeEnabled);
+
+    // Listen for class changes on the body to update state
+    const observer = new MutationObserver(() => {
+      const darkModeActive = document.body.classList.contains("dark-mode");
+      setIsDarkMode(darkModeActive);
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    // Clean up the observer on component unmount
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="container mt-4">
       <div className="about-box">
@@ -92,7 +114,9 @@ const About: React.FC = () => {
           .
         </p>
         <img
-          src={`public/logo_text.png`}
+          src={
+            isDarkMode ? `public/logo_white_text.png` : `public/logo_text.png`
+          }
           alt="SnapperML Banner"
           className="img-fluid center-image"
           style={{ width: "50%" }}

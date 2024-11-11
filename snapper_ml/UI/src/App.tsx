@@ -4,7 +4,17 @@ import NavBar from "./assets/components/NavBar";
 import FileUpload from "./assets/components/FileUpload";
 import About from "./assets/components/About";
 import Contact from "./assets/components/Contact";
-import "../styles.css";
+import "./styles/global.css";
+import "./styles/header.css";
+import "./styles/buttons.css";
+import "./styles/navbar.css";
+import "./styles/editor.css";
+import "./styles/terminal.css";
+import "./styles/about.css";
+import "./styles/contact.css";
+import "./styles/footer.css";
+import "./styles/dark-mode.css";
+import "./styles/light-mode.css";
 
 const App: React.FC = () => {
   return (

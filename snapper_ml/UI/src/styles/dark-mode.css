@@ -1,0 +1,79 @@
+/* Example Dark Mode colors (customize as needed) */
+body.dark-mode {
+  background: radial-gradient(circle, #3fc1c9 0%, #c491ca 100%);
+}
+
+/* Dark Mode Button */
+body.dark-mode .dark-mode-toggle {
+  color: #fffb00;
+}
+
+/* Header colors */
+.header-title,
+.header-subtitle {
+  color: #ffffff;
+  text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.2);
+}
+
+/* Navbar colors */
+.navbar.navbar-expand-lg {
+  background-color: #343a40;
+}
+
+.navbar.navbar-expand-lg .navbar-brand,
+.navbar.navbar-expand-lg .nav-link {
+  color: #ffffff;
+}
+
+/* About box colors */
+.about-box {
+  background-color: #343a40;
+  border: 1px solid #495057;
+}
+
+.about-box h2,
+.about-box h3 {
+  color: #ffffff;
+}
+
+.about-box p,
+body.dark-mode .about-box li {
+  color: #e0e0e0;
+}
+
+body.dark-mode .about-box a {
+  color: #34f8d3;
+}
+
+.about-box a:hover {
+  text-decoration: underline;
+}
+
+/* Contact colors */
+.contact-title {
+  color: #ffffff;
+  text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .contact-title:hover {
+  color: #ebb6fc;
+}
+
+.contact-box {
+  background-color: #495057;
+  border: 1px solid #6c757d;
+}
+
+.contact-text h3 {
+  color: #ffffff;
+}
+
+.contact-text p {
+  color: #f1f1f1;
+}
+
+/* Footer colors */
+.footer {
+  color: #ffffff;
+  background-color: #343a40;
+}
