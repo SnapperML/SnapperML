@@ -41,12 +41,15 @@ const Contact: React.FC = () => {
               Yeray López Ramírez is an ABAP Junior Developer at Taghleef
               Industries and a soon-to-be Computer Engineering graduate from the
               University of Granada (2020-2024). He developed SnapperML as his
-              final degree project, titled "Gestión de Deuda Técnica y Diseño de
-              Interfaz en Framework MLOps (SnapperML)." Yeray has a passion for
-              software development, data science, and DevOps, and he brings
-              experience in languages like Rust, C++, and JavaScript, alongside
-              a strong dedication to continuous learning and community
-              involvement.
+              final degree project, titled{" "}
+              <q>
+                Gestión de Deuda Técnica y Diseño de Interfaz en Framework MLOps
+                (SnapperML)
+              </q>
+              . Yeray has a passion for software development, data science, and
+              DevOps, and he brings experience in languages like Rust, C++, and
+              JavaScript, alongside a strong dedication to continuous learning
+              and community involvement.
             </p>
           </div>
         </div>
@@ -66,10 +69,13 @@ const Contact: React.FC = () => {
               Procore Technologies and the original creator of SnapperML. He
               earned his degree in Computer Engineering from the University of
               Granada, where he developed SnapperML as his final degree project,
-              titled "Diseño e implementación de ml-experiment: framework para
-              MLOps. Aplicación a rayos cósmicos de ultra alta energía." His
-              work laid the foundation for SnapperML, contributing significantly
-              to the field of MLOps frameworks.
+              titled{" "}
+              <q>
+                Diseño e implementación de ml-experiment: framework para MLOps.
+                Aplicación a rayos cósmicos de ultra alta energía
+              </q>
+              . His work laid the foundation for SnapperML, contributing
+              significantly to the field of MLOps frameworks.
             </p>
           </div>
         </div>

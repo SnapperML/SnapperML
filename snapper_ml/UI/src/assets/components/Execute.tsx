@@ -176,13 +176,19 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       <button
         className="btn btn-light ml-2 mlflowButton"
         onClick={handleMlflowClick}
+        aria-label="Open MLflow"
       >
-        <img src="MLflow-Logo.svg" alt="Mlflow" style={{ width: "50px" }} />
+        <img
+          src="MLflow-Logo.svg"
+          alt="MLflow logo"
+          style={{ width: "50px" }}
+        />
       </button>
       <button
         className="btn btn-primary executeButton"
         onClick={handleExecute}
         disabled={loading}
+        aria-label="Execute SnapperML"
       >
         {loading ? (
           <span
@@ -198,6 +204,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
         className="btn btn-danger ml-2 cancelButton"
         onClick={handleCancel}
         disabled={!loading}
+        aria-label="Cancel Execution"
       >
         Cancel
       </button>

@@ -1,5 +1,7 @@
 /*Global*/
 body {
+  height: 100%;
+  margin: 0;
   /* Gradient background using modern colors */
   background: radial-gradient(circle, #84fab0 0%, #8fd3f4 100%);
 
@@ -11,6 +13,16 @@ body {
   height: 100vh;
 }
 
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
 button {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -20,7 +32,7 @@ button {
 .header-title {
   font-weight: bold;
   font-size: 3rem;
-  color: #2c3e50; /* Deep, elegant color */
+  color: #000;
   text-align: center; /* Center the title */
   margin-bottom: 30px; /* Space below the title */
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
@@ -31,7 +43,7 @@ button {
 .header-subtitle {
   font-weight: bold;
   font-size: 1.5rem;
-  color: #2c3e50; /* Deep, elegant color */
+  color: #000; /* Deep, elegant color */
   text-align: center; /* Center the title */
   margin-bottom: 30px; /* Space below the title */
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
@@ -56,7 +68,7 @@ button {
 }
 
 .navbar.navbar-expand-lg {
-  background-color: rgba(54, 79, 107, 0.3); /* Semi-transparent background */
+  background-color: #f8f9fa;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding-left: 10px; /* Adjust padding as needed */
   font-weight: bold;
@@ -155,8 +167,15 @@ button {
   transition: transform 0.2s ease-in-out; /* Animation effect */
 }
 
-.about-box:hover {
-  transform: translateY(-5px); /* Lift the box slightly on hover */
+.container .about-box a {
+  color: #003366;
+  font-weight: 600; 
+  text-decoration: underline; 
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.container .about-box a:hover {
+  background-color: #e6f7ff;
 }
 
 .about-box h2,
@@ -188,14 +207,14 @@ button {
 
 /*Contacts*/
 .contact-title {
-  font-size: 2.5rem; /* Larger font size */
-  font-weight: 700; /* Bold weight */
-  color: #2c3e50; /* Deep, elegant color */
-  text-align: center; /* Center the title */
-  margin-bottom: 30px; /* Space below the title */
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
-  letter-spacing: 1px; /* Slightly increased letter spacing */
-  transition: color 0.3s ease; /* Smooth transition for hover effect */
+  font-size: 2.5rem; 
+  font-weight: 700;
+  color: #000;
+  text-align: center; 
+  margin-bottom: 30px; 
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); 
+  letter-spacing: 1px; 
+  transition: color 0.3s ease; 
 }
 
 .contact-title:hover {
@@ -239,4 +258,17 @@ button {
   font-size: 14px; /* Consistent text size */
   line-height: 1.5; /* Improved readability */
   margin: 0; /* Remove default margin */
+}
+
+/*footer*/
+.footer {
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-text {
+  margin-top: 0.5rem; /* Adjust the top margin as needed */
 }

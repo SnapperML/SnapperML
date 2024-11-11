@@ -63,6 +63,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
             highlight={highlightWithPrism}
             padding={10}
             className="editor"
+            aria-label="YAML code editor"
           />
         </div>
 
