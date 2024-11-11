@@ -9,8 +9,11 @@ interface ExecuteProps {
 // Define the interface for parsed YAML content
 interface ParsedYaml {
   name?: string;
-  num_trials?: number;
-  run?: string[];
+  root_path?: string;
+  data: {
+    folder?: string;
+    files?: string[];
+  };
 }
 
 const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
@@ -37,7 +40,8 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       return;
     }
 
-    const nameAttribute = parsedYaml?.name || "default_name";
+    const experiment_name = parsedYaml?.name || "default_name";
+
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -48,7 +52,9 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
 
     // Format: YYYY-MM-DD_HH-MM-SS
     const currentDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-    const filename = `${currentDateTime}_${nameAttribute}.yaml`;
+    const folder = `${parsedYaml.root_path}/artifacts/experiments_config/${currentDateTime}_${experiment_name}`;
+    parsedYaml.data.folder = `${parsedYaml.root_path}/${parsedYaml.data.folder}`;
+    const filename = `${experiment_name}.yaml`;
 
     setLoading(true);
 
@@ -56,27 +62,33 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
     setController(newController);
 
     wasCanceledRef.current = false;
-    let executionCompleted = false;
+    let wasSuccessful = false;
 
     try {
-      // Step 1: Create the YAML file on the server
-      const createYamlResponse = await fetch(
-        "http://localhost:8000/create_yaml",
+      // Step 1: Create the YAML experiment file file on the server
+      const saveExperimentResponse = await fetch(
+        "http://localhost:8000/save_experiment_file",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ yamlContent, filename }),
+          body: JSON.stringify({
+            folder,
+            experiment_name,
+            yamlContent,
+            root_path: parsedYaml.root_path,
+            dataset: parsedYaml.data,
+          }),
         }
       );
 
-      if (!createYamlResponse.ok) {
+      if (!saveExperimentResponse.ok) {
         throw new Error("Failed to create YAML file.");
       }
 
       // Step 2: Execute the command to run snapper-ml with the created YAML file
-      const cmd = `snapper-ml --config_file artifacts/experiments_config/${filename}`;
+      const cmd = `snapper-ml run --config_file ${folder}/${filename}`;
       terminalRef.current?.writeCommand(cmd);
 
       const executeResponse = await fetch("http://localhost:8000/execute", {
@@ -100,13 +112,20 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
-          const chunk = decoder.decode(value);
+          let chunk = decoder.decode(value);
+
+          // Check for the process status message
+          if (chunk.includes("PROCESS_STATUS:")) {
+            const statusMatch = chunk.match(/PROCESS_STATUS: (True|False)/);
+            chunk = chunk.replace(/\nPROCESS_STATUS: (True|False)\n/, "");
+            if (statusMatch) {
+              wasSuccessful = statusMatch[1] === "True";
+            }
+          }
 
           terminalRef.current?.writeOutput(chunk, !done);
         }
       }
-
-      executionCompleted = true;
     } catch (error) {
       const typedError = error as Error;
       console.error("Error executing command:", typedError);
@@ -118,7 +137,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       setLoading(false);
       setController(null);
 
-      if (executionCompleted && !wasCanceledRef.current) {
+      if (wasSuccessful && !wasCanceledRef.current) {
         handleMlflowClick();
       }
     }
@@ -157,13 +176,19 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
       <button
         className="btn btn-light ml-2 mlflowButton"
         onClick={handleMlflowClick}
+        aria-label="Open MLflow"
       >
-        <img src="MLflow-Logo.svg" alt="Mlflow" style={{ width: "50px" }} />
+        <img
+          src="MLflow-Logo.svg"
+          alt="MLflow logo"
+          style={{ width: "50px" }}
+        />
       </button>
       <button
         className="btn btn-primary executeButton"
         onClick={handleExecute}
         disabled={loading}
+        aria-label="Execute SnapperML"
       >
         {loading ? (
           <span
@@ -179,6 +204,7 @@ const Execute: React.FC<ExecuteProps> = ({ yamlContent }) => {
         className="btn btn-danger ml-2 cancelButton"
         onClick={handleCancel}
         disabled={!loading}
+        aria-label="Cancel Execution"
       >
         Cancel
       </button>

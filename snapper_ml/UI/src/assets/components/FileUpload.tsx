@@ -1,10 +1,10 @@
-// FileUpload.tsx
 import React, { useState, useRef } from "react";
 import YamlEditor from "./YamlEditor";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is imported
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const FileUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,9 +13,10 @@ const FileUpload: React.FC = () => {
       const fileExtension = file.name.split(".").pop()?.toLowerCase();
       if (fileExtension === "yaml" || fileExtension === "yml") {
         setSelectedFile(file);
+        setError(null); // Clear any previous error
       } else {
-        console.error(
-          "Formato de archivo no soportado. Por favor sube un archivo .yaml o .yml"
+        setError(
+          "Unsupported file format. Please upload a .yaml or .yml file."
         );
         setSelectedFile(null);
       }
@@ -27,11 +28,11 @@ const FileUpload: React.FC = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <div className="header-section mb-4 text-center">
+    <main className="container mt-4">
+      <header className="mb-4 text-center">
         <h1 className="header-title">SnapperML</h1>
         <p className="header-subtitle">Make your experiments reproducible</p>
-      </div>
+      </header>
 
       <div className="d-flex justify-content-center">
         <div className="text-center">
@@ -39,6 +40,7 @@ const FileUpload: React.FC = () => {
             type="button"
             className="btn btn-primary btn-lg upload-button"
             onClick={handleButtonClick}
+            aria-label="Upload YAML File"
           >
             Upload YAML File
           </button>
@@ -47,14 +49,14 @@ const FileUpload: React.FC = () => {
             accept=".yaml, .yml"
             ref={fileInputRef}
             onChange={handleFileUpload}
-            className="hidden-file-input"
+            className="d-none"
           />
+          {error && <p className="text-danger mt-2">{error}</p>}
         </div>
       </div>
 
-      {/* Render YAML editor */}
       {selectedFile && <YamlEditor file={selectedFile} />}
-    </div>
+    </main>
   );
 };
 

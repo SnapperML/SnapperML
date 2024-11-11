@@ -1,5 +1,5 @@
 from typing import *
-from utils.data import UnifiedDataLoader, SEED
+from snapper_ml.data import UnifiedDataLoader, SEED
 from snapper_ml.callbacks.notifiers import DesktopNotifier
 import numpy as np
 from snapper_ml import job

@@ -10,7 +10,12 @@ Welcome to snapper-ml's documentation!
    running_first_experiment
    hyperparameter_tuning
    experiment_specification
-   package_reference
+   reference/modules
+   reference/snapper_ml
+   reference/snapper_ml.optuna
+   reference/snapper_ml.scripts
+   reference/snapper_ml.callbacks
+   reference/snapper_ml.config
    cli_reference
 
 * **User Guide:**
@@ -19,7 +24,7 @@ Welcome to snapper-ml's documentation!
   * :doc:`Running your first experiment <running_first_experiment>`
   * :doc:`Hyperparameter tuning <hyperparameter_tuning>`
   * :doc:`Experiment Specification <experiment_specification>`
-  * :doc:`Package Reference <package_reference>`
+  * :doc:`SnapperML <reference/snapper_ml>`
   * :doc:`CLI Reference <cli_reference>`
 
 

@@ -1,4 +1,4 @@
-from utils.data import UnifiedDataLoader, SEED
+from snapper_ml.data import UnifiedDataLoader, SEED
 import numpy as np
 from snapper_ml import job, AutologgingBackend, Trial, DataLoader
 from snapper_ml.integrations import XGBoostPruningCallback

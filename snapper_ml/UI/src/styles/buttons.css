@@ -1,0 +1,38 @@
+/* Buttons */
+.hidden-file-input {
+  display: none;
+}
+
+.btn.btn-primary.btn-lg.upload-button {
+  border-radius: 0.75rem;
+  height: 5rem;
+  width: 17rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+}
+
+.upload-button:hover {
+  transform: translateY(-2px);
+}
+
+.mlflowButton,
+.btn.btn-primary.executeButton,
+.btn.btn-danger.cancelButton {
+  font-weight: bold;
+}
+
+.mlflowButton {
+  height: 3rem;
+  width: 6rem;
+}
+
+.btn.btn-primary.executeButton {
+  margin: 0 10px;
+  height: 3rem;
+  width: 10rem;
+}
+
+.btn.btn-danger.cancelButton {
+  height: 3rem;
+  width: 6rem;
+}

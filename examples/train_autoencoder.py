@@ -9,7 +9,7 @@ from tensorflow.keras.optimizers import SGD
 from keras import constraints
 import tensorflow.keras.backend as K
 from tensorflow.keras.callbacks import EarlyStopping
-from utils.data import SplitDataLoader, SEED
+from snapper_ml.data import SplitDataLoader, SEED
 from scipy.spatial.distance import euclidean
 from utils.one_cycle import OneCycleLR
 from snapper_ml.callbacks.notifiers import DesktopNotifier

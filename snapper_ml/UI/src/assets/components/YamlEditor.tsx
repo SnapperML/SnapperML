@@ -12,7 +12,7 @@ interface YamlEditorProps {
 }
 
 const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
-  const [yamlContent, setYamlContent] = useState<string | null>(null);
+  const [yamlContent, setyamlContent] = useState<string | null>(null);
   const [parsedYaml, setParsedYaml] = useState<object | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +21,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target?.result as string;
-        setYamlContent(text);
+        setyamlContent(text);
         try {
           const parsed = yaml.load(text) as object;
           setParsedYaml(parsed);
@@ -35,7 +35,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
   }, [file]);
 
   const handleYamlChange = (updatedYaml: string) => {
-    setYamlContent(updatedYaml);
+    setyamlContent(updatedYaml);
 
     try {
       const parsed = yaml.load(updatedYaml) as object;
@@ -63,6 +63,7 @@ const YamlEditor: React.FC<YamlEditorProps> = ({ file }) => {
             highlight={highlightWithPrism}
             padding={10}
             className="editor"
+            aria-label="YAML code editor"
           />
         </div>
 

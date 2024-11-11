@@ -1,0 +1,22 @@
+/* Home headers */
+.header-title {
+  font-weight: bold;
+  font-size: 3rem;
+  color: #000;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.header-subtitle {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #000;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}

@@ -15,6 +15,7 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
 
     return Object.entries(data).map(([key, value]) => {
       const fieldKey = prefix ? `${prefix}.${key}` : key; // Create a prefixed key for nested attributes
+      const inputId = `input-${fieldKey.replace(/\./g, "-")}`; // Generate a unique ID for each input
 
       // Skip rendering of top-level keys in the nested rendering
       if (["name", "kind", "num_trials", "sampler"].includes(key)) {
@@ -29,7 +30,9 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
         // If the value is an object, render it recursively
         return (
           <div key={fieldKey} className="form-group nested-attributes">
-            <label className="bold">{key}</label>
+            <label className="bold" htmlFor={inputId}>
+              {key}
+            </label>
             <div>{renderAttributes(value, fieldKey, level + 1)}</div>
           </div>
         );
@@ -37,9 +40,12 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
         // Render input for non-object values
         return (
           <div key={fieldKey} className="form-group" style={indentationStyle}>
-            <label className="regular">{key}</label>
+            <label className="regular" htmlFor={inputId}>
+              {key}
+            </label>
             <input
               type="text"
+              id={inputId} // Set the id for the input
               className="form-control custom-input"
               readOnly
               value={
@@ -58,23 +64,29 @@ const YamlAttributes: React.FC<YamlAttributesProps> = ({ yamlData }) => {
     const topLevelKeys = ["name", "kind", "num_trials", "sampler"]; // List of top-level keys to display inline
     return (
       <div className="top-level-attributes">
-        {topLevelKeys.map((key) => (
-          <div key={key} className="form-group">
-            <label className="bold">{key}</label>
-            <input
-              type="text"
-              className={`form-control custom-input ${
-                key === "name" || key === "kind" ? "name-kind" : "num-sampler"
-              }`} // Use custom class
-              readOnly
-              value={
-                typeof yamlData[key] === "string"
-                  ? yamlData[key].replace(/(^"|"$)/g, "")
-                  : String(yamlData[key])
-              }
-            />
-          </div>
-        ))}
+        {topLevelKeys.map((key) => {
+          const inputId = `input-${key}`; // Generate a unique ID for each top-level input
+          return (
+            <div key={key} className="form-group">
+              <label className="bold" htmlFor={inputId}>
+                {key}
+              </label>
+              <input
+                type="text"
+                id={inputId} // Set the id for the input
+                className={`form-control custom-input ${
+                  key === "name" || key === "kind" ? "name-kind" : "num-sampler"
+                }`} // Use custom class
+                readOnly
+                value={
+                  typeof yamlData[key] === "string"
+                    ? yamlData[key].replace(/(^"|"$)/g, "")
+                    : String(yamlData[key])
+                }
+              />
+            </div>
+          );
+        })}
       </div>
     );
   };

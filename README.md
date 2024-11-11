@@ -1,50 +1,55 @@
 # SnapperML
 
-[![Documentation Status](https://readthedocs.org/projects/snapperml/badge/?version=latest)](https://snapperml.readthedocs.io/en/latest/?badge=latest)
+[![](https://readthedocs.org/projects/snapperml/badge/?style=for-the-badge&version=latest)](https://snapperml.readthedocs.io/en/latest/?badge=latest)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+[![PyPI version](https://img.shields.io/pypi/v/snapper-ml.svg?style=for-the-badge)](https://pypi.org/project/snapper-ml/)
 
-![](docs/assets/banner.png)
+<div style="text-align: center;">
+  <img src="docs/assets/banner.png" alt="SnapperML">
+</div>
 
-SnapperML is a framework for experiment tracking and machine learning operationalization that combines existent and well-supported technologies. These technologies include Docker, [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), among others.
+SnapperML is a comprehensive framework for experiment tracking and machine learning operationalization (MLOps), built using well-supported technologies like [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), Docker, and more. It provides an opinionated workflow designed to facilitate both local and cloud-based experimentation.
 
-The framework provides an opinionated workflow to design and execute experiments either on a local environment or the cloud. ml-experiment includes:
+## Key Features
 
-- An automatic tracking system
-- First-class support for distributed training and hyperparameter optimization
-- Command Line Interface (CLI) for packaging and running projects inside containers.
+- **Automatic Tracking**: Seamless integration with MLflow for parameter and metric tracking.
+- **Distributed Training**: First-class support for distributed training and hyperparameter optimization using Optuna and Ray.
+- **CLI-Based Execution**: Easily package and execute projects within containers using our intuitive Command Line Interface (CLI).
+- **Web Interface**: A modern web interface developed with Vite, React, TypeScript, and Bootstrap for managing experiment configurations.
 
-## SnapperML UI
+## Project Goals
 
-To run snapper UI execute:
+SnapperML aims to:
 
-```
-make UI
-```
+1. **Enhance Maintainability**: By addressing technical debt and improving the codebase, making it cleaner and more efficient.
+1. **Improve Scalability**: Ensure the system can handle large-scale experiments and concurrent requests smoothly.
+1. **Provide a Robust Web UI**: A user-friendly interface that simplifies the setup and execution of ML experiments.
+1. **Ensure Reproducibility**: Leverage MLOps principles to ensure experiments can be replicated easily.
 
-Open [localhost:4000](http://localhost:4000/) and upload your firsts experiments!
-![](docs/assets/UI.png)
+## Architecture
 
-> [!IMPORTANT]
-> You need install `expect` package to use the interactive terminal
+### Overview
 
-```
-apt-get install expect // Ubuntu
-pacman -S expect // Arch Linux
-```
+SnapperML integrates several components to streamline machine learning workflows:
 
-To stop snapper UI just execute:
+- **CLI Framework**: Facilitates command-based interactions and logging for experiment execution.
+- **Flask API**: Manages requests from the frontend and interfaces with backend processes.
+- **Vite-Powered Web UI**: An accessible and intuitive web application that handles experiment configurations and tracks real-time logs.
+- **Containerized Databases**: Securely stores experiment results using containerized MLflow and Optuna databases.
+  > [!IMPORTANT]
+  > Be sure to configure your databases and network settings carefully to ensure the security and integrity of your experiment data.
 
-```
-make stop_UI
-```
+![Architecture Overview](./docs/assets/snapperml_architecture.png)
 
-## How to install?
+## Installation
 
-The project has some core dependencies:
+### Prerequisites
 
-- mlflow
-- optuna>=1.1.0
-- ray>=0.8.2
-- docker>=4.1.0
+- docker
+- python 3.12+
+- node.js (for UI development)
+
+### Install
 
 The python package can be install using **pip**:
 
@@ -55,30 +60,56 @@ pip install snapper-ml
 Or from this repo:
 
 ```
-pip install -e .
+pip install .
 ```
+
+> [!NOTE]
+> Python 3.12 or later is required. Ensure that Docker is installed and running on your system for full functionality.
 
 ## Deploy
 
-To run snapper first you need to deploy mlflow and optuna. Execute:
+To run SnapperML, you first need to deploy MLflow and Optuna databases. Execute:
+
+> [!TIP]
+> To use the SnapperML web interface, deploy it with:
 
 ```
-make docker
+snapper-ml make docker
 ```
 
 Once the deploy finished you can execute `snapper-ml` in the CLI. For an ilustrative example, check the [example section](#Example).
 
-## Architecture
+To use snapperML web interface you need to deploy it too.
 
-The framework main core is divided into four modules that interact with the user through a Command-Line Interface (CLI) and a Python library.
-The objective of the library is to minimize the code changes required to instrument scripts to be executed by the Job Runner and to provide the abstractions to interact with the Tracking and Hyperparameter Optimization engines. On the other hand, the CLI is in charge of executing scripts either in a local
-environment or a remote environment.
+```
+snapper-ml make UI
+```
 
-![Architecture Overview](./thesis/source/figures/ml_experiment_overview.svg)
+Open [localhost:4000](http://localhost:4000/) and upload your firsts experiments!
+
+![](docs/assets/UI.png)
+
+To stop snapper UI just execute:
+
+```
+make stop_UI
+```
+
+And to stop mlflow and optuna databases execute:
+
+```
+make stop_docker
+```
+
+> [!CAUTION]
+> Running make stop_UI also stops the Docker containers for the databases, so ensure you have saved all necessary data.
 
 ## Documentation
 
 The documentation is available [here](https://snapperml.readthedocs.io/en/latest/)
+
+> [!TIP]
+> Visit the documentation for more examples and detailed instructions.
 
 ## Example
 
@@ -120,13 +151,20 @@ metric:
 ray_config:
   num_cpus: 4
 
+data:
+  folder: data/
+  files: ["*QGSJet.txt"]
+
 run:
   - train_svm.py
 ```
 
-```bash
-
-snapper-ml --config_file=train_svm.yaml
 ```
+
+snapper-ml run --config_file=train_svm.yaml
+```
+
+> [!WARNING]
+> Make sure the configuration files are correctly set to avoid runtime errors. Misconfigured parameters could lead to unexpected behavior.
 
 There are more examples in the [examples folder](https://github.com/yerasiito/SnapperML/tree/master/examples).

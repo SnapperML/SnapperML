@@ -11,12 +11,11 @@ import ray
 import traceback
 from pytictoc import TicToc
 import optuna
-
 from .callbacks.core import Callback, CallbacksHandler
 from .loggings import logger, setup_logging
 from .config import parse_config, get_validation_model
 from .config.models import GroupConfig, ExperimentConfig, JobTypes, \
-    JobConfig, Metric, RayConfig, Settings
+    JobConfig, Metric, RayConfig, Settings, Data
 from .mlflow import create_mlflow_experiment, log_experiment_results, \
     setup_autologging, AutologgingBackendParam, log_text_file
 from .optuna import create_optuna_study, optimize_optuna_study, sample_params_from_distributions
@@ -41,6 +40,13 @@ class DataLoader(object):
     The shared data will be stored in the Plasma Object Store of ray, so you should take into account
     its limitations: https://docs.ray.io/en/latest/serialization.html
     """
+    data: Data
+
+    @classmethod
+    def set_data(cls, data: Data):
+        # Ensure that the dataset is set on the base class
+        cls.data = data
+
     @classmethod
     def load_data(cls):
         raise DataNotLoaded()
@@ -177,7 +183,10 @@ def _run_group(func: Callable,
     try:
         result = ray.get(futures)
     except Exception as e:
+        # Log the exception with detailed information
         callbacks_handler.on_job_end(exception=e)
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)  # Exit with a non-zero status code to indicate failure
     else:
         callbacks_handler.on_job_end(exception=None)
         return result
@@ -199,6 +208,7 @@ def _run_group_remote(func: Callable,
 
     if data:
         DataLoader.load_data = lambda: data
+        DataLoader.set_data(group_config.data)
 
     def objective(trial: optuna.Trial):
         with MlflowRunWithErrorHandling(callbacks_handler=callbacks_handler,
@@ -267,6 +277,7 @@ def _run_experiment(func: Callable,
 
         if data_loader_func:
             DataLoader.load_data = data_loader_func
+            DataLoader.set_data(config.data)
 
         results = _run_job(func, config)
         if not results:
@@ -387,7 +398,8 @@ def job(func: Optional[Callable] = None, *,
         safe_project_settings = _validate_project_settings(config, settings)
 
         create_mlflow_experiment(experiment_name=config.name, settings=safe_project_settings)
-
+        
+        logger.info(config.data)
         call_params = dict(func=func,
                            config=config,
                            autologging_backends=autologging_backends,

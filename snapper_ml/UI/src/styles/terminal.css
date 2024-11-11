@@ -1,0 +1,10 @@
+/* Terminal */
+.terminal {
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  max-height: auto;
+  text-align: left;
+  scrollbar-color: #fff #333;
+  scrollbar-width: hide;
+}

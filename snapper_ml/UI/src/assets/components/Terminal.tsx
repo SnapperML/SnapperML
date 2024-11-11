@@ -122,7 +122,8 @@ const TerminalComponent = forwardRef((_: TerminalProps, ref) => {
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
-      const chunk = decoder.decode(value);
+      let chunk = decoder.decode(value);
+      chunk = chunk.replace(/\nPROCESS_STATUS: (True|False)\n/, "");
       writeOutput(chunk, !done || isResetOrClearCommand());
     }
   };

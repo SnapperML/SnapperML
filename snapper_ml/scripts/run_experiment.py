@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 from pathlib import Path
 import tempfile
@@ -87,15 +88,25 @@ def run_job(job: JobConfig, config_file: str, env: Dict):
     if isinstance(job, ExperimentConfig) or isinstance(job, GroupConfig):
         bash_commands = [f'python3 {cmd.command} {config_file}' for cmd in run_commands]
     else:
-        bash_commands = [pystache.render(cmd.command, job.params) if cmd.template else cmd.command
-                         for cmd in run_commands]
+        bash_commands = [
+            pystache.render(cmd.command, job.params) if cmd.template else cmd.command
+            for cmd in run_commands
+        ]
 
     if job.docker_config:
         process_docker(job.docker_config, bash_commands, env)
     else:
-        for commands in bash_commands:
-            subprocess.run(commands, shell=True, env={**os.environ, **env})
-
+        for command in bash_commands:
+            try:
+                subprocess.run(
+                    command,
+                    shell=True,
+                    env={**os.environ, **env},
+                    check=True,
+                )
+            except Exception as e:
+                logger.error(f"Command '{e}' failed with exit code {e}")
+                sys.exit(1) 
 
 def validate_dict(value: str) -> dict:    
     value = value.strip()
@@ -143,8 +154,6 @@ def validate_existent_file(value: Union[List[Path], Path], extensions: Union[str
     for file in value:
         if extensions and file.suffix not in extensions:
             raise typer.BadParameter(f'File should have one of the following extensions: {",".join(extensions)}')
-        if current_dir not in list(file.parents):
-            raise typer.BadParameter('Running scripts from outside the working directory is not supported.')
 
     return value[0] if is_singleton else value
 
@@ -210,6 +219,7 @@ PARAMS_HELP = f'Job parameters. If config file is specified, these parameters {D
 KIND_HELP = f'Type of job. {OVERRIDE_CONFIG}'
 
 ######### TODO ENV_HELP #########
+ROOT_PATH_HELP = ''
 
 PARAM_SPACE_HELP = f'Job parameter space. {ONLY_GROUP} {DICT_OVERLAP}'
 NUM_TRIALS_HELP = f'Number of experiments to execute in parallel. {ONLY_GROUP} {OVERRIDE_CONFIG}'
@@ -228,12 +238,12 @@ DOCKER_ARGS_HELP = 'A dictionary of build arguments. Only applies when the Docke
 RAY_CONFIG_HELP = 'A dictionary of arguments to pass to Ray.init.' \
                   f'Here you can specify the cluster address, number of cpu, gpu, etc. {DICT_OVERLAP}'
 
-
 # TODO: Add .py extension restriction when params/params_space is used.
 @app.command(help=CLI_HELP)
 def run(scripts: List[Path] = ExistentFile('.py', None),
         config_file: Path = ExistentFileOption(SUPPORTED_EXTENSIONS, None, '--config_file'),
         name: str = typer.Option(None, help=NAME_HELP),
+        root_path: Path = typer.Option(None, help=ROOT_PATH_HELP),
         kind: JobTypes = typer.Option(None, help=KIND_HELP),
         env: str = FileOrDict({}),
         params: str = FileOrDict({}, help=PARAMS_HELP),
@@ -251,92 +261,139 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
         docker_build_args: str = FileOrDict({}, '--docker_build_args', help=DOCKER_ARGS_HELP),
         ray_config: str = FileOrDict({}, '--ray_config', help=RAY_CONFIG_HELP)):
     
-    load_dotenv(find_dotenv())
-    
-    if not scripts and not config_file:
-        ctx = click.get_current_context()
-        click.echo(ctx.get_help())
-        ctx.exit()
+    try:
+        load_dotenv(find_dotenv())
+        
+        if not scripts and not config_file:
+            ctx = click.get_current_context()
+            click.echo(ctx.command.get_help(ctx))
+            ctx.exit()
 
-    if config_file:
-        # TODO: Fix parse when file does not exist
-        config = parse_config(config_file, get_validation_model)
+        if config_file:
+            # Attempt to parse the configuration
+            try:
+                config = parse_config(config_file, get_validation_model)
+            except FileNotFoundError as e:
+                typer.echo(f"Error: Configuration file not found: {config_file}", err=True)
+                raise typer.Exit(code=1)
+            except Exception as e:
+                typer.echo(f"Error: Failed to parse the configuration file: {e}", err=True)
+                raise typer.Exit(code=1)
+                
+            kind = kind or config.kind
+            name = name or config.name
+            root_path = root_path or config.root_path
+            scripts = scripts or config.run
+            params = {**config.params, **params}
+            
+            if root_path is None:
+                config.root_path = os.getcwd()
 
-        kind = kind or config.kind
-        name = name or config.name
-        scripts = scripts or config.run
-        params = {**config.params, **params}
+            # Append root path to scripts
+            for script in scripts:
+                script.command = os.path.join(config.root_path, Path(script.command))
 
-        if config.ray_config:
-            ray_config = {**config.ray_config.dict(), **ray_config}
+            # Append root path to data
+            config.data.folder = os.path.join(config.root_path, config.data.folder)
 
-        if config.docker_config:
-            docker_image = docker_image or config.docker_config.dockerfile
-            dockerfile = dockerfile or config.docker_config.dockerfile
-            docker_context = docker_context or config.docker_config.context
-            docker_build_args = {**docker_build_args, **config.docker_config.args}
+            if config.ray_config:
+                ray_config = {**config.ray_config.dict(), **ray_config}
 
-        config = config.dict(exclude_defaults=True)
-    else:
-        config = {}
+            if config.docker_config:
+                docker_image = docker_image or config.docker_config.dockerfile
+                dockerfile = dockerfile or config.docker_config.dockerfile
+                docker_context = docker_context or config.docker_config.context
+                docker_build_args = {**docker_build_args, **config.docker_config.args}
 
-    metric = Metric(name=metric_key, metric_direction=metric_direction) if metric_key else None
+            config = config.dict(exclude_defaults=True)
+        else:
+            config = {}
 
-    # Job type inference based on input parameters
-    kind = JobTypes.GROUP if param_space else kind
+        metric = Metric(name=metric_key, metric_direction=metric_direction) if metric_key else None
 
-    job_config = {
-        'params': params,
-        'name': name,
-        'ray_config': ray_config,
-        'run': scripts
-    }
+        # Job type inference based on input parameters
+        kind = JobTypes.GROUP if param_space else kind
 
-    job_config = {k: v for k, v in job_config.items() if v}
-
-    if docker_image or dockerfile:
-        job_config['docker_config'] = {
-            'image': docker_image,
-            'dockerfile': dockerfile,
-            'context': docker_context,
-            'args': docker_build_args
+        job_config = {
+            'params': params,
+            'name': name,
+            'ray_config': ray_config,
+            'run': scripts
         }
 
+        job_config = {k: v for k, v in job_config.items() if v}
+
+        if docker_image or dockerfile:
+            job_config['docker_config'] = {
+                'image': docker_image,
+                'dockerfile': dockerfile,
+                'context': docker_context,
+                'args': docker_build_args
+            }
+
+        try:
+            if kind == JobTypes.GROUP:
+                group_config = dict(kind=JobTypes.GROUP,
+                                    root_path = root_path,
+                                    sampler=sampler,
+                                    pruner=pruner,
+                                    num_trials=num_trials,
+                                    timeout_per_trial=timeout_per_trial,
+                                    metric=metric,
+                                    param_space=param_space)
+                group_config = {k: v for k, v in group_config.items() if v}
+                group_config = {**job_config, **config, **group_config}
+                result = GroupConfig.model_validate(group_config)
+            elif kind == JobTypes.EXPERIMENT:
+                result = ExperimentConfig(**job_config)
+            else:
+                result = JobConfig(**job_config)
+        except ValidationError as e:
+            _print_validation_error(config_file, e)
+            raise typer.Exit(code=1) 
+
+        setup_logging(experiment_name=result.name)
+
+        # Avoid raising non-serializable errors
+        if isinstance(result, GroupConfig):
+            result.param_space = recursive_map(
+                lambda x: str(x) if isinstance(x, Callable) else x, result.param_space)
+
+        fp = tempfile.NamedTemporaryFile(mode='w+', suffix='.json')
+        file_content = result.model_dump_json(exclude_defaults=False)
+        fp.write(file_content)
+        fp.flush()
+        os.fsync(fp.fileno())
+        run_job(result, fp.name, env)
+        fp.close()
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        typer.echo(f"An unexpected error occurred: {e}", err=True)
+        sys.exit(1) 
+
+@app.command(help="Execute a Makefile to start the project.")
+def make(target: str = typer.Argument("docker", help="Makefile target to execute, default is 'docker'.")):
+    """Executes the specified Makefile target."""
     try:
-        if kind == JobTypes.GROUP:
-            group_config = dict(kind=JobTypes.GROUP,
-                                sampler=sampler,
-                                pruner=pruner,
-                                num_trials=num_trials,
-                                timeout_per_trial=timeout_per_trial,
-                                metric=metric,
-                                param_space=param_space)
-            group_config = {k: v for k, v in group_config.items() if v}
-            group_config = {**job_config, **config, **group_config}
-            result = GroupConfig.model_validate(group_config)
-        elif kind == JobTypes.EXPERIMENT:
-            result = ExperimentConfig(**job_config)
-        else:
-            result = JobConfig(**job_config)
-    except ValidationError as e:
-        print(e)
-        _print_validation_error(config_file, e)
-        raise typer.Exit()
+        makefile_directory = Path(__file__).resolve().parents[2]
+        result = subprocess.run(
+            ["make", target, "BACKGROUND=1"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=str(makefile_directory)
+        )
+        typer.echo(result.stdout.decode())
+        typer.echo(result.stderr.decode())
+    except subprocess.CalledProcessError as e:
+        typer.echo(f"Error: Makefile target '{target}' failed.", err=True)
+        typer.echo(e.stderr.decode(), err=True)
+        sys.exit(1)
+    except FileNotFoundError:
+        typer.echo("Error: 'make' command not found. Please ensure Make is installed.", err=True)
+        sys.exit(1)
 
-    setup_logging(experiment_name=result.name)
-
-    # Avoid raising non-serializable errors
-    if isinstance(result, GroupConfig):
-        result.param_space = recursive_map(
-            lambda x: str(x) if isinstance(x, Callable) else x, result.param_space)
-
-    fp = tempfile.NamedTemporaryFile(mode='w+', suffix='.json')
-    file_content = result.model_dump_json(exclude_defaults=False)
-    fp.write(file_content)
-    fp.flush()
-    os.fsync(fp.fileno())
-    run_job(result, fp.name, env)
-    fp.close()
 
 if __name__ == '__main__':
     app()

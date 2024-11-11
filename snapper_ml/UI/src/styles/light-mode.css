@@ -1,0 +1,81 @@
+/* light-mode.css */
+/* Apply this class to the body when light mode is active */
+body.light-mode {
+  color: #000;
+  background: radial-gradient(circle, #84fab0 0%, #8fd3f4 100%);
+}
+
+/* Header colors */
+body.light-mode .header-title,
+body.light-mode .header-subtitle {
+  color: #000;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark Mode Button */
+.dark-mode-toggle {
+  color: #000
+}
+
+/* Navbar colors */
+body.light-mode .navbar.navbar-expand-lg {
+  background-color: #f8f9fa;
+}
+
+body.light-mode .navbar.navbar-expand-lg .navbar-brand,
+body.light-mode .navbar.navbar-expand-lg .nav-link {
+  color: #000;
+}
+
+/* About box colors */
+body.light-mode .about-box {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+body.light-mode .about-box h2,
+body.light-mode .about-box h3 {
+  color: #343a40;
+}
+
+body.light-mode .about-box p,
+body.light-mode .about-box li {
+  color: #495057;
+}
+
+body.light-mode .about-box a {
+  color: #000;
+}
+
+body.light-mode .about-box a:hover {
+  text-decoration: underline;
+}
+
+/* Contact colors */
+body.light-mode .contact-title {
+  color: #000;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode .contact-title:hover {
+  color: #8c6c96;
+}
+
+body.light-mode .contact-box {
+  background-color: #f1f3f5;
+  border: 1px solid #ced4da;
+}
+
+body.light-mode .contact-text h3 {
+  color: #343a40;
+}
+
+body.light-mode .contact-text p {
+  color: #495057;
+}
+
+/* Footer colors */
+body.light-mode .footer {
+  background-color: #f8f9fa;
+  color: #000000;
+}

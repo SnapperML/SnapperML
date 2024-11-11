@@ -16,5 +16,11 @@ metric:
 ray_config:
   num_cpus: 4
 
+data:
+  folder: examples/data/
+  files: [
+    '*QGSJet.txt'
+  ]
+
 run:
   - examples/train_svm.py

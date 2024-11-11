@@ -14,6 +14,6 @@ Extra logs, stored config files and more in the local `artifacts` folder.
 
 ## Deploy UI
 
-Deploy the UI executing `make UI`.
+Deploy the UI executing `snapper-ml make UI`.
 
-And stop it with `make stop_UI`.
+And stop it with `snapper-ml make stop_UI`.

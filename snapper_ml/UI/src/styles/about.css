@@ -1,0 +1,48 @@
+/* About */
+.about-box {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.container .about-box a {
+  color: #003366;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.container .about-box a:hover {
+  background-color: rgba(206, 206, 206, 0.5);
+}
+
+.about-box h2,
+.about-box h3 {
+  color: #343a40;
+  font-weight: 600;
+}
+
+.about-box p,
+.about-box li {
+  color: #495057;
+  line-height: 1.6;
+}
+
+.about-box a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.about-box a:hover {
+  text-decoration: underline;
+}
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
