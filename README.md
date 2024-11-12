@@ -4,9 +4,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
 [![PyPI version](https://img.shields.io/pypi/v/snapper-ml.svg?style=for-the-badge)](https://pypi.org/project/snapper-ml/)
 
-<div style="text-align: center;">
-  <img src="docs/assets/banner.png" alt="SnapperML">
-</div>
+![SnapperML](https://raw.githubusercontent.com/SnapperML/SnapperML/refs/heads/master/docs/assets/banner.png)
 
 SnapperML is a comprehensive framework for experiment tracking and machine learning operationalization (MLOps), built using well-supported technologies like [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), Docker, and more. It provides an opinionated workflow designed to facilitate both local and cloud-based experimentation.
 
@@ -39,7 +37,7 @@ SnapperML integrates several components to streamline machine learning workflows
   > [!IMPORTANT]
   > Be sure to configure your databases and network settings carefully to ensure the security and integrity of your experiment data.
 
-![Architecture Overview](./docs/assets/snapperml_architecture.png)
+![Architecture Overview](https://raw.githubusercontent.com/SnapperML/SnapperML/refs/heads/master/docs/assets/snapperml_architecture.png)
 
 ## Installation
 
@@ -87,7 +85,7 @@ snapper-ml make UI
 
 Open [localhost:4000](http://localhost:4000/) and upload your firsts experiments!
 
-![](docs/assets/UI.png)
+![UI](https://raw.githubusercontent.com/SnapperML/SnapperML/refs/heads/master/docs/assets/UI.png)
 
 To stop snapper UI just execute:
 
