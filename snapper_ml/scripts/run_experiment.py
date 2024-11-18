@@ -11,6 +11,7 @@ from typer import BadParameter
 import click
 from pydantic import ValidationError
 import pystache
+import select 
 
 from snapper_ml.config import parse_config, get_validation_model, SUPPORTED_EXTENSIONS, _print_validation_error
 from snapper_ml.config.models import DockerConfig, JobConfig, ExperimentConfig, \
@@ -376,25 +377,45 @@ def run(scripts: List[Path] = ExistentFile('.py', None),
 def make(target: str = typer.Argument("docker", help="Makefile target to execute, default is 'docker'.")):
     """Executes the specified Makefile target."""
     try:
+        # Change to the parent of the parent directory
         makefile_directory = Path(__file__).resolve().parents[2]
+        os.chdir(makefile_directory)
+
+        # Start the Makefile process
+        command = ["make", target, "BACKGROUND=1"]
         process = subprocess.Popen(
-            ["make", target, "BACKGROUND=1"],
-            cwd=str(makefile_directory),
+            command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             bufsize=1,
             universal_newlines=True
         )
 
-        # Stream stdout and stderr
-        for line in process.stdout:
-            typer.echo(line, nl=False)  # Print stdout line by line without adding extra newlines
-        for line in process.stderr:
-            typer.echo(line, nl=False, err=True)  # Print stderr line by line without extra newlines
+        # Stream stdout and stderr in real time
+        def generate():
+            while True:
+                reads = [process.stdout, process.stderr]
+                readable, _, _ = select.select(reads, [], [])
 
-        process.stdout.close()
-        process.stderr.close()
-        process.wait()
+                for stream in readable:
+                    line = stream.readline()
+                    if line:
+                        yield line  # Yield output line by line
+                if process.poll() is not None:  # Check if the process has completed
+                    break
+
+            # Clean up the process when done
+            process.stdout.close()
+            process.stderr.close()
+
+            # Check if the process finished successfully
+            exit_code = process.returncode
+            success = exit_code == 0
+            yield f"\nPROCESS_STATUS: {success}\n"
+
+        # Use Typer's echo to stream the output
+        for output in generate():
+            typer.echo(output, nl=False)
 
         if process.returncode != 0:
             typer.echo(f"\nError: Makefile target '{target}' failed.", err=True)
