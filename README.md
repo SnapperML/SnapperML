@@ -8,6 +8,26 @@
 
 SnapperML is a comprehensive framework for experiment tracking and machine learning operationalization (MLOps), built using well-supported technologies like [Mlflow](https://mlflow.org/), [Ray](https://github.com/ray-project/ray/), Docker, and more. It provides an opinionated workflow designed to facilitate both local and cloud-based experimentation.
 
+If you use this software, please make a reference to it: https://www.sciencedirect.com/science/article/pii/S2352711024000190
+
+@article{DBLP:journals/softx/MolnerCG24,
+  author       = {Antonio Molner and
+                  Francisco Carrillo{-}Perez and
+                  Alberto Guill{\'{e}}n},
+  title        = {SnapperML: {A} python-based framework to improve machine learning
+                  operations},
+  journal      = {SoftwareX},
+  volume       = {26},
+  pages        = {101648},
+  year         = {2024},
+  url          = {https://doi.org/10.1016/j.softx.2024.101648},
+  doi          = {10.1016/J.SOFTX.2024.101648},
+  timestamp    = {Sun, 19 Jan 2025 14:02:18 +0100},
+  biburl       = {https://dblp.org/rec/journals/softx/MolnerCG24.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+
 ## Key Features
 
 - **Automatic Tracking**: Seamless integration with MLflow for parameter and metric tracking.
