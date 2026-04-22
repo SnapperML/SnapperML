@@ -1,0 +1,6 @@
+[submodule "thesis/thesis/yeray_lopez_ramirez"]
+	path = thesis/thesis/yeray_lopez_ramirez
+	url = git@github.com:yerasiito/TFG.git
+[submodule "thesis/yeray_lopez_ramirez"]
+	path = thesis/yeray_lopez_ramirez
+	url = git@github.com:yerasiito/TFG.git
